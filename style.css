@@ -6,16 +6,35 @@
 #header .site-name a.text-logo,#header .header__title{color:#fff!important;}
 #header .motto{color:#18A073!important;}
 
-/* Hlavní menu */
-#navigation{background:linear-gradient(90deg,#18A073,#5B2CDB)!important;padding:10px 0;}
+/* Hlavní menu — gradient aplikovaný na víc úrovní pro jistotu */
+#navigation,
+#navigation .navigation-in,
+#navigation ul.menu-level-1{
+  background:linear-gradient(90deg,#18A073,#5B2CDB)!important;
+}
+#navigation{padding:10px 0;}
 #navigation .menu-level-1>li>a{color:#fff!important;font-family:'Poppins',sans-serif;font-weight:500;}
 #navigation .submenu-arrow::after{content:"\25BE";color:#fff;font-size:11px;margin-left:4px;}
 
+/* Rozbalené podmenu — vlastní čitelná barva, nezávislá na horní liště */
+#navigation .menu-level-2{background:#fff!important;}
+#navigation .menu-level-2 a{color:#222!important;font-weight:400;}
+
+/* Vyhledávání — zaoblení na inputu/tlačítku, ne na obalu, aby fungoval našeptávač */
+.search-form{display:flex;position:relative;border:2px solid #5B2CDB;border-radius:50px;height:52px;max-width:480px;}
+.search-form .query-input{border:none!important;border-radius:50px 0 0 50px!important;padding-left:22px!important;font-size:16px!important;height:100%!important;}
+.search-form .btn.btn-default{background:#5B2CDB!important;border:none!important;border-radius:0 50px 50px 0!important;color:#fff!important;font-weight:600;padding:0 32px!important;font-size:15px;}
+.search-form .search-whisperer{z-index:9999;}
+
+/* Košík — vysunovací panel vždy nad ostatním obsahem */
+#cart-widget{z-index:99999!important;}
+
+/* Tlačítka Do košíku */
+.btn.btn-cart.add-to-cart-button,.btn-cart,.btn-conversion,a.btn-cart,a.btn-conversion{
+  background:#5B2CDB!important;border-color:#5B2CDB!important;color:#fff!important;
+}
+
 @media(max-width:767px){
   #header .header-top{flex-direction:column;text-align:center;}
-  .search-form{width:100%;}
-  
-}/* Vyhledávání */
-.search-form{display:flex;border-radius:50px;overflow:hidden;border:2px solid #5B2CDB;height:52px;max-width:480px;}
-.search-form .query-input{border:none!important;border-radius:0!important;padding-left:22px!important;font-size:16px!important;height:100%!important;}
-.search-form .btn.btn-default{background:#5B2CDB!important;border:none!important;border-radius:0!important;color:#fff!important;font-weight:600;padding:0 32px!important;font-size:15px;}
+  .search-form{width:100%;max-width:none;}
+}
