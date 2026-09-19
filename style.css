@@ -10,30 +10,33 @@
    Když se header-top zalomí na 2 řádky, zvýší se jeho reálná výška, ale
    košík se pořád vykreslí na starém pevném 103px offsetu → vypadá to,
    že "spadl" někam pod menu. Řešení: nezalamovat, sloupce se místo
-   toho podle potřeby zmenší (flex-shrink:1 je už v základní šabloně). */
-#header{background:#131111!important;}
-#header .header-top{padding:16px 0;gap:12px;flex-wrap:nowrap;}
+   toho podle potřeby zmenší (flex-shrink:1 je už v základní šabloně).
+   Padding 22px 0 (dřív 16px) dává logu trochu víc vzduchu nahoře/dole —
+   je to jen malá změna výšky, takže pozici košíku/vyhledávání níže
+   citelně neovlivní. */
+/* Tmavá barva #0A0E17 je zkopírovaná přímo z živého webu prahacomputer.cz
+   (sekce .section-dark, ověřeno reálným computed stylem, ne odhad) —
+   stejná tmavě-modročerná, ne čistě černá. */
+#header{background:#0A0E17!important;}
+#header .header-top{padding:22px 0;gap:12px;flex-wrap:nowrap;}
 #header .site-name a.text-logo,#header .header__title{color:#fff!important;}
 #header .motto{color:#18A073!important;}
 
 /* Větší logo — cílí na skutečný <img> tag (.site-name a img), viz
-   Shoptet header.less. 82px se pořád vejde do pevné výšky headeru
-   98px, takže to nerozbije pozici košíku/vyhledávání výše. */
+   Shoptet header.less. */
 #header .site-name a img{max-height:82px;width:auto;}
 
 /* ===== Hlavní menu ===== */
+/* Přechod fialová → zelená, stejné barvy i úhel (135deg) jako tlačítko
+   "Chci nezávaznou diagnostiku" na prahacomputer.cz — taky ověřeno
+   přímo z reálného computed stylu tlačítka na webu. */
 #navigation,
 #navigation .navigation-in,
 #navigation ul.menu-level-1{
-  background:linear-gradient(90deg,#18A073,#5B2CDB)!important;
+  background:linear-gradient(135deg,#5B2CDB,#7A3FE0 45%,#18A073)!important;
 }
 #navigation{padding:10px 0;}
 
-/* Odkazy 1. úrovně — text je vždy bílý. Shoptet při hoveru/rozbalení
-   (.exp) sám nastavuje světlé pozadí (--colors-surface-primary) +
-   barevný text (--color-primary) — proto byl text neviditelný.
-   Explicitně přebíjíme OBĚ vlastnosti v hover/exp stavu, takže pozadí
-   jen ztmavne (funguje na celém přechodu) a text zůstane čitelný. */
 #navigation .menu-level-1>li>a{
   color:#fff!important;
   background-color:transparent!important;
@@ -48,8 +51,6 @@
 }
 #navigation .submenu-arrow::after{content:"\25BE";color:#fff;font-size:11px;margin-left:4px;}
 
-/* Rozbalené podmenu (2. úroveň) — vlastní čitelná barva nezávislá na
-   hlavní liště + jasný hover stav namísto Shoptet defaultu. */
 #navigation .menu-level-2{background:#fff!important;}
 #navigation .menu-level-2 a{color:#222!important;font-weight:400;}
 #navigation .menu-level-2 a:hover,
@@ -69,9 +70,6 @@
   outline:none!important;
   box-shadow:none!important;
 }
-/* Focus řešíme na celé pilulce (:focus-within), ne na inputu samotném —
-   input tak nemá žádný vlastní rámeček/outline (mizí default modrý/bílý
-   rámeček prohlížeče) a celá pilulka jen jemně "zazáří" brand fialovou. */
 .search-form:focus-within{
   border-color:#3d1a99!important;
   box-shadow:0 0 0 3px rgba(91,44,219,.25)!important;
@@ -83,10 +81,40 @@
 }
 .search-form .search-whisperer{z-index:9999;}
 
-/* ===== Košík =====
-   Skutečná oprava pozice je výše (header-top flex-wrap:nowrap).
-   Z-index necháváme jako pojistku proti překrytí. */
+/* ===== Košík ===== */
 #cart-widget{z-index:99999!important;}
+
+.popup-widget.cart-widget{
+  border:2px solid #5B2CDB!important;
+  border-radius:10px!important;
+  box-shadow:0 14px 34px rgba(91,44,219,.22)!important;
+}
+.popup-widget.cart-widget::before{
+  border-color:#5B2CDB!important;
+  background-color:#fff!important;
+}
+.cart-widget-product{
+  border-bottom-color:#eee!important;
+}
+.cart-widget-product-name{color:#222!important;font-weight:500;}
+.cart-widget-product-delete button{color:#999!important;}
+.cart-widget-product-delete button:hover{color:#e03131!important;}
+.cart-widget-button{background:#fff!important;}
+.cart-widget-button .btn{
+  background:#5B2CDB!important;
+  border-color:#5B2CDB!important;
+  color:#fff!important;
+  border-radius:50px!important;
+  font-weight:600;
+}
+.cart-widget-button .btn:hover{
+  background:#4a23b3!important;
+  border-color:#4a23b3!important;
+}
+.cart-free-shipping{
+  background:#eafaf3!important;
+  color:#0f7a56!important;
+}
 
 /* ===== Tlačítka Do košíku ===== */
 .btn.btn-cart.add-to-cart-button,.btn-cart,.btn-conversion,a.btn-cart,a.btn-conversion{
