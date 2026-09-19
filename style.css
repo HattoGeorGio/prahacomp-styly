@@ -2,34 +2,14 @@
 
 :root{--color-secondary:#5B2CDB;}
 
-/* ===== Hlavička =====
-   Header-top NESMÍ zalamovat na desktopu (flex-wrap:nowrap) — Shoptet
-   pozicuje vysunovací panely košíku/vyhledávání pomocí pevného absolutního
-   "top" v px, spočítaného pro jednořádkovou hlavičku o výšce 98px
-   (viz variables-specific.less: @popup-widget_top-md-min:21 + @popup_widget_cart-offset:82 = 103px).
-   Když se header-top zalomí na 2 řádky, zvýší se jeho reálná výška, ale
-   košík se pořád vykreslí na starém pevném 103px offsetu → vypadá to,
-   že "spadl" někam pod menu. Řešení: nezalamovat, sloupce se místo
-   toho podle potřeby zmenší (flex-shrink:1 je už v základní šabloně).
-   Padding 22px 0 (dřív 16px) dává logu trochu víc vzduchu nahoře/dole —
-   je to jen malá změna výšky, takže pozici košíku/vyhledávání níže
-   citelně neovlivní. */
-/* Tmavá barva #0A0E17 je zkopírovaná přímo z živého webu prahacomputer.cz
-   (sekce .section-dark, ověřeno reálným computed stylem, ne odhad) —
-   stejná tmavě-modročerná, ne čistě černá. */
+/* ===== Hlavička ===== */
 #header{background:#0A0E17!important;}
 #header .header-top{padding:22px 0;gap:12px;flex-wrap:nowrap;}
 #header .site-name a.text-logo,#header .header__title{color:#fff!important;}
 #header .motto{color:#18A073!important;}
-
-/* Větší logo — cílí na skutečný <img> tag (.site-name a img), viz
-   Shoptet header.less. */
 #header .site-name a img{max-height:82px;width:auto;}
 
 /* ===== Hlavní menu ===== */
-/* Přechod fialová → zelená, stejné barvy i úhel (135deg) jako tlačítko
-   "Chci nezávaznou diagnostiku" na prahacomputer.cz — taky ověřeno
-   přímo z reálného computed stylu tlačítka na webu. */
 #navigation,
 #navigation .navigation-in,
 #navigation ul.menu-level-1{
@@ -81,7 +61,39 @@
 }
 .search-form .search-whisperer{z-index:9999;}
 
-/* ===== Košík ===== */
+/* ===== Košík — tlačítko v hlavičce (zavřený stav) ===== */
+#header .cart-count{
+  display:inline-flex!important;
+  align-items:center;
+  gap:10px;
+  padding:6px 18px 6px 6px!important;
+  border-radius:50px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14);
+}
+#header .cart-count:hover{
+  background:rgba(255,255,255,.13);
+  border-color:rgba(255,255,255,.24);
+}
+#header .cart-count::before{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#5B2CDB,#18A073)!important;
+  color:#fff!important;
+  font-size:17px!important;
+  margin:0!important;
+}
+#header .cart-count,
+#header .cart-count .cart-price{
+  color:#fff!important;
+  font-weight:600;
+}
+
+/* ===== Košík — rozbalený panel s produkty ===== */
 #cart-widget{z-index:99999!important;}
 
 .popup-widget.cart-widget{
