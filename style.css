@@ -4,10 +4,22 @@
 
 /* ===== Hlavička ===== */
 #header{background:#0A0E17!important;}
-#header .header-top{padding:22px 0;gap:12px;flex-wrap:nowrap;}
 #header .site-name a.text-logo,#header .header__title{color:#fff!important;}
 #header .motto{color:#18A073!important;}
-#header .site-name a img{max-height:82px;width:auto;}
+
+/* Padding hlavičky a větší logo NESMÍ platit na mobilu/tabletu (<768px).
+   Shoptet tam má vlastní mechanismus "mizející hlavičky" při scrollu —
+   #header .site-name a #header .cart-count dostávají transform:translateY(...)
+   a celá #header se sbalí na pevných 44px výšky (ověřeno v mobile-header-v1-11.less
+   i přímo na živém webu při scrollování). Když je vevnitř větší padding/logo
+   než se do těch 44px vejde, obsah se jen "ztratí" a zůstane holá tmavá
+   plocha — přesně ta černá čára. Na desktopu žádný takový scroll-mechanismus
+   není, takže tam je to bezpečné (a navíc to tam potřebujeme kvůli
+   správné pozici košíku, viz sekce Košík níže). */
+@media(min-width:768px){
+  #header .header-top{padding:22px 0;gap:12px;flex-wrap:nowrap;}
+  #header .site-name a img{max-height:82px;width:auto;}
+}
 
 /* ===== Hlavní menu ===== */
 #navigation,
@@ -39,8 +51,13 @@
   background-color:#f5f2fc!important;
 }
 
-/* ===== Vyhledávání ===== */
-.search-form{display:flex;position:relative;border:2px solid #5B2CDB;border-radius:50px;height:52px;max-width:480px;}
+/* ===== Vyhledávání =====
+   Pevná výška 52px je ze stejného důvodu (viz poznámka u hlavičky výše)
+   omezená jen na desktop. */
+.search-form{display:flex;position:relative;border:2px solid #5B2CDB;border-radius:50px;max-width:480px;}
+@media(min-width:768px){
+  .search-form{height:52px;}
+}
 .search-form .query-input{
   border:none!important;
   border-radius:50px 0 0 50px!important;
