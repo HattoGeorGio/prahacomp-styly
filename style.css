@@ -1,1 +1,36 @@
-body{border-top:10px solid red!important;}
+:root{--color-secondary:#5B2CDB;}
+
+/* Hlavička */
+#header{background:#131111!important;border-bottom:3px solid #18A073;}
+#header .header-top{padding:16px 0;flex-wrap:wrap;gap:12px;}
+#header .site-name a.text-logo,#header .header__title{color:#fff!important;}
+#header .motto{color:#18A073!important;}
+
+/* Hlavní menu */
+#navigation{background:linear-gradient(90deg,#18A073,#5B2CDB)!important;padding:14px 0;}
+#navigation .menu-level-1{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;}
+#navigation .menu-level-1>li>a{color:#fff!important;font-weight:600;font-family:'Poppins',sans-serif;padding:8px 10px;display:flex;align-items:center;}
+#navigation .submenu-arrow{margin-left:6px;}
+#navigation .submenu-arrow::after{content:"\25BE";color:#fff;font-size:11px;}
+
+/* Pojistka proti sbalení menu do hamburgeru na desktopu */
+@media(min-width:1024px){
+  #navigation .menu-helper,#navigation [data-testid="hamburgerMenu"]{display:none!important;}
+  #navigation .menu-level-1{display:flex!important;flex-wrap:nowrap!important;}
+  #navigation{overflow:visible!important;}
+}
+
+/* Vyhledávání */
+.search-form{display:flex;border-radius:30px;overflow:hidden;border:2px solid #18A073;}
+.search-form .query-input{border:none!important;border-radius:0!important;padding-left:18px!important;}
+.search-form .btn.btn-default{background:#18A073!important;border:none!important;border-radius:0!important;color:#fff!important;font-weight:600;padding:0 24px!important;}
+
+/* Tlačítka Do košíku */
+.btn.btn-cart.add-to-cart-button,.btn-cart,.btn-conversion,a.btn-cart,a.btn-conversion{
+  background:#5B2CDB!important;border-color:#5B2CDB!important;color:#fff!important;
+}
+
+@media(max-width:767px){
+  #header .header-top{flex-direction:column;text-align:center;}
+  .search-form{width:100%;}
+}
