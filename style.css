@@ -2,33 +2,74 @@
 
 :root{--color-secondary:#5B2CDB;}
 
-/* ===== Hlavička ===== */
+/* ===== Hlavička =====
+   Header-top NESMÍ zalamovat na desktopu (flex-wrap:nowrap) — Shoptet
+   pozicuje vysunovací panely košíku/vyhledávání pomocí pevného absolutního
+   "top" v px, spočítaného pro jednořádkovou hlavičku o výšce 98px
+   (viz variables-specific.less: @popup-widget_top-md-min:21 + @popup_widget_cart-offset:82 = 103px).
+   Když se header-top zalomí na 2 řádky, zvýší se jeho reálná výška, ale
+   košík se pořád vykreslí na starém pevném 103px offsetu → vypadá to,
+   že "spadl" někam pod menu. Řešení: nezalamovat, sloupce se místo
+   toho podle potřeby zmenší (flex-shrink:1 je už v základní šabloně).
+   Padding 22px 0 (dřív 16px) dává logu trochu víc vzduchu nahoře/dole —
+   je to jen malá změna výšky, takže pozici košíku/vyhledávání níže
+   citelně neovlivní. */
+/* Tmavá barva #0A0E17 je zkopírovaná přímo z živého webu prahacomputer.cz
+   (sekce .section-dark, ověřeno reálným computed stylem, ne odhad) —
+   stejná tmavě-modročerná, ne čistě černá. */
 #header{background:#0A0E17!important;}
 #header .site-name a.text-logo,#header .header__title{color:#fff!important;}
 #header .motto{color:#18A073!important;}
 
 /* Padding hlavičky a větší logo NESMÍ platit na mobilu/tabletu (<768px).
    Shoptet tam má vlastní mechanismus "mizející hlavičky" při scrollu —
-   #header .site-name a #header .cart-count dostávají transform:translateY(...)
+   #header.site-name a #header .cart-count dostávají transform:translateY(...)
    a celá #header se sbalí na pevných 44px výšky (ověřeno v mobile-header-v1-11.less
    i přímo na živém webu při scrollování). Když je vevnitř větší padding/logo
    než se do těch 44px vejde, obsah se jen "ztratí" a zůstane holá tmavá
-   plocha — přesně ta černá čára. Na desktopu žádný takový scroll-mechanismus
-   není, takže tam je to bezpečné (a navíc to tam potřebujeme kvůli
-   správné pozici košíku, viz sekce Košík níže). */
+   plocha — přesně ta černá čára, co jsi viděl. Na desktopu žádný takový
+   scroll-mechanismus není, takže tam je to bezpečné (a navíc to tam
+   potřebujeme kvůli správné pozici košíku, viz sekce Košík níže). */
 @media(min-width:768px){
   #header .header-top{padding:22px 0;gap:12px;flex-wrap:nowrap;}
   #header .site-name a img{max-height:82px;width:auto;}
 }
 
-/* ===== Hlavní menu ===== */
-#navigation,
+/* ===== Hlavní menu (desktop) ===== */
+/* Přechod fialová → zelená, stejné barvy i úhel (135deg) jako tlačítko
+   "Chci nezávaznou diagnostiku" na prahacomputer.cz — taky ověřeno
+   přímo z reálného computed stylu tlačítka na webu.
+
+   DŮLEŽITÉ: gradient je nastavený POUZE na #navigation (nejzevnější,
+   přes celou plochu menu). Dřív měly stejný gradient nastavený i
+   .navigation-in a ul.menu-level-1 uvnitř — na desktopu to nevadilo,
+   protože všechny tři mají naprosto stejný rozměr (jeden řádek), takže
+   se tři kopie gradientu překrývaly beze švu. Na mobilu (rozbalené
+   hamburger menu) ale ul.menu-level-1 zabírá jen výšku 4 položek
+   (~170px), zatímco #navigation zabírá celou výšku obrazovky (~800px) —
+   každý element si tak počítal STEJNÝ gradient znovu, ale přes jinak
+   velkou plochu, a ul.menu-level-1 (nejvrchnější, tedy viditelná)
+   proto "protočila" celou fialovo-zelenou škálu během pouhých 4 řádků.
+   Výsledek: každá kategorie jinak barevný pruh (to "hnusné pruhované
+   menu" na mobilu). Řešení: gradient je jen na jednom, nejzevnějším
+   elementu, který má vždy správnou celkovou výšku panelu — ostatní
+   mají background:none a gradient prosvítá skrz. Ověřeno živě: na
+   desktopu beze změny, na mobilu teď jeden plynulý přechod přes celý
+   panel. */
+#navigation{
+  background:linear-gradient(135deg,#5B2CDB,#7A3FE0 45%,#18A073)!important;
+  padding:10px 0;
+}
 #navigation .navigation-in,
 #navigation ul.menu-level-1{
-  background:linear-gradient(135deg,#5B2CDB,#7A3FE0 45%,#18A073)!important;
+  background:none!important;
 }
-#navigation{padding:10px 0;}
 
+/* Odkazy 1. úrovně — text je vždy bílý. Shoptet při hoveru/rozbalení
+   (.exp) sám nastavuje světlé pozadí (--colors-surface-primary) +
+   barevný text (--color-primary) — proto byl text neviditelný.
+   Explicitně přebíjíme OBĚ vlastnosti v hover/exp stavu, takže pozadí
+   jen ztmavne (funguje na celém přechodu) a text zůstane čitelný. */
 #navigation .menu-level-1>li>a{
   color:#fff!important;
   background-color:transparent!important;
@@ -41,8 +82,34 @@
   color:#fff!important;
   background-color:rgba(0,0,0,.18)!important;
 }
+
+/* Malá zelená čárka mezi kategoriemi (Počítače | Notebooky | ...):
+   Shoptetova vlastní šablona (third-level-menu mixin, modules/navigation.less)
+   dává položkám hlavního menu na desktopu nenápadný `border-left:1px solid`
+   jako oddělovač — barva se dědí z proměnné navázané na primární barvu
+   e-shopu (v tomto shopu vychází na tmavě zelenou rgb(19,129,92)), což
+   je nezávislé na našem fialovo-zeleném gradientu. Ověřeno živě přes
+   getComputedStyle na skutečné položce menu. Necháváme šířku okraje
+   beze změny (aby se nic nehýbalo při hoveru), jen ho děláme neviditelný. */
+#navigation .navigation-in>ul>li{
+  border-left-color:transparent!important;
+}
+
+/* Chybějící šipky u kategorií: Shoptetova šablona (stejný third-level-menu
+   mixin) na desktopu (min-width 768px) schovává KAŽDÝ <span> uvnitř
+   odkazu položky s podmenu (`&.ext > a > span{display:none}`) — a šipka
+   (.submenu-arrow) je přesně takový <span>. Naše barva/obsah šipky
+   (▾, bílá) byly už dřív nastavené správně, ale samotný element byl
+   display:none, takže se nemělo co zobrazit. Ověřeno živě: po vynucení
+   display:inline-block se šipka viditelně objeví, na mobilu, kde
+   Shoptet žádné takové pravidlo nemá, to nic nemění. */
+#navigation .navigation-in>ul>li.ext>a>span.submenu-arrow{
+  display:inline-block!important;
+}
 #navigation .submenu-arrow::after{content:"\25BE";color:#fff;font-size:11px;margin-left:4px;}
 
+/* Rozbalené podmenu (2. úroveň) — vlastní čitelná barva nezávislá na
+   hlavní liště + jasný hover stav namísto Shoptet defaultu. */
 #navigation .menu-level-2{background:#fff!important;}
 #navigation .menu-level-2 a{color:#222!important;font-weight:400;}
 #navigation .menu-level-2 a:hover,
@@ -53,7 +120,8 @@
 
 /* ===== Vyhledávání =====
    Pevná výška 52px je ze stejného důvodu (viz poznámka u hlavičky výše)
-   omezená jen na desktop. */
+   omezená jen na desktop — na mobilu/tabletu by se nevešla do zúženého
+   44px pruhu při scrollu. */
 .search-form{display:flex;position:relative;border:2px solid #5B2CDB;border-radius:50px;max-width:480px;}
 @media(min-width:768px){
   .search-form{height:52px;}
@@ -78,39 +146,66 @@
 }
 .search-form .search-whisperer{z-index:9999;}
 
-/* ===== Košík — tlačítko v hlavičce (zavřený stav) ===== */
-#header .cart-count{
-  display:inline-flex!important;
-  align-items:center;
-  gap:10px;
-  padding:6px 18px 6px 6px!important;
-  border-radius:50px;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.14);
-}
-#header .cart-count:hover{
-  background:rgba(255,255,255,.13);
-  border-color:rgba(255,255,255,.24);
-}
-#header .cart-count::before{
-  display:inline-flex!important;
-  align-items:center;
-  justify-content:center;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#5B2CDB,#18A073)!important;
-  color:#fff!important;
-  font-size:17px!important;
-  margin:0!important;
-}
+/* ===== Košík =====
+   Ikona v hlavičce dostává bílou barvu VŽDY (desktop i mobil) — na obou
+   to ladí s ostatními bílými ikonami v hlavičce. Kruhový barevný odznak
+   (fialovo-zelený gradient) a "pilulkové" pozadí kolem něj ale patří
+   JEN na desktop, viz vysvětlení níže u bodu "Přetékání košíku na mobilu". */
 #header .cart-count,
 #header .cart-count .cart-price{
   color:#fff!important;
   font-weight:600;
 }
 
-/* ===== Košík — rozbalený panel s produkty ===== */
+@media(min-width:768px){
+  /* Tlačítko v hlavičce (zavřený stav, desktop) — dosud jsem se ho vůbec
+     nedotkl, proto zůstávalo jako holý zelený text bez stylu. Ikona teď
+     dostává kolečko s přechodem fialová→zelená (stejný vizuální jazyk
+     jako ikony na prahacomputer.cz), text je bílý na jemné tmavé kartě.
+     Potvrzeno uživatelem jako povedené — na desktopu se NEMĚNÍ. */
+  #header .cart-count{
+    display:inline-flex!important;
+    align-items:center;
+    gap:10px;
+    padding:6px 18px 6px 6px!important;
+    border-radius:50px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.14);
+  }
+  #header .cart-count:hover{
+    background:rgba(255,255,255,.13);
+    border-color:rgba(255,255,255,.24);
+  }
+  #header .cart-count::before{
+    display:inline-flex!important;
+    align-items:center;
+    justify-content:center;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#5B2CDB,#18A073)!important;
+    color:#fff!important;
+    font-size:17px!important;
+    margin:0!important;
+  }
+}
+@media(max-width:767px){
+  /* Přetékání košíku na mobilu: Shoptet pozicuje ikonu košíku v mobilní
+     hlavičce pomocí absolute top/bottom vypočítaného pro malou nativní
+     ikonu (~24px). Naše "pilulka" s kolečkem (36px + padding) je ale
+     vysoká 50px, takže i se stejným "top" nutně přesahuje 11px pod
+     spodní okraj 50px vysokého mobilního headeru — přesně to přetékání,
+     co jsi viděl na screenshotu. Ověřeno živě přes getBoundingClientRect
+     (výška pilulky 50px > výška hlavičky 50px, počátek posunutý o 11px).
+     Řešení: na mobilu žádnou pilulku ani kolečko nepřidáváme vůbec —
+     necháme Shoptetovu vlastní malou ikonu (jen v bílé barvě, viz výše),
+     stejně jako ostatní ikony (lupa, hamburger) v mobilní hlavičce.
+     Ověřeno živě, že se tím přetékání zcela odstraní. */
+  #header .cart-count::before{
+    font-size:20px!important;
+  }
+}
+
 #cart-widget{z-index:99999!important;}
 
 .popup-widget.cart-widget{
