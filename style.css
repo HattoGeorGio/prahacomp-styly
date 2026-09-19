@@ -65,9 +65,32 @@ body.ordering-process #header .site-name{display:block!important;}
   body.ordering-process ol.cart-header li{
     padding-left:150px!important;
   }
+  /* Text kroku ("Nákupní košík") měl výchozí Shoptet font (Exo 2, řez
+     400 — normální, trochu tenký na nadpis) — přepnuto na náš brand font
+     Poppins, tučnější řez a jemné rozpálení písmen, aby to na tmavém
+     pozadí vypadalo sebevědoměji a ladilo se zbytkem webu. */
   body.ordering-process ol.cart-header li strong,
   body.ordering-process ol.cart-header li span{
     color:#fff!important;
+    font-family:'Poppins',sans-serif!important;
+    font-weight:600!important;
+    letter-spacing:0.03em!important;
+  }
+}
+
+/* Tělo stránky (body) celého objednávkového procesu má v Shoptetu na
+   desktopu vlastní světle šedé pozadí — zatímco nahraný obrázek pozadí
+   (tmavá grafika s deskou plošných spojů, nastavený v administraci
+   Shoptetu přes "Upravit vzhled stránky") tuhle stránku dole nedokryje
+   celou, prosvítá pod ním právě to světlé pozadí a vzniká ošklivá
+   bílo-šedá plocha/linka mezi obrázkem a zbytkem tmavého vzhledu webu.
+   Přebijeme barvu pozadí těla na stejnou tmavou barvu jako hlavička, aby
+   vše plynule navazovalo, ať obrázek sahá kamkoli — jen na desktopu
+   (>=768px), na mobilu tahle stránka žádné takové pozadí nepoužívá a
+   zůstává beze změny (ověřeno živě). */
+@media(min-width:768px){
+  body.ordering-process{
+    background-color:#0A0E17!important;
   }
 }
 
@@ -162,6 +185,37 @@ body.ordering-process #header .site-name{display:block!important;}
   width:10px;
   height:10px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='4 8 12 16 20 8'/%3E%3C/svg%3E") no-repeat center/contain;
+}
+
+/* Vycentrování šipky na PŘESNÝ střed celé barevné lišty menu (ne jen
+   uvnitř odkazu, což jsme řešili výše). Skutečná příčina: #navigation
+   má v šabloně Shoptetu napevno danou výšku, spočítanou z původní
+   jednořádkové výšky textu BEZ našeho kruhového odznáčku (jen 32px), a
+   overflow:hidden. Jakmile je teď odkaz s větším odznáčkem vyšší (38px),
+   horní část se do těch 32px vejde, ale spodní se ořízne — šipka se tak
+   opticky posune až těsně k dolnímu okraji lišty. To je přesně to, co
+   bylo vidět PŘED najetím myší; po najetí Shoptet vnitřní rozměry mírně
+   přepočítá, proto to vypadalo "opravené" jen v hover stavu (ověřeno
+   živě přesným měřením — bez téhle opravy 0px místo nad odznáčkem uvnitř
+   lišty, 12px pod ním; s opravou přesně 12px/12px na obou stranách).
+   Řešení: liště dáme dost místa (44px) a její vnitřní obálku
+   (.navigation-in, kterou Shoptet natvrdo pozicuje pomocí
+   position:absolute, takže ignoruje vlastní padding lišty) přepneme na
+   flexbox se svislým vycentrováním — rozbalování podnabídky (pozice se
+   počítá vůči jednotlivé položce, ne vůči liště) funguje beze změny. */
+@media(min-width:768px){
+  #navigation{
+    height:44px!important;
+    overflow:visible!important;
+  }
+  #navigation .navigation-in{
+    position:static!important;
+    top:auto!important;
+    bottom:auto!important;
+    display:flex!important;
+    align-items:center!important;
+    height:100%!important;
+  }
 }
 
 /* Rozbalené podmenu (2. úroveň) — vlastní čitelná barva nezávislá na
@@ -308,13 +362,38 @@ body.ordering-process #header .site-name{display:block!important;}
   border-color:#5B2CDB!important;
   background-color:#fff!important;
 }
+
+/* Zaoblení rohů fialového rámečku kolem celého okna košíku — rámeček
+   (border-radius:10px) měl zaoblené rohy, ale bílé vnitřní bloky
+   (.popup-widget-inner nahoře, .cart-widget-button dole) měly rohy
+   pravoúhlé a "přetékaly" přes zaoblení rámečku ven — proto to vypadalo,
+   že se zaobluje jen samotný rámeček, ne celé okno. Vnější box musí
+   zůstat overflow:visible (jinak by se uřízla šipka/hrot okna, který čouhá
+   nahoře ven), takže zaoblení přidáváme přímo na oba vnitřní bloky a
+   ořezáváme (overflow:hidden) jen je — ověřeno živě, teď se zaobluje
+   celé okno včetně fialového pruhu okolo. */
+.popup-widget.cart-widget .popup-widget-inner{
+  border-top-left-radius:8px!important;
+  border-top-right-radius:8px!important;
+  overflow:hidden;
+}
+.popup-widget.cart-widget .cart-widget-button{
+  border-bottom-left-radius:8px!important;
+  border-bottom-right-radius:8px!important;
+  overflow:hidden;
+}
 .cart-widget-product{
   border-bottom-color:#eee!important;
 }
 .cart-widget-product-name{color:#222!important;font-weight:500;}
 .cart-widget-product-delete button{color:#999!important;}
 .cart-widget-product-delete button:hover{color:#e03131!important;}
-.cart-widget-button{background:#fff!important;}
+/* Tlačítko "Pokračovat do košíku" sedělo úplně nalepené na spodní hranu
+   okna (Shoptetův vlastní default má tenhle blok vycpaný jen NAHOŘE —
+   68px 0 0 — kvůli banneru "doprava zdarma" nad tlačítkem, dole nechává
+   0). Přidáváme vlastní odstup zdola — ověřeno živě, mezera mezi
+   tlačítkem a spodním okrajem okna teď 22px. */
+.cart-widget-button{background:#fff!important;padding-bottom:20px!important;}
 
 /* Tlačítko "Pokračovat do košíku" v rozbalovacím náhledu košíku bylo
    roztažené přes celou šířku panelu (Shoptetův vlastní default pro .btn
