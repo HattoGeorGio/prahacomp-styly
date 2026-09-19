@@ -1,40 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
 :root{--color-secondary:#5B2CDB;}
 
-/* Hlavička */
-#header{background:#131111!important;border-bottom:3px solid #18A073;}
-#header .header-top{padding:16px 0;flex-wrap:wrap;gap:12px;}
+/* ===== Hlavička =====
+   Header-top NESMÍ zalamovat na desktopu (flex-wrap:nowrap) — Shoptet
+   pozicuje vysunovací panely košíku/vyhledávání pomocí pevného absolutního
+   "top" v px, spočítaného pro jednořádkovou hlavičku o výšce 98px
+   (viz variables-specific.less: @popup-widget_top-md-min:21 + @popup_widget_cart-offset:82 = 103px).
+   Když se header-top zalomí na 2 řádky, zvýší se jeho reálná výška, ale
+   košík se pořád vykreslí na starém pevném 103px offsetu → vypadá to,
+   že "spadl" někam pod menu. Řešení: nezalamovat, sloupce se místo
+   toho podle potřeby zmenší (flex-shrink:1 je už v základní šabloně). */
+#header{background:#131111!important;}
+#header .header-top{padding:16px 0;gap:12px;flex-wrap:nowrap;}
 #header .site-name a.text-logo,#header .header__title{color:#fff!important;}
 #header .motto{color:#18A073!important;}
 
-/* Hlavní menu — gradient aplikovaný na víc úrovní pro jistotu */
+/* Větší logo — cílí na skutečný <img> tag (.site-name a img), viz
+   Shoptet header.less. 82px se pořád vejde do pevné výšky headeru
+   98px, takže to nerozbije pozici košíku/vyhledávání výše. */
+#header .site-name a img{max-height:82px;width:auto;}
+
+/* ===== Hlavní menu ===== */
 #navigation,
 #navigation .navigation-in,
 #navigation ul.menu-level-1{
   background:linear-gradient(90deg,#18A073,#5B2CDB)!important;
 }
 #navigation{padding:10px 0;}
-#navigation .menu-level-1>li>a{color:#fff!important;font-family:'Poppins',sans-serif;font-weight:500;}
+
+/* Odkazy 1. úrovně — text je vždy bílý. Shoptet při hoveru/rozbalení
+   (.exp) sám nastavuje světlé pozadí (--colors-surface-primary) +
+   barevný text (--color-primary) — proto byl text neviditelný.
+   Explicitně přebíjíme OBĚ vlastnosti v hover/exp stavu, takže pozadí
+   jen ztmavne (funguje na celém přechodu) a text zůstane čitelný. */
+#navigation .menu-level-1>li>a{
+  color:#fff!important;
+  background-color:transparent!important;
+  font-family:'Poppins',sans-serif;
+  font-weight:500;
+}
+#navigation .menu-level-1>li>a:hover,
+#navigation .menu-level-1>li>a:focus-visible,
+#navigation .menu-level-1>li.exp>a{
+  color:#fff!important;
+  background-color:rgba(0,0,0,.18)!important;
+}
 #navigation .submenu-arrow::after{content:"\25BE";color:#fff;font-size:11px;margin-left:4px;}
 
-/* Rozbalené podmenu — vlastní čitelná barva, nezávislá na horní liště */
+/* Rozbalené podmenu (2. úroveň) — vlastní čitelná barva nezávislá na
+   hlavní liště + jasný hover stav namísto Shoptet defaultu. */
 #navigation .menu-level-2{background:#fff!important;}
 #navigation .menu-level-2 a{color:#222!important;font-weight:400;}
+#navigation .menu-level-2 a:hover,
+#navigation .menu-level-2 a:focus-visible{
+  color:#5B2CDB!important;
+  background-color:#f5f2fc!important;
+}
 
-/* Vyhledávání — zaoblení na inputu/tlačítku, ne na obalu, aby fungoval našeptávač */
+/* ===== Vyhledávání ===== */
 .search-form{display:flex;position:relative;border:2px solid #5B2CDB;border-radius:50px;height:52px;max-width:480px;}
-.search-form .query-input{border:none!important;border-radius:50px 0 0 50px!important;padding-left:22px!important;font-size:16px!important;height:100%!important;}
-.search-form .btn.btn-default{background:#5B2CDB!important;border:none!important;border-radius:0 50px 50px 0!important;color:#fff!important;font-weight:600;padding:0 32px!important;font-size:15px;}
+.search-form .query-input{
+  border:none!important;
+  border-radius:50px 0 0 50px!important;
+  padding-left:22px!important;
+  font-size:16px!important;
+  height:100%!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+/* Focus řešíme na celé pilulce (:focus-within), ne na inputu samotném —
+   input tak nemá žádný vlastní rámeček/outline (mizí default modrý/bílý
+   rámeček prohlížeče) a celá pilulka jen jemně "zazáří" brand fialovou. */
+.search-form:focus-within{
+  border-color:#3d1a99!important;
+  box-shadow:0 0 0 3px rgba(91,44,219,.25)!important;
+}
+.search-form .btn.btn-default{
+  background:#5B2CDB!important;border:none!important;border-radius:0 50px 50px 0!important;
+  color:#fff!important;font-weight:600;padding:0 32px!important;font-size:15px;
+  outline:none!important;box-shadow:none!important;
+}
 .search-form .search-whisperer{z-index:9999;}
 
-/* Košík — vysunovací panel vždy nad ostatním obsahem */
+/* ===== Košík =====
+   Skutečná oprava pozice je výše (header-top flex-wrap:nowrap).
+   Z-index necháváme jako pojistku proti překrytí. */
 #cart-widget{z-index:99999!important;}
 
-/* Tlačítka Do košíku */
+/* ===== Tlačítka Do košíku ===== */
 .btn.btn-cart.add-to-cart-button,.btn-cart,.btn-conversion,a.btn-cart,a.btn-conversion{
   background:#5B2CDB!important;border-color:#5B2CDB!important;color:#fff!important;
 }
 
 @media(max-width:767px){
-  #header .header-top{flex-direction:column;text-align:center;}
+  #header .header-top{flex-direction:column;text-align:center;flex-wrap:wrap;}
   .search-form{width:100%;max-width:none;}
 }
