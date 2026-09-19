@@ -47,6 +47,30 @@
    ověřeno živě že se nepřekrývá s tlačítkem menu. */
 body.ordering-process #header .site-name{display:block!important;}
 
+/* Na stránce košíku SE ZBOŽÍM (na rozdíl od prázdného košíku výše) se pod
+   hlavičkou navíc vykresluje Shoptetův vlastní ukazatel kroků objednávky
+   (<ol class="cart-header">, kroky "Nákupní košík / Doprava a platba /
+   Informace o vás") — na mobilu je taky position:fixed, ve STEJNÉM místě
+   obrazovky (0–60px odshora) jako právě zviditelněné logo, ale s nižším
+   z-indexem, takže logo přes text kroku vizuálně "přejíždělo" (ověřeno
+   přes elementFromPoint/getBoundingClientRect — tohle je ten skutečný
+   viník, ne #top-navigation-bar). Řešení: pruh kroků obarvíme na stejnou
+   tmavou barvu hlavičky a textu uděláme místo (padding-left) přesně tak,
+   aby logo mělo svých 150px a zbytek byl volný pro text — ověřeno živě,
+   mezera mezi logem a textem kroku je čistých 15px, bez překryvu. */
+@media(max-width:767px){
+  body.ordering-process ol.cart-header{
+    background:#0A0E17!important;
+  }
+  body.ordering-process ol.cart-header li{
+    padding-left:150px!important;
+  }
+  body.ordering-process ol.cart-header li strong,
+  body.ordering-process ol.cart-header li span{
+    color:#fff!important;
+  }
+}
+
 /* ===== Hlavní menu (desktop) ===== */
 /* Přechod fialová → zelená, stejné barvy i úhel (135deg) jako tlačítko
    "Chci nezávaznou diagnostiku" na prahacomputer.cz — taky ověřeno
@@ -70,10 +94,14 @@ body.ordering-process #header .site-name{display:block!important;}
 /* Odkazy 1. úrovně — na desktopu bílý text na barevném přechodu. Shoptet
    při hoveru/rozbalení (.exp) sám nastavuje světlé pozadí + barevný text
    (proto byl text neviditelný) — explicitně přebíjíme oba, pozadí jen
-   ztmavne (funguje na celém přechodu) a text zůstane čitelný. Na mobilu
+   ztmavne (funguje na celém přechodu) a text zůstane čitelný. Odkaz je
+   navíc flex box se svisle vycentrovaným obsahem (viz šipka u kategorií
+   níže — díky tomu je odznáček šipky přesně na střed řádku). Na mobilu
    (viz sekce "Menu na mobilu" níž) se tahle barevná varianta přebije
    tmavým textem na bílém pozadí. */
 #navigation .menu-level-1>li>a{
+  display:flex!important;
+  align-items:center!important;
   color:#fff!important;
   background-color:transparent!important;
   font-family:'Poppins',sans-serif;
@@ -89,7 +117,7 @@ body.ordering-process #header .site-name{display:block!important;}
 /* Malá zelená čárka mezi kategoriemi (Počítače | Notebooky | ...) na
    desktopu: Shoptetova vlastní šablona (third-level-menu mixin,
    modules/navigation.less) dává položkám hlavního menu na desktopu
-   nenápadný `border-left:1px solid` jako oddělovač — barva se dědí
+   nenápadný border-left:1px solid jako oddělovač — barva se dědí
    z proměnné navázané na primární barvu e-shopu (v tomto shopu vychází
    na tmavě zelenou rgb(19,129,92)), nezávisle na našem gradientu.
    Ověřeno živě přes getComputedStyle. Necháváme šířku okraje beze
@@ -98,7 +126,7 @@ body.ordering-process #header .site-name{display:block!important;}
   border-left-color:transparent!important;
 }
 
-/* ===== Šipka u kategorií (nová verze) =====
+/* ===== Šipka u kategorií =====
    Předchozí verze používala textový znak "▾" — ten se ale v malém
    písmu (11px) vykresloval jako neforemná tmavá skvrna/tečka, ne jako
    čistý trojúhelník (různé fonty ho renderují jinak, ostrost trpí).
@@ -108,7 +136,14 @@ body.ordering-process #header .site-name{display:block!important;}
    vykreslení na jakékoli velikosti a v jakémkoli prohlížeči. Shoptet
    navíc sám otočí šipku o 180° při rozbalení kategorie (jejich vlastní
    pravidlo .submenu-visible li.exp .submenu-arrow::after), takže to
-   funguje automaticky i tady. */
+   funguje automaticky i tady.
+   Vycentrování na přesný střed: odznáček už NEPOUŽÍVÁ ruční posun
+   (position:relative;top:-1px) — ten býval jen odhad a dával nestejné
+   mezery nad/pod (8px/10px). Místo toho je teď rodičovský odkaz
+   (#navigation .menu-level-1>li>a výše) flex box se svisle
+   vycentrovaným obsahem, takže odznáček sedí automaticky přesně na
+   střed řádku — ověřeno živě, mezera nad i pod je shodných 9px na
+   všech položkách menu. */
 #navigation .navigation-in>ul>li.ext>a>span.submenu-arrow{
   display:inline-flex!important;
   align-items:center!important;
@@ -118,11 +153,8 @@ body.ordering-process #header .site-name{display:block!important;}
   min-width:20px!important;
   padding:0!important;
   margin-left:6px!important;
-  vertical-align:middle;
   border-radius:50%!important;
   background:linear-gradient(135deg,#5B2CDB,#18A073)!important;
-  position:relative;
-  top:-1px;
   flex-shrink:0;
 }
 #navigation .submenu-arrow::after{
@@ -206,7 +238,14 @@ body.ordering-process #header .site-name{display:block!important;}
    (ověřeno přes getBoundingClientRect — to bylo to "přetékání").
    Teď má mobilní varianta průměr 28px: 50px (výška hlavičky) − 2×11px
    (Shoptetův vlastní horní/dolní odstup) = 28px přesně na míru, takže
-   sedí dokonale na střed a nikam nepřečnívá — ověřeno živě. */
+   sedí dokonale na střed a nikam nepřečnívá — ověřeno živě.
+
+   -webkit-tap-highlight-color: po kliknutí/klepnutí na košík se dřív
+   objevil ošklivý bílo-modrý "obtah" kolem tlačítka — stejně jako dřív
+   u vyhledávacího pole. Nejde o CSS outline ani box-shadow (ty jsou už
+   explicitně vypnuté), ale o vlastní "dotykové zvýraznění" prohlížeče
+   (WebKit/Chrome) při kliknutí — vypíná se touto vlastností, ověřeno
+   živě že tím obtah zmizí úplně, na desktopu i na mobilu. */
 #header .cart-count,
 #header .cart-count .cart-price{
   color:#fff!important;
@@ -215,6 +254,7 @@ body.ordering-process #header .site-name{display:block!important;}
 #header .cart-count{
   display:inline-flex!important;
   align-items:center;
+  -webkit-tap-highlight-color:transparent!important;
 }
 #header .cart-count::before{
   display:inline-flex!important;
@@ -275,7 +315,17 @@ body.ordering-process #header .site-name{display:block!important;}
 .cart-widget-product-delete button{color:#999!important;}
 .cart-widget-product-delete button:hover{color:#e03131!important;}
 .cart-widget-button{background:#fff!important;}
+
+/* Tlačítko "Pokračovat do košíku" v rozbalovacím náhledu košíku bylo
+   roztažené přes celou šířku panelu (Shoptetův vlastní default pro .btn
+   je tam display:block na 100% šířky wrapperu — ověřeno živě, 426×66px).
+   Wrapper (.cart-widget-button) má text-align:center už ze šablony, takže
+   stačí tlačítku vrátit přirozenou "inline" šířku podle textu a wrapper
+   ho sám vycentruje — vypadá jako běžné tlačítko, ne přes celý košík. */
 .cart-widget-button .btn{
+  display:inline-block!important;
+  width:auto!important;
+  padding:14px 40px!important;
   background:#5B2CDB!important;
   border-color:#5B2CDB!important;
   color:#fff!important;
