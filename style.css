@@ -14,4 +14,8 @@
 @media(max-width:767px){
   #header .header-top{flex-direction:column;text-align:center;}
   .search-form{width:100%;}
-}
+  
+}/* Vyhledávání */
+.search-form{display:flex;border-radius:50px;overflow:hidden;border:2px solid #5B2CDB;height:52px;max-width:480px;}
+.search-form .query-input{border:none!important;border-radius:0!important;padding-left:22px!important;font-size:16px!important;height:100%!important;}
+.search-form .btn.btn-default{background:#5B2CDB!important;border:none!important;border-radius:0!important;color:#fff!important;font-weight:600;padding:0 32px!important;font-size:15px;}
