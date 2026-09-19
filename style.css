@@ -457,49 +457,31 @@ body.ordering-process #header .site-name{display:block!important;}
   .search-form{width:100%;max-width:none;}
 }
 
-/* ===== Horní lišta se zákaznickou podporou a odkazy (nad hlavním menu) =====
-   Skutečný a opakovaný zdroj té "bílé čáry/linky" nahoře na stránce, na
-   kterou jsme už dvakrát omylem hledali jiné vysvětlení: tahle tenká lišta
-   úplně nahoře (telefon, "Jak nakupovat", "Obchodní podmínky", "Přihlášení")
-   má v Shoptetu defaultně BÍLÉ pozadí a tmavě šedý text — na běžné světlé
-   šabloně splyne a není vidět, ale na našem tmavém webu vytváří nahoře přes
-   celou šířku nepřehlédnutelný bílý pruh (ověřeno živě přes getComputedStyle
-   na více stránkách i šířkách — pruh 31,5px vysoký, background přesně
-   rgb(255,255,255) — a je to úplně nezávislé na dřívějších pokusech opravit
-   "bílou čáru" přes pozadí stránky košíku, což byl jiný, samostatný
-   problém). Přebarvujeme na stejnou tmavou barvu jako zbytek hlavičky a
-   text zesvětlujeme, aby zůstal čitelný. */
-.top-navigation-bar{
-  background:#0A0E17!important;
-}
-.top-navigation-bar .top-navigation-contacts,
-.top-navigation-bar .top-navigation-contacts strong,
-.top-navigation-bar .top-navigation-contacts a,
-.top-navigation-bar .top-navigation-bar-menu a,
-.top-navigation-bar .top-nav-button-login{
-  color:rgba(255,255,255,.75)!important;
-}
-.top-navigation-bar .top-navigation-contacts a:hover,
-.top-navigation-bar .top-navigation-bar-menu a:hover,
-.top-navigation-bar .top-nav-button-login:hover{
-  color:#fff!important;
-}
-
 /* ===== Tlačítko menu (hamburger) na stránkách objednávkového procesu =====
    Na stránkách objednávky (prázdný i plný košík, doprava a platba, info o
    vás — body.ordering-process) dává Shoptet tlačítku pro otevření menu
    úplně jinou velikost (60×60px místo 40×40px) a navíc mu přidává kulaté
    šedé pozadí — na běžných stránkách webu je to štíhlejší ikona bez
-   kroužku. V kombinaci s bílou horní lištou (viz výše) to působilo jako
-   "jiná/rozbitá" hlavička se špatně vycentrovanou ikonou. Sjednocujeme na
-   stejnou velikost, pozici a vzhled jako všude jinde na webu (ověřeno živě
-   — teď je tlačítko na obou typech stránek úplně identické, funkčnost
-   otevření menu beze změny). */
+   kroužku. Sjednocujeme na stejnou velikost a vzhled jako všude jinde na
+   webu.
+   DŮLEŽITÉ (oprava vycentrování): tlačítko samo o sobě je po zmenšení na
+   40×40px umístěné správně (top:5px přesně vystředí 40px tlačítko uvnitř
+   50px vysokého pruhu nahoře — ověřeno živě přes getBoundingClientRect).
+   Ikonka (tři čárky) uvnitř ALE zůstávala posunutá dolů a částečně
+   přetékala pod tlačítko — příčina: Shoptet ji na střed vystřeďuje
+   nastavením line-height:52px (spočítáno pro původní 60px vysoké tlačítko:
+   60px − 2×4px padding = 52px), a tohle jsme při zmenšení tlačítka na
+   40px nepřepsali. Ikonka je 32px vysoká — obsahová plocha 40px tlačítka
+   (40px − 2×4px padding) je taky přesně 32px, takže stačí dát
+   line-height na stejných 32px a ikonka pak sedí dokonale na střed bez
+   jakéhokoli přetékání (ověřeno matematicky i živě přes getBoundingClientRect
+   na skutečně nasazené v14 verzi). */
 @media(max-width:767px){
   body.ordering-process .top-navigation-bar .top-navigation-tools .responsive-tools a.toggle-window[data-target="navigation"]{
     width:40px!important;
     height:40px!important;
     top:5px!important;
+    line-height:32px!important;
   }
   body.ordering-process .toggle-window[data-target="navigation"]::before{
     background:transparent!important;
