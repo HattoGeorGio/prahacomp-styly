@@ -417,10 +417,24 @@ body.ordering-process #header .site-name{display:block!important;}
   right:auto!important;
   top:auto!important;
   bottom:auto!important;
-  display:block!important;
+  display:table!important;
   width:100%!important;
   margin:0!important;
 }
+/* Ikonka+text "Dopravu máte zdarma!" byly po předchozí opravě (viz výše)
+   nalepené vlevo místo na střed. Příčina: Shoptet vykresluje obsah přes
+   display:table (na .cart-free-shipping) + display:table-cell (na vnitřním
+   <div>) — tenhle mechanismus zároveň zajišťuje, že vnitřní buňka vyplní
+   celou šířku a text-align:center pak funguje. Naše předchozí oprava
+   přepnula .cart-free-shipping na display:block (potřebovali jsme to kvůli
+   position:static místo původního absolute), čímž se ale nechtěně rozbilo
+   i tohle — vnitřní table-cell zůstal osamocený bez table rodiče, prohlížeč
+   mu automaticky vytvořil anonymní tabulku, která se smrští jen na šířku
+   obsahu a zarovná doleva. Řešení: display:table místo display:block —
+   pořád je to blokový prvek (funguje s position:static stejně dobře), ale
+   zachovává původní table/table-cell mechanismus, takže se ikonka+text
+   zase vejdou přes celou šířku a vycentrují (ověřeno živě přesným měřením:
+   střed textu 1006,5px přesně odpovídá středu baneru 1007px). */
 
 /* Tlačítko "Pokračovat do košíku" v rozbalovacím náhledu košíku bylo
    roztažené přes celou šířku panelu (Shoptetův vlastní default pro .btn
