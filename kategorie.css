@@ -1,0 +1,69 @@
+/* =====================================================================
+   KATEGORIE.CSS — výpis produktů v kategorii (dlaždice podkategorií,
+   panel řazení, karta produktu)
+   ===================================================================== */
+
+.subcategories li a{
+  border-radius:12px!important;
+  border:1px solid #eef0f4!important;
+  box-shadow:0 2px 10px rgba(20,20,40,.07)!important;
+  transition:box-shadow .2s ease,transform .2s ease,border-color .2s ease;
+}
+.subcategories li a:hover{
+  box-shadow:0 8px 22px rgba(91,44,219,.16)!important;
+  border-color:#5B2CDB!important;
+  transform:translateY(-2px);
+}
+
+.listSorting__controls{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:4px!important;
+  background:#f5f5f8!important;
+  border-radius:10px!important;
+  padding:4px!important;
+}
+button.listSorting__control{
+  border-radius:8px!important;
+  transition:background .15s ease,color .15s ease;
+}
+button.listSorting__control:hover{
+  background:rgba(0,0,0,.05)!important;
+}
+button.listSorting__control--current,
+button.listSorting__control--current:hover{
+  background:#eafaf3!important;
+  color:#0f7a56!important;
+  font-weight:600!important;
+}
+
+div.products div.product .p{
+  background:#fff!important;
+  border-radius:14px!important;
+  box-shadow:0 3px 14px rgba(20,20,40,.09)!important;
+  transition:box-shadow .25s ease,transform .25s ease;
+}
+div.products div.product .p:hover{
+  box-shadow:0 12px 28px rgba(91,44,219,.18)!important;
+  transform:translateY(-4px);
+}
+div.products div.product .p > a.image,
+div.products div.product .p > a.image img{
+  border-radius:14px 14px 0 0!important;
+}
+div.products div.product .p-in{
+  padding:16px 16px 20px!important;
+}
+div.products div.product .flags.flags-default{
+  top:10px!important;
+  left:10px!important;
+}
+div.products div.product .flag.flag-new{
+  border-radius:6px!important;
+}
+div.products div.product .btn.btn-cart.add-to-cart-button{
+  border-radius:8px!important;
+}
+div.products div.product .btn.btn-cart.add-to-cart-button:hover{
+  box-shadow:0 4px 14px rgba(91,44,219,.35)!important;
+}
