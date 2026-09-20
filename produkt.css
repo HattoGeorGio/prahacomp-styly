@@ -299,6 +299,142 @@ table.detail-parameters td{
   word-break:break-word;
 }
 
+/* ===== Detailní popis produktu (rolování) =====
+   Stejný princip jako skrývací lišta u dlouhého popisu kategorie
+   (kategorie-popis.css/.js) — jen napojený na existující nadpis
+   ".basic-description h3" ("Detailní popis produktu"), místo aby se
+   vytvářelo úplně nové tlačítko s jiným textem. Klient chtěl přesně
+   tenhle text zachovaný, proto JS (produkt.js, setupBasicDescription)
+   nadpis nemaže ani nepřepisuje — jen do něj vloží skutečné <button>
+   (nadpis <h3> zůstává v DOM, jen jeho obsahem je teď klikací tlačítko
+   se stejným textem), a všechno, co za nadpisem následovalo (odstavce,
+   seznamy), přesune do nového sbalitelného obalu za ním.
+
+   DŮLEŽITÉ pro SEO: nadpis zůstává h3 (nemění se na div/span), jeho
+   text je nedotčený, a popisný text pod ním se jen vizuálně sbaluje
+   (grid-template-rows 0fr→1fr, stejná robustní technika jako u
+   kategorie — žádný odhadovaný "strop" výšky), nikdy nemaže z DOM.
+   Google tenhle vzor (nadpis + sbalitelný obsah, tzv. accordion) bere
+   jako plnohodnotně indexovaný.
+
+   Vizuálně stejná "rodina" jako lišta u kategorie (jemně fialová karta,
+   fialový akcent, otáčecí šipka), jen zarovnaná doleva místo na střed —
+   je to totiž skutečný nadpis sekce, ne obecná výzva k akci, a stejné
+   zarovnání (titulek vlevo, šipka vpravo) používá i sousední
+   "Doplňkové parametry" panel vedle. */
+.basic-description h3.pp-detail-toggle{
+  margin:0 0 16px!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+}
+.pp-detail-toggle-btn{
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  width:100%;
+  background:#f8f7fd!important;
+  border:1px solid #eef0f4!important;
+  border-radius:12px!important;
+  padding:14px 18px!important;
+  cursor:pointer;
+  font-family:'Poppins',sans-serif!important;
+  font-size:16px!important;
+  font-weight:600!important;
+  color:#1a1a1a!important;
+  text-align:left;
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+  box-shadow:0 2px 10px rgba(20,20,40,.05)!important;
+}
+.pp-detail-toggle-btn:hover,
+.pp-detail-toggle-btn:focus-visible{
+  background:#f0ecfb!important;
+  border-color:#5B2CDB!important;
+  box-shadow:0 4px 14px rgba(91,44,219,.15)!important;
+}
+.pp-detail-toggle-btn:focus-visible{
+  outline:2px solid #5B2CDB;
+  outline-offset:2px;
+}
+.pp-detail-toggle-btn.pp-open{
+  background:#f0ecfb!important;
+  border-color:#5B2CDB!important;
+  color:#5B2CDB!important;
+}
+.pp-detail-toggle-icon{
+  width:9px;
+  height:9px;
+  flex-shrink:0;
+  border-right:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+  transform:rotate(45deg);
+  transition:transform .2s ease;
+}
+.pp-detail-toggle-btn.pp-open .pp-detail-toggle-icon{
+  transform:rotate(-135deg);
+}
+@media(max-width:479px){
+  .pp-detail-toggle-btn{
+    padding:12px 14px!important;
+    font-size:15px!important;
+  }
+}
+
+/* Sbalitelný obal kolem samotného textu popisu (vše, co v DOM
+   následovalo za nadpisem) — stejná grid-template-rows 0fr→1fr technika
+   jako u kategorie, viz kategorie-popis.css pro plné zdůvodnění. */
+.pp-detail-collapse{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .4s ease;
+}
+.pp-detail-collapse.pp-open{
+  grid-template-rows:1fr;
+}
+.pp-detail-collapse-inner{
+  overflow:hidden;
+  min-height:0;
+}
+
+/* ===== Sjednocení fontu/velikosti/barvy v popisu produktu =====
+   Stejný princip jako u krátkého popisu (.p-short-description) a u
+   popisů kategorie (kategorie-popis.css): klient edituje tenhle text
+   přes Shoptetův WYSIWYG editor, který někdy zapíše font/velikost/
+   barvu přímo do "style" atributu konkrétního elementu. Aby formátování
+   (tučně, seznamy, případné podnadpisy) zůstalo beze změny, ale VZHLED
+   (jaký font, jak velké, jakou barvou) byl vždy pod kontrolou webu, ne
+   editoru, force-ujeme tady stejné hodnoty, jaké má nativně celý web
+   (Poppins, 14px, #4d4d4d — stejná barva/velikost jako perex kategorie
+   i krátký popis produktu, ať text na webu vypadá jednotně). Odkazy
+   (a) barvu nedostávají vynucenou, ať zůstanou vizuálně odlišitelné od
+   běžného textu. */
+.basic-description p,
+.basic-description li,
+.basic-description span,
+.basic-description strong,
+.basic-description em{
+  font-family:'Poppins',sans-serif!important;
+  color:#4d4d4d!important;
+  font-size:14px!important;
+  line-height:1.6!important;
+}
+.basic-description strong{
+  font-weight:600!important;
+}
+.basic-description a{
+  font-family:'Poppins',sans-serif!important;
+}
+/* Případné podnadpisy, které by si klient v textu sám vytvořil (H2/H4 —
+   H3 je vyhrazené pro nadpis "Detailní popis produktu" výš), dostávají
+   jen font, ne vynucenou velikost/barvu — tam je žádoucí, aby si
+   nadpis pořád vizuálně sedl podle své úrovně. */
+.basic-description h2,
+.basic-description h4{
+  font-family:'Poppins',sans-serif!important;
+  font-weight:700!important;
+}
+
 /* ===== Taby (Popis / Související soubory / Diskuze / Značka) ===== */
 ul.p-detail-tabs{
   display:flex!important;
@@ -349,6 +485,8 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
 .p-detail-inner-header h1{
   flex:1 1 auto;
   min-width:280px;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:700!important;
 }
 .p-detail-inner-header .p-brand-moved{
   flex-shrink:0;

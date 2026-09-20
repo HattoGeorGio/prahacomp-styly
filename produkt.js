@@ -66,6 +66,70 @@
     });
   }
 
+  function setupBasicDescriptionToggle(){
+    var basicDesc = document.querySelector('.basic-description');
+    if(!basicDesc || basicDesc.dataset.toggleDone) return;
+
+    var heading = basicDesc.querySelector('h3');
+    if(!heading) return;
+
+    // Vše, co v DOM následuje za nadpisem (odstavce, seznamy...) —
+    // tohle jde do sbalitelného obalu. Pokud by za nadpisem nic nebylo
+    // (prázdný popis), lištu vůbec nevytváříme.
+    var contentEls = [];
+    var node = heading.nextElementSibling;
+    while(node){
+      contentEls.push(node);
+      node = node.nextElementSibling;
+    }
+    if(!contentEls.length) return;
+
+    basicDesc.dataset.toggleDone = '1';
+    heading.classList.add('pp-detail-toggle');
+
+    // Text nadpisu ("Detailní popis produktu") zůstává přesně stejný —
+    // jen ho přesuneme dovnitř nového <button>, ať je nadpis pořád h3
+    // (kvůli SEO/struktuře), ale klikatelný je skutečný button prvek
+    // (nativní klávesnicová ovladatelnost, žádné ruční ošetřování
+    // Enter/mezerníku).
+    var headingText = heading.textContent.trim();
+    heading.textContent = '';
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pp-detail-toggle-btn';
+    btn.setAttribute('aria-expanded', 'false');
+
+    var label = document.createElement('span');
+    label.className = 'pp-detail-toggle-label';
+    label.textContent = headingText;
+
+    var icon = document.createElement('span');
+    icon.className = 'pp-detail-toggle-icon';
+    icon.setAttribute('aria-hidden', 'true');
+
+    btn.appendChild(label);
+    btn.appendChild(icon);
+    heading.appendChild(btn);
+
+    var outer = document.createElement('div');
+    outer.className = 'pp-detail-collapse';
+    outer.id = 'pp-basic-description';
+    var inner = document.createElement('div');
+    inner.className = 'pp-detail-collapse-inner';
+    outer.appendChild(inner);
+    contentEls.forEach(function(el){ inner.appendChild(el); });
+    basicDesc.appendChild(outer);
+
+    btn.setAttribute('aria-controls', outer.id);
+
+    btn.addEventListener('click', function(){
+      var isOpen = outer.classList.toggle('pp-open');
+      btn.classList.toggle('pp-open', isOpen);
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
   function setupLayout(){
     var infoWrapper = document.querySelector('.p-info-wrapper');
     if(!infoWrapper || infoWrapper.dataset.layoutDone) return;
@@ -144,9 +208,11 @@
       }
       avatarEl.textContent = avatarText;
 
-      // "Repasované A" -> "Rep. A" (kolo 8: ještě kratší než dřívější
-      // "Repas. A" — po přesunutí bloku nahoru je tam méně místa a
-      // potřebujeme, aby se vedle sebe vešly všechny 4 kartičky).
+      // "Repasované A" -> "Stav A" (klient si tohle po kole 8 ještě sám
+      // doladil přímo v nasazeném souboru — místo zkratky "Rep." chtěl
+      // "Stav", ať je hned jasné, že jde o stav zboží, ne o zkratku
+      // slova "repasované"; ponecháváme stejné, ať se scratchpad shoduje
+      // s tím, co je skutečně nasazené).
       var shortLabel = value.replace(/^Repasované\s+/i, 'Stav ');
       var textEl = inner.querySelector('.variant-chip-label');
       if(!textEl){
@@ -161,6 +227,7 @@
   function init(){
     setupActionIcons();
     setupParams();
+    setupBasicDescriptionToggle();
     setupLayout();
     setupVariantChips();
   }
