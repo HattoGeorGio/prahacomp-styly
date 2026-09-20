@@ -491,3 +491,118 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
 .p-short-description li p{
   margin:0!important;
 }
+
+/* ===== Slevový štítek na hlavní fotce =====
+   Shoptet vykresluje výchozí štítek jako plný modrý KRUH (barva
+   nesouvisející s webem, 100px), nalepený do pravého dolního rohu
+   fotky. Necháváme ho ve stejném rohu, jen mu měníme tvar (zaoblený
+   obdélník místo kruhu — text uvnitř má víc místa a nepůsobí to jako
+   "bublina") a barvu na stejný fialovo-zelený přechod, jaký má
+   tlačítko "Přidat do košíku" výš — ať vypadá jako součást jednoho
+   designu, ne cizí prvek nalepený na fotku. Vnitřní strukturu (přeškrt-
+   nutá původní cena + tučné "-X %") necháváme beze změny, tu Shoptet
+   řeší sám a funguje správně i po přepnutí varianty. */
+.p-image .flag.flag-discount{
+  position:static!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  border-radius:10px!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  padding:8px 12px!important;
+  box-shadow:0 8px 18px -4px rgba(20,10,60,.45)!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  white-space:nowrap!important;
+  gap:2px!important;
+}
+.p-image .flags.flags-extra{
+  right:10px!important;
+  bottom:10px!important;
+}
+
+/* ===== Varianty (Nové / Repasované A / B / C) =====
+   Shoptet u tohoto produktu vykresluje všechny 4 varianty se STEJNOU
+   fotkou (na serveru je jen jeden obrázek) — bez popisku byla všechna
+   4 kolečka k nerozeznání, jediný způsob, jak zjistit, o jakou variantu
+   jde, bylo najet myší a počkat na nenápadnou nativní bublinu "Stav
+   zboží: X". JS (produkt.js, setupVariantChips) přečte tenhle skrytý
+   text u každé varianty a vypíše ho rovnou do štítku; CSS tady mění
+   kolečka na barevné popisové "pilulky" s vlastní barvou pro každý
+   stav, ať je přepínání na první pohled jasné i bez najetí myší.
+   Fotka (stejná pro všechny varianty, bez informační hodnoty) je
+   schovaná — nahrazuje ji text. Nativní "fajfka" u vybrané varianty
+   (obrázek přes celé kolečko) byla navržená pro kruh 40×40 a na
+   obdélníkové pilulce by textu překážela — vybraný stav místo toho
+   ukazujeme vyplněním barvou. */
+#simple-variants{
+  display:flex!important;
+  flex-wrap:wrap;
+  gap:8px;
+}
+label.advanced-parameter.variant-chip{
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  cursor:pointer;
+}
+label.advanced-parameter.variant-chip .advanced-parameter-inner{
+  width:auto!important;
+  height:auto!important;
+  border-radius:10px!important;
+  border:1.5px solid var(--chip-color,#c7cad1)!important;
+  background:var(--chip-bg,#f5f5f8)!important;
+  box-shadow:none!important;
+  padding:8px 14px!important;
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  transition:background .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease;
+}
+label.advanced-parameter.variant-chip .advanced-parameter-inner:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 10px rgba(20,20,40,.12)!important;
+}
+label.advanced-parameter.variant-chip .advanced-parameter-inner img{
+  display:none!important;
+}
+label.advanced-parameter.variant-chip .advanced-parameter-inner.yes-before::before{
+  content:none!important;
+}
+label.advanced-parameter.variant-chip .variant-chip-label{
+  font-family:'Poppins',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  color:var(--chip-color,#4d4d4d);
+  white-space:nowrap;
+  line-height:1;
+}
+label.advanced-parameter.variant-chip .advanced-parameter-inner.yes-before{
+  background:var(--chip-color,#5B2CDB)!important;
+  border-color:var(--chip-color,#5B2CDB)!important;
+}
+label.advanced-parameter.variant-chip .advanced-parameter-inner.yes-before .variant-chip-label{
+  color:#fff!important;
+}
+/* Čtyři jasně odlišené barvy podle stavu zboží — zákazník pozná rozdíl
+   na první pohled, i bez čtení textu. Nové = zelená (stejná jako
+   "Skladem"/pozitivní stavy), Repasované A/B/C odstupňované fialová →
+   oranžová → šedomodrá (od "nejlepší" k "nejlevnější", bez červené —
+   pořád jde o funkční zboží, ne o chybu/problém). */
+label.variant-chip--new{ --chip-color:#18A073; --chip-bg:#eafaf4; }
+label.variant-chip--grade-a{ --chip-color:#5B2CDB; --chip-bg:#f1ecfd; }
+label.variant-chip--grade-b{ --chip-color:#E8A23D; --chip-bg:#fdf3e4; }
+label.variant-chip--grade-c{ --chip-color:#64748B; --chip-bg:#eef1f4; }
+label.variant-chip--default{ --chip-color:#4d4d4d; --chip-bg:#f5f5f8; }
+/* Na mobilu ať je řádek "Varianta" pod popiskem, ne vedle něj v úzkém
+   sloupci tabulky — jinak by se štítky mačkaly na málo místa. */
+@media (max-width:480px){
+  tr.variant-list th,
+  tr.variant-list td{
+    display:block!important;
+    width:100%!important;
+    padding-bottom:4px!important;
+  }
+}

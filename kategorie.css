@@ -1,8 +1,17 @@
 /* =====================================================================
    KATEGORIE.CSS — výpis produktů v kategorii (dlaždice podkategorií,
    panel řazení, karta produktu)
+   Samostatný soubor od základního style.css (viz dohoda s klientem) —
+   pokud by se sem vloudila chyba, hlavička/menu/košík v tom druhém
+   souboru to vůbec nepozná.
    ===================================================================== */
 
+/* ===== Dlaždice podkategorií ("Herní notebooky", "MacBooky" atp.) =====
+   Shoptet je defaultně vykresluje jako ploché bílé obdélníky s tenkým
+   šedým obrysem (border:1px solid #dadada), bez stínu, bez zaoblení.
+   Přidáváme zaoblení + jemný stín pro hloubku, obrys zesvětlujeme (stín
+   teď dělá vizuální oddělení, silný šedý obrys by byl navíc) a při
+   najetí myší dlaždice jemně "povyskočí" a orámuje se brand fialovou. */
 .subcategories li a{
   border-radius:12px!important;
   border:1px solid #eef0f4!important;
@@ -15,6 +24,14 @@
   transform:translateY(-2px);
 }
 
+/* ===== Panel řazení (Nejlevnější / Nejdražší / Nejprodávanější / Abecedně) =====
+   Původně čtyři obyčejná textová tlačítka bez rámečku — aktivní položka
+   se lišila jen barvou textu (zelená, Shoptetův vlastní barevný motiv
+   obchodu — necháváme, je to sladěné se zbytkem webu). Přidáváme vzhled
+   "segmentovaného přepínače": světle šedé zaoblené pozadí kolem celé
+   skupiny a aktivní volba dostane vlastní bílo-zelenou "pilulku" (stejná
+   dvojice barev #eafaf3/#0f7a56 jako u banneru "Dopravu máte zdarma" v
+   košíku — sjednocený vzhled napříč webem). */
 .listSorting__controls{
   display:flex!important;
   flex-wrap:wrap!important;
@@ -37,6 +54,17 @@ button.listSorting__control--current:hover{
   font-weight:600!important;
 }
 
+/* ===== Karta produktu ve výpisu kategorie =====
+   Shoptet defaultně nemá kartu produktu vůbec orámovanou — žádné
+   zaoblení, žádný stín, žádný vnitřní padding (obrázek, název i tlačítko
+   "Do košíku" jsou nalepené přímo na sebe). ".product" je jen vnější
+   10px odstup mezi kartami (Shoptetův mechanismus mezer), skutečná
+   viditelná "krabička" karty je vnitřní ".p" — tu zaoblujeme a dáváme
+   jí stín. Obrázek NEOŘEZÁVÁME přes overflow:hidden (riziko, že by
+   uřízl "Novinka" štítek v rohu) — místo toho zaoblujeme přímo horní
+   rohy obrázku stejným poloměrem, aby vizuálně přesně navazoval na
+   zaoblení karty pod ním. Vnitřní obsah (název, hodnocení, cena,
+   tlačítko, popisek) dostává padding, aby nebyl nalepený na okraj karty. */
 div.products div.product .p{
   background:#fff!important;
   border-radius:14px!important;
@@ -54,6 +82,10 @@ div.products div.product .p > a.image img{
 div.products div.product .p-in{
   padding:16px 16px 20px!important;
 }
+/* Štítek "Novinka" byl přilepený přesně do rohu (top:0;left:0) — po
+   zaoblení obrázku by tak z poloviny "visel" mimo zaoblenou hranu.
+   Posouváme ho o kousek dovnitř, aby seděl uvnitř zaobleného rohu, a
+   zaoblujeme i jeho vlastní ostré hrany, ať ladí se zbytkem karty. */
 div.products div.product .flags.flags-default{
   top:10px!important;
   left:10px!important;
@@ -61,9 +93,69 @@ div.products div.product .flags.flags-default{
 div.products div.product .flag.flag-new{
   border-radius:6px!important;
 }
+/* Tlačítko "Do košíku" — barvu (fialová) už nastavuje základní
+   style.css přes obecné pravidlo pro .btn-cart, tady jen přidáváme
+   zaoblení a jemné zvýraznění stínem při najetí myší. */
 div.products div.product .btn.btn-cart.add-to-cart-button{
   border-radius:8px!important;
 }
 div.products div.product .btn.btn-cart.add-to-cart-button:hover{
   box-shadow:0 4px 14px rgba(91,44,219,.35)!important;
+}
+
+/* ===== Slevový štítek na obrázku karty =====
+   Stejná úprava jako na detailu produktu (produkt.css) — Shoptetův
+   výchozí plný modrý kruh nahrazujeme zaobleným obdélníkem s fialovo-
+   zeleným přechodem, ať ladí se zbytkem webu. Vnitřní obsah (přeškrt-
+   nutá cena + "až -X %") necháváme beze změny, jen tvar/barvu venku.
+   Shoptet tu štítek defaultně skládá jako řádek (flex-direction:row) —
+   při užší kartě (mobil) se tak text zalamoval doprostřed slova
+   ("6 890" / "Kč" na dvou řádcích). Přepínáme na sloupec a zakazujeme
+   zalamování uvnitř slov, ať štítek zůstane čitelný v jakékoliv šířce
+   karty. */
+div.products div.product .flag.flag-discount{
+  position:static!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  border-radius:10px!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  padding:6px 10px!important;
+  box-shadow:0 6px 14px -4px rgba(20,10,60,.4)!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  white-space:nowrap!important;
+  gap:2px!important;
+}
+div.products div.product .extra-flags{
+  right:10px!important;
+  bottom:10px!important;
+}
+
+/* ===== Tlačítko "Detail" (u produktů s více variantami) =====
+   U produktů, kde zákazník musí nejdřív zvolit variantu (Nové/
+   Repasované A/B/C), Shoptet místo "Do košíku" ukazuje tlačítko
+   "Detail" — obyčejné ploché fialové, bez zaoblení. Sjednocujeme ho se
+   stylem tlačítka "Přidat do košíku" z detailu produktu (produkt.css)
+   — stejný fialovo-zelený přechod, at obě tlačítka na webu působí jako
+   jedna rodina, ne dvě různá tlačítka. */
+div.products div.product .p-tools a.btn.btn-primary{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  border:none!important;
+  border-radius:10px!important;
+  padding:10px 20px!important;
+  font-weight:600!important;
+  letter-spacing:.2px;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  box-shadow:0 6px 16px -4px rgba(20,10,60,.4)!important;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease!important;
+}
+div.products div.product .p-tools a.btn.btn-primary:hover{
+  background:linear-gradient(135deg,#6d3ef0 0%,#8a54e8 45%,#1dbb84 100%)!important;
+  box-shadow:0 10px 22px -4px rgba(20,10,60,.5)!important;
+  transform:translateY(-2px);
+  color:#fff!important;
 }

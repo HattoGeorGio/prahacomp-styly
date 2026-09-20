@@ -1,13 +1,15 @@
 /* PRODUKT.JS — patří k produkt.css (detail produktu).
-   Řeší tři věci, které Shoptet sám neumí / kde je potřeba přesunout
-   prvky mimo jejich výchozí místo v DOM:
+   Řeší čtyři věci, které Shoptet sám neumí / kde je potřeba přesunout
+   nebo doplnit prvky mimo jejich výchozí místo/podobu v DOM:
    1) ikony Tisk/Zeptat se/Sdílet — schované za tlačítko "•••", navíc
       přesunuté vedle "Skladem"
    2) tabulku "Doplňkové parametry" schovanou pod klikací nadpis
    3) přesun Značky (vedle nadpisu H1, do hlavičky produktu) a kódu
       produktu (vedle "Detailní informace") z hlavičky dolů/vedle,
       viz setupLayout() níž
-   Načítá se přes <script src="...produkt.js?v=3"> v Zápatí — soubor
+   4) barevné popisové štítky u variant (Nové/Repasované A/B/C) místo
+      čtyř vizuálně identických koleček, viz setupVariantChips() níž
+   Načítá se přes <script src="...produkt.js?v=4"> v Zápatí — soubor
    samotný je na GitHubu spolu s CSS soubory, stejný princip jako
    style.css/kategorie.css/produkt.css (žádné kopírování kódu do
    administrace, jen jedna řádka <script src>). */
@@ -97,10 +99,55 @@
     }
   }
 
+  function setupVariantChips(){
+    var container = document.getElementById('simple-variants');
+    if(!container || container.dataset.chipsDone) return;
+    container.dataset.chipsDone = '1';
+
+    // Shoptet u tohoto produktu vykresluje všechny varianty se stejnou
+    // fotkou (na serveru je jen jeden obrázek), takže kolečka byla bez
+    // popisku vzájemně k nerozeznání. Text stavu ("Stav zboží: X") už
+    // Shoptet do stránky vypisuje, jen skrytě — jako nativní tooltip
+    // (data-original-title) u každé varianty. Přečteme ho a vypíšeme
+    // rovnou do štítku; barvu podle stavu (Nové/A/B/C) přidává CSS přes
+    // třídu, kterou tu jen určíme z textu.
+    var labels = container.querySelectorAll('label.advanced-parameter');
+    Array.prototype.forEach.call(labels, function(label){
+      var inner = label.querySelector('.advanced-parameter-inner');
+      if(!inner) return;
+      var title = inner.getAttribute('data-original-title') || inner.getAttribute('title') || '';
+      var value = title.indexOf(':') !== -1 ? title.split(':').slice(1).join(':').trim() : title.trim();
+      if(!value) return;
+
+      var words = value.split(/\s+/);
+      var last = words[words.length - 1];
+      var key;
+      if(/^[A-D]$/.test(last)){
+        key = 'grade-' + last.toLowerCase();
+      } else if(/^nov/i.test(value)){
+        key = 'new';
+      } else {
+        key = 'default';
+      }
+      label.classList.add('variant-chip', 'variant-chip--' + key);
+
+      // "Repasované A" -> "Repas. A", ať se štítek zbytečně neroztahuje.
+      var shortLabel = value.replace(/^Repasované\s+/i, 'Repas. ');
+      var textEl = inner.querySelector('.variant-chip-label');
+      if(!textEl){
+        textEl = document.createElement('span');
+        textEl.className = 'variant-chip-label';
+        inner.appendChild(textEl);
+      }
+      textEl.textContent = shortLabel;
+    });
+  }
+
   function init(){
     setupActionIcons();
     setupParams();
     setupLayout();
+    setupVariantChips();
   }
 
   if(document.readyState === 'loading'){
