@@ -1,0 +1,213 @@
+/* =====================================================================
+   PRODUKT.CSS — detail produktu (galerie, přidání do košíku, ikony
+   akcí, doplňkové parametry, taby, cena/dostupnost, krátký popis)
+   ===================================================================== */
+
+.p-image{
+  border:1px solid #eef0f4!important;
+  border-radius:16px!important;
+  overflow:hidden;
+  background:#fff;
+}
+a.p-thumbnail{
+  border-radius:10px!important;
+  overflow:hidden;
+  outline-style:solid!important;
+  outline-width:2px!important;
+  outline-color:transparent!important;
+  outline-offset:2px;
+  transition:outline-color .15s ease,transform .15s ease;
+}
+a.p-thumbnail:hover{ transform:translateY(-2px); }
+a.p-thumbnail.highlighted{ outline-color:#5B2CDB!important; }
+
+.add-to-cart{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap;
+  gap:12px;
+  background:#fff;
+  border:1px solid #eef0f4;
+  border-radius:14px;
+  box-shadow:0 3px 14px rgba(20,20,40,.08);
+  padding:12px 14px;
+}
+.add-to-cart .quantity{
+  display:flex;
+  align-items:stretch;
+  border:1px solid #e4e4ea;
+  border-radius:10px;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.add-to-cart .quantity input.amount{
+  border:0!important;
+  width:48px;
+  text-align:center;
+  font-weight:600;
+  font-size:15px;
+}
+.add-to-cart .quantity button.increase,
+.add-to-cart .quantity button.decrease{
+  width:36px;
+  border:0;
+  background:#f5f5f8;
+  color:#5B2CDB;
+  font-size:16px;
+  transition:background .15s ease;
+}
+.add-to-cart .quantity button.increase:hover,
+.add-to-cart .quantity button.decrease:hover{ background:#eee9fb; }
+.add-to-cart .btn.add-to-cart-button{
+  border-radius:10px!important;
+  flex:1 1 200px;
+}
+.add-to-cart .btn.add-to-cart-button:hover{
+  box-shadow:0 4px 14px rgba(91,44,219,.35)!important;
+}
+
+.social-buttons-wrapper{ position:relative; }
+.link-icons-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid #e4e4ea;
+  border-radius:999px;
+  padding:9px 16px;
+  background:#fff;
+  color:#4d4d4d;
+  font-size:14px;
+  font-family:inherit;
+  cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,color .15s ease;
+}
+.link-icons-toggle:hover{ background:#f5f5f8; border-color:#5B2CDB; color:#5B2CDB; }
+.link-icons-toggle .li-dots{ display:inline-flex; gap:3px; }
+.link-icons-toggle .li-dots span{
+  width:4px; height:4px; border-radius:50%; background:currentColor; display:block;
+}
+div.link-icons.link-icons-panel{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  z-index:20;
+  display:flex!important;
+  flex-direction:column;
+  gap:2px;
+  min-width:190px;
+  background:#fff;
+  border:1px solid #eef0f4;
+  border-radius:12px;
+  box-shadow:0 10px 28px rgba(20,20,40,.16);
+  padding:8px;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(-6px);
+  transition:opacity .15s ease,transform .15s ease;
+}
+div.link-icons.link-icons-panel.open{ opacity:1; pointer-events:auto; transform:translateY(0); }
+div.link-icons.link-icons-panel a.link-icon{
+  display:flex!important;
+  align-items:center;
+  padding:9px 12px;
+  border-radius:8px;
+  color:#1a1a1a!important;
+  text-decoration:none!important;
+  font-size:14px;
+}
+div.link-icons.link-icons-panel a.link-icon:hover{ background:#f5f5f8; }
+
+.extended-description h3.params-toggle{
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:#f5f5f8;
+  border-radius:10px;
+  padding:14px 16px;
+  margin:0!important;
+  user-select:none;
+}
+.extended-description h3.params-toggle::after{
+  content:"";
+  width:9px; height:9px;
+  flex-shrink:0;
+  border-right:2px solid #5B2CDB;
+  border-bottom:2px solid #5B2CDB;
+  transform:rotate(45deg);
+  transition:transform .2s ease;
+}
+.extended-description h3.params-toggle.open::after{ transform:rotate(-135deg); }
+table.detail-parameters{ width:100%; border-collapse:collapse; }
+table.detail-parameters.params-collapsible{
+  max-height:0; overflow:hidden; display:block; transition:max-height .35s ease;
+}
+table.detail-parameters.params-collapsible.open{ max-height:3000px; }
+table.detail-parameters.params-collapsible tbody{ display:block; }
+table.detail-parameters.params-collapsible tr{ display:flex; border-bottom:1px solid #f0f0f3; }
+table.detail-parameters.params-collapsible tr:nth-child(even){ background:#fafafc; }
+table.detail-parameters th{
+  text-align:left; font-weight:500; color:#4d4d4d; padding:10px 12px; flex:0 0 42%;
+}
+table.detail-parameters td{
+  padding:10px 12px; color:#1a1a1a; flex:1; word-break:break-word;
+}
+
+ul.p-detail-tabs{
+  display:flex!important;
+  flex-wrap:wrap;
+  gap:4px;
+  border-bottom:2px solid #eef0f4;
+  padding-left:0;
+}
+ul.p-detail-tabs li.shp-tab{ list-style:none; }
+ul.p-detail-tabs li.shp-tab a.shp-tab-link{
+  display:inline-block;
+  padding:12px 18px;
+  color:#4d4d4d!important;
+  font-weight:500;
+  text-decoration:none!important;
+  border-bottom:3px solid transparent;
+  margin-bottom:-2px;
+  transition:color .15s ease,border-color .15s ease;
+}
+ul.p-detail-tabs li.shp-tab a.shp-tab-link:hover{ color:#5B2CDB!important; }
+ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
+  color:#5B2CDB!important;
+  border-bottom-color:#5B2CDB;
+  font-weight:600;
+}
+
+.p-final-price-wrapper strong.price-final{
+  font-size:34px!important;
+  font-weight:700!important;
+  color:#0A0E17!important;
+}
+.availability-value{ font-size:16px!important; }
+.availability-label{ display:inline-flex!important; align-items:center; gap:8px; }
+.availability-label::before{
+  content:"";
+  width:8px; height:8px;
+  border-radius:50%;
+  background:currentColor;
+  display:inline-block;
+  flex-shrink:0;
+}
+.p-short-description{
+  background:#f9f9fb;
+  border:1px solid #eef0f4;
+  border-radius:14px;
+  padding:18px 20px;
+  margin:16px 0;
+}
+.p-short-description p,
+.p-short-description li,
+.p-short-description span{
+  font-family:'Poppins',sans-serif!important;
+  color:#1a1a1a!important;
+  font-size:15px!important;
+  line-height:1.6!important;
+}
+.p-short-description ul{ margin:10px 0 0!important; padding-left:20px!important; }
+.p-short-description li{ margin-bottom:6px; }
