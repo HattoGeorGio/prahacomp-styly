@@ -104,10 +104,25 @@ body.ordering-process #header .site-name{display:block!important;}
    background:none a gradient prosvítá skrz — jinak by si každý ze tří
    vnořených elementů počítal svou VLASTNÍ kopii gradientu přes jinak
    velkou plochu (na mobilu v rozbaleném menu to dřív dělalo ošklivé
-   pruhované řádky). Na mobilu níž navíc měníme na bílé pozadí úplně. */
+   pruhované řádky). Na mobilu níž navíc měníme na bílé pozadí úplně.
+
+   ZAOBLENÍ HORNÍCH ROHŮ (v17): klient chtěl zaoblit jen horní dva rohy
+   celé barevné lišty (dolní zůstávají pravoúhlé, lišta plynule navazuje
+   na obsah pod ní/drobečkovou navigaci). `border-radius` na `#navigation`
+   stačí sám o sobě — barva pozadí (`background`) se automaticky ořeže
+   podle zaoblení rohů elementu, bez potřeby `overflow:hidden`. To je
+   důležité: `overflow:hidden` na `#navigation` by schovalo rozbalovací
+   podnabídky kategorií (viz `overflow:visible!important` o kousek níž,
+   schválně nastavené kvůli tomuhle), takže se mu záměrně vyhýbáme. Menu
+   položky (odkazy) mají uvnitř lišty dost odstupu (`padding:10px 0`
+   lišty + vlastní odsazení první/poslední položky), takže se do
+   zaoblených rohů nezakusují ani při hoveru. Platí jak pro desktopní
+   barevnou variantu, tak pro mobilní bílou varinatu níž (radius se nikde
+   nepřebíjí). */
 #navigation{
   background:linear-gradient(135deg,#5B2CDB,#7A3FE0 45%,#18A073)!important;
   padding:10px 0;
+  border-radius:16px 16px 0 0!important;
 }
 #navigation .navigation-in,
 #navigation ul.menu-level-1{
@@ -135,6 +150,21 @@ body.ordering-process #header .site-name{display:block!important;}
 #navigation .menu-level-1>li.exp>a{
   color:#fff!important;
   background-color:rgba(0,0,0,.18)!important;
+}
+
+/* Tučně "SERVIS" a "VÝKUP ZBOŽÍ" (v17) — obě jsou položky menu typu
+   "Externí odkaz" (viz claude/eshop-menu-servis-odkaz-v1.md), na rozdíl
+   od kategorií nemají vlastní ID, kterým by šlo cílit — cílíme proto
+   robustně přímo na jejich skutečnou cílovou adresu (`href`), ne na
+   žádné interní Shoptet ID, které by se při smazání/znovuvytvoření
+   položky změnilo. Nastaveno na `<a>` i na jeho vnitřní `<b>` zároveň
+   (Shoptet obaluje text KAŽDÉ položky menu do `<b>`) pro jistotu, ať už
+   se skutečná tloušťka písma řídí kterýmkoli z nich. */
+#navigation a[href="https://www.prahacomputer.cz"],
+#navigation a[href="https://www.prahacomputer.cz"] b,
+#navigation a[href="https://www.prahacomputer.cz/#vykup"],
+#navigation a[href="https://www.prahacomputer.cz/#vykup"] b{
+  font-weight:700!important;
 }
 
 /* Malá zelená čárka mezi kategoriemi (Počítače | Notebooky | ...) na
