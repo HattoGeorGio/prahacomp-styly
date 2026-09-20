@@ -1,6 +1,6 @@
 /* =====================================================================
-   PRODUKT.CSS — detail produktu (galerie, přidání do košíku, ikony
-   akcí, doplňkové parametry, taby, pořadí bloků, cena/dostupnost/popis)
+   PRODUKT.CSS — detail produktu (galerie, přidání do košíku, ikony,
+   doplňkové parametry, taby, pořadí/umístění bloků, cena/dostupnost/popis)
    ===================================================================== */
 
 .p-image{
@@ -16,6 +16,7 @@ a.p-thumbnail{
   width:64px!important;
   height:64px!important;
   border-radius:8px!important;
+  overflow:hidden!important;
   outline:none!important;
   box-shadow:0 0 0 2px transparent;
   transition:box-shadow .15s ease,transform .15s ease;
@@ -77,13 +78,14 @@ a.p-thumbnail.highlighted{
 }
 
 .social-buttons-wrapper{ position:relative; }
+.availability-value .social-buttons-wrapper{ margin-left:auto; }
 .link-icons-toggle{
   display:inline-flex;
   align-items:center;
   gap:8px;
   border:1px solid #e4e4ea;
   border-radius:999px;
-  padding:9px 16px;
+  padding:6px 10px;
   background:#fff;
   color:#4d4d4d;
   font-size:14px;
@@ -99,7 +101,8 @@ a.p-thumbnail.highlighted{
 div.link-icons.link-icons-panel{
   position:absolute;
   top:calc(100% + 8px);
-  left:0;
+  left:auto;
+  right:0;
   z-index:20;
   display:flex!important;
   flex-direction:column;
@@ -193,15 +196,35 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
   display:flex!important;
   flex-direction:column;
 }
+.p-info-wrapper > .p-brand-moved{
+  order:-3;
+  align-self:flex-end;
+  margin-bottom:8px;
+}
+.p-info-wrapper > .p-brand-moved a{
+  font-size:13px;
+  color:#8a8f98!important;
+  text-decoration:none!important;
+}
+.p-info-wrapper > .p-brand-moved a:hover{ color:#5B2CDB!important; }
+.p-info-wrapper > .p-brand-moved a span{ font-weight:600; color:#1a1a1a; }
 .p-info-wrapper > .p-short-description{
   order:-2;
   margin-top:0!important;
   margin-bottom:18px!important;
 }
-.p-info-wrapper > .p-short-description + p{
+.p-info-wrapper > .p-meta-row{
   order:-1;
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px;
   margin-bottom:20px!important;
 }
+.p-info-wrapper > .p-meta-row p{ margin:0!important; }
+.p-code{ font-size:13px; color:#8a8f98; }
+.p-code .p-code-label{ margin-right:4px; }
 
 .p-final-price-wrapper{ margin-bottom:12px!important; }
 .p-final-price-wrapper strong.price-final{
@@ -209,7 +232,13 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
   font-weight:700!important;
   color:#0A0E17!important;
 }
-.availability-value{ margin-bottom:14px!important; font-size:15px!important; }
+.availability-value{
+  display:flex!important;
+  align-items:center;
+  gap:8px;
+  margin-bottom:14px!important;
+  font-size:15px!important;
+}
 .availability-label{ display:inline-flex!important; align-items:center; gap:8px; }
 .availability-label::before{
   content:"";

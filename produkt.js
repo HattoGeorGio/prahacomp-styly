@@ -10,8 +10,9 @@
     toggle.type = 'button';
     toggle.className = 'link-icons-toggle';
     toggle.setAttribute('aria-label', 'Další možnosti (tisk, sdílet, zeptat se)');
-    toggle.innerHTML = '<span class="li-dots"><span></span><span></span><span></span></span><span>Další možnosti</span>';
-    panel.parentNode.insertBefore(toggle, panel);
+    toggle.innerHTML = '<span class="li-dots"><span></span><span></span><span></span></span>';
+    var wrapper = panel.closest('.social-buttons-wrapper');
+    wrapper.insertBefore(toggle, panel);
 
     toggle.addEventListener('click', function(e){
       e.stopPropagation();
@@ -22,6 +23,11 @@
         panel.classList.remove('open');
       }
     });
+
+    var availability = document.querySelector('.availability-value');
+    if(availability){
+      availability.appendChild(wrapper);
+    }
   }
 
   function setupParams(){
@@ -40,9 +46,33 @@
     });
   }
 
+  function setupLayout(){
+    var infoWrapper = document.querySelector('.p-info-wrapper');
+    if(!infoWrapper || infoWrapper.dataset.layoutDone) return;
+    infoWrapper.dataset.layoutDone = '1';
+
+    var brandLink = document.querySelector('.p-detail-info [data-testid="productCardBrandName"]');
+    if(brandLink){
+      var brandWrap = brandLink.parentElement;
+      brandWrap.classList.add('p-brand-moved');
+      infoWrapper.insertBefore(brandWrap, infoWrapper.firstChild);
+    }
+
+    var infoToggle = infoWrapper.querySelector('p[data-testid="productCardDescr"]');
+    var code = document.querySelector('.p-code');
+    if(infoToggle && code){
+      var row = document.createElement('div');
+      row.className = 'p-meta-row';
+      infoToggle.parentNode.insertBefore(row, infoToggle);
+      row.appendChild(infoToggle);
+      row.appendChild(code);
+    }
+  }
+
   function init(){
     setupActionIcons();
     setupParams();
+    setupLayout();
   }
 
   if(document.readyState === 'loading'){
