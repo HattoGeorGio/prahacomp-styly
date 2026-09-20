@@ -1,57 +1,72 @@
 /* =====================================================================
-   BREADCRUMB.CSS — drobečková navigace (.breadcrumbs-wrapper), v1
+   BREADCRUMB.CSS — drobečková navigace (.breadcrumbs-wrapper), v2
    Lišta hned pod hlavním fialovo-zeleným menu, která ukazuje, kde na
    webu se návštěvník právě nachází (ikonka domů → kategorie →
    podkategorie → aktuální stránka). Je to SDÍLENÁ komponenta — stejná
-   lišta se zobrazuje na výpisu kategorie i na detailu produktu (ověřeno
-   živě na obou typech stránek), a nativně je úplně bez vlastního stylu:
-   obyčejný šedý text na bílém pozadí, systémový font, bez jakéhokoli
-   hoveru (viz přiložený screenshot od klienta).
+   lišta se zobrazuje na výpisu kategorie i na detailu produktu.
 
    SCHVÁLNĚ SAMOSTATNÝ SOUBOR (na přání klienta, stejně jako u
    sidebar.css) — načítá se vlastní <link> značkou v administraci,
-   stejný princip jako style.css/kategorie.css/produkt.css/sidebar.css
-   (žádné kopírování kódu do administrace, jen jedna řádka <link>), aby
-   případná chyba tady nemohla ovlivnit nic jiného na webu.
+   stejný princip jako style.css/kategorie.css/produkt.css/sidebar.css.
 
    ODOLNOST VŮČI ZMĚNÁM OBSAHU — žádný selektor se neváže na konkrétní
-   kategorii, konkrétní hloubku zanoření ani na `#navigation-N` ID
-   jednotlivých úrovní. Místo toho se cílí na atributy, které Shoptet
-   nativně dává KAŽDÉ úrovni stejně (ověřeno živě porovnáním DOM výpisu
-   na 2, 3 i 4úrovňové drobečkové navigaci):
-     - `[data-testid="breadcrumbsSecondLevel"]` — úplně KAŽDÁ mezilehlá
-       úroveň (kategorie, podkategorie, pod-podkategorie…), bez ohledu
-       na to, kolik jich je.
-     - `[data-testid="breadcrumbsLastLevel"]` — vždy jen ta úplně
-       poslední, aktuální položka (bez vlastního <a>, protože se na ni
-       neodkazuje samo na sebe).
-     - `.navigation-home-icon` — ikonka domů, jediná svého druhu, vždy
-       na začátku.
-   Přidání/odebrání úrovně kategorie tak nemůže nic rozbít — lišta se
-   navíc smí zalomit na víc řádků (`flex-wrap:wrap`), kdyby byl součet
-   názvů na velmi úzkém displeji delší než šířka řádku.
+   kategorii ani na `#navigation-N` ID jednotlivých úrovní. Cílí jen na
+   atributy, které Shoptet dává KAŽDÉ úrovni stejně bez ohledu na
+   hloubku: `[itemprop="itemListElement"]` (každá úroveň), `[data-testid=
+   "breadcrumbsSecondLevel"]` (každá mezilehlá úroveň), `[data-testid=
+   "breadcrumbsLastLevel"]` (vždy jen ta poslední) a `.navigation-home-
+   icon`/`.navigation-bullet` (ikonka domů a oddělovač, jediné svého
+   druhu). Přidání/odebrání úrovně kategorie nemůže nic rozbít.
 
-   CO ZŮSTÁVÁ SCHVÁLNĚ NETKNUTÉ: samotná ikonka domů (grafika/glyf) a
-   lomítkový oddělovač mezi úrovněmi. Zkoumáno živě dost důkladně (výpis
-   computed-style na ikonce, jejím rodiči i všech okolních elementech,
-   hledání background-image/mask/border-image/box-shadow/pseudo-element
-   obsahu, kontrola stínového DOM i SVG/<img> v okolí) a mechanismus,
-   kterým se ikonka vykresluje, se nepodařilo jednoznačně dohledat —
-   nejpravděpodobnějším kandidátem je vzdálený, cross-origin ikona-font
-   soubor Shoptetu, ke kterému není přístup. Rozhodnutí: nesahat na nic
-   rozměrového ani na `content`/`background`/`mask` u `.navigation-home-
-   icon` a `.navigation-bullet` (ten je ostatně nativně `display:none` —
-   samotné lomítko je neviditelné, viditelný oddělovač je ta stejná
-   ikona-font vrstva jako u domečku) — jen na barvu pozadí/textu při
-   hoveru, a to ověřeno živě na čtyřech různých stránkách, že ikonku ani
-   její pozici nijak nenarušuje.
+   ZMĚNA VE v2 — VLASTNÍ IKONKY MÍSTO NATIVNÍCH (na přání klienta):
+   Ve v1 byly ikonka domů a oddělovače mezi úrovněmi schválně ponechané
+   nativní (Shoptet), protože se nepodařilo dohledat, čím přesně se
+   ikonka domů vykresluje (žádná CSS vlastnost na ní ani jejích rodičích/
+   potomcích — background/mask/border/box-shadow/pseudo-element obsah —
+   se od prázdného odkazu nelišila, ověřeno systematickým porovnáním
+   VŠECH computed-style vlastností). Po zpětné vazbě klienta (ikonka
+   domů při najetí myší mizela, a najetí na mezilehlou úroveň vytvářelo
+   ošklivý "orámovaný" hranatý efekt zasahující do oddělovače) byly obě
+   věci nahrazeny vlastními SVG ikonkami v barvách webu:
+
+   1) ODDĚLOVAČ (šipka mezi úrovněmi) — u nativní verze byl postavený
+      jako dva tenké (1px) pruhy pootočené o ±45° (`::before`/`::after`
+      přímo na odkazu KAŽDÉ úrovně, `transform:matrix(0.707,...)`,
+      ověřeno živě přes getComputedStyle), tvořící dohromady obrys ">".
+      Tenhle mechanismus jsme dohledali a šlo by ho jen přebarvit, ALE
+      měl zásadní vadu: žil fyzicky UVNITŘ vlastního boxu odkazu (odkaz
+      má nativně `padding-right:20px` schválně na místo pro tenhle
+      symbol) — takže náš pilulkový hover na odkazu (viz níž) přebarvil
+      pozadí přes celou tuhle plochu a opticky "spolykal"/rozmazal
+      oddělovač (přesně to, co klient nahlásil jako "rámeček/stín
+      zasahující do lomítek"). ŘEŠENÍ: nativní `::before`/`::after`
+      oddělovač úplně vypínáme (`content:none`) a míso něj aktivujeme
+      `.navigation-bullet` — samostatný `<span>`, který Shoptet do DOM
+      dává u KAŽDÉ mezilehlé úrovně už nativně (obsahuje jen text "/"),
+      ale nechává ho `display:none` (ověřeno živě). Je to SKUTEČNÝ
+      sourozenec odkazu (ne jeho vnitřní součást), takže když ho
+      zviditelníme a dáme mu vlastní vzhled (vlastní SVG šipka, náš
+      výběr barvy), leží mimo box odkazu — hover na odkazu už do něj
+      nemůže zasahovat.
+   2) IKONKA DOMŮ — čím přesně se nativně vykresluje, se nepodařilo
+      jednoznačně dohledat (viz výše), ale empiricky se ověřilo, že
+      `background-image` nastavený přímo na `.navigation-home-icon`
+      překreslí/zakryje cokoliv, co se tam nativně vykreslovalo (ověřeno
+      testem s jasně odlišnou barvou, zmizelo beze zbytku, i po
+      zopakování na čtyřech různých stránkách). Proto native vzhled
+      zakrýváme vlastním SVG (jednoduchý obrys domečku, stejná gramatika
+      linek jako zbytek webu) — v klidu tlumeně šedý, po najetí myší
+      fialový (`#5B2CDB`, stejná barva jako hover textových odkazů).
+
+   3) SPOLEČNÝ RÁMEC PRO ODDĚLOVAČ I IKONKU/ODKAZ V RÁMCI JEDNÉ ÚROVNĚ —
+      aby ikonka/odkaz a jeho vlastní oddělovač seděly vedle sebe na
+      jedné řádce bez ohledu na to, že odkaz je nativně `display:block`,
+      dostává každá `[itemprop="itemListElement"]` (obalový `<span>`
+      jedné úrovně) `display:inline-flex` — obecné pravidlo, platí pro
+      libovolný počet úrovní.
    ===================================================================== */
 
-/* ===== Základní rámec lišty =====
-   Jemná spodní linka odděluje lištu od obsahu stránky pod ní (dřív byla
-   lišta bez jakéhokoli ohraničení, splývala s bílým pozadím obsahu).
-   `flex-wrap` dovoluje zalomení na víc řádků při velmi dlouhé cestě
-   kategoriemi na úzkém displeji, místo přetečení mimo obrazovku. */
+/* ===== Základní rámec lišty ===== */
 .breadcrumbs-wrapper{
   border-bottom:1px solid #eef0f4;
 }
@@ -60,40 +75,87 @@
   flex-wrap:wrap;
 }
 
-/* ===== Mezilehlé úrovně (odkazy) + ikonka domů =====
-   Cílí na JAKÝKOLI odkaz s `data-testid="breadcrumbsSecondLevel"` —
-   tedy na všechny kategorie/podkategorie v cestě, bez ohledu na jejich
-   počet — plus samostatně na ikonku domů. Sjednocená tlumená šedá barva
-   (dřív nativní prohlížečová modrá/šedá bez jednotného stylu) a jemné
-   zaoblení připravené pro hover efekt níž. */
-.breadcrumbs a[data-testid="breadcrumbsSecondLevel"],
-.breadcrumbs .navigation-home-icon{
+/* ===== Každá úroveň (ikonka/odkaz + její vlastní oddělovač) jako
+   jedna vodorovná řádka, svisle vycentrovaná — viz bod 3) výše. ===== */
+.breadcrumbs [itemprop="itemListElement"]{
+  display:inline-flex!important;
+  align-items:center!important;
+}
+
+/* Vypnutí nativního oddělovače (dva pootočené pruhy) na odkazu i na
+   ikonce domů — nahrazen níž vlastním SVG na `.navigation-bullet`,
+   viz bod 1) v hlavičce souboru. */
+.navigation-home-icon::before,
+.navigation-home-icon::after,
+.breadcrumbs a[data-testid="breadcrumbsSecondLevel"]::before,
+.breadcrumbs a[data-testid="breadcrumbsSecondLevel"]::after{
+  content:none!important;
+}
+
+/* ===== Mezilehlé úrovně (odkazy) =====
+   `padding-right` zmenšen z nativních 20px na 10px — těch 20px bylo
+   nativně vyhrazeno pro starý oddělovač uvnitř TOHOTO boxu (viz bod 1)
+   v hlavičce); teď už tam oddělovač nežije, stačí menší odstup před
+   `.navigation-bullet`. Hover pilulka teď díky tomu obepíná jen text
+   odkazu, nezasahuje do sousedního oddělovače (oprava nahlášeného
+   "rámečku/stínu"). */
+.breadcrumbs a[data-testid="breadcrumbsSecondLevel"]{
   color:#5a5f6b!important;
   border-radius:8px!important;
-  transition:background .15s ease,color .15s ease;
+  padding-right:10px!important;
+  transition:background-color .15s ease,color .15s ease;
 }
-/* Hover: jemná šedá "pilulka" pod textem/ikonkou a barva textu do
-   brand fialové — stejný vzorec jako hover odkazů v sidebaru
-   (`.sidebar-inner .box li > a:hover`, viz sidebar.css), aby lišta
-   působila jako součást stejného designu. Ověřeno živě (přes
-   `element.matches(':hover')`, ne jen vizuálně) na textovém odkazu i
-   na ikonce domů zvlášť — ikonka samotná (glyf) se barvou nemění,
-   protože na `color`/`currentColor` nativně nereaguje (ověřeno), mění
-   se jen podkladová "pilulka" kolem ní. */
-.breadcrumbs a[data-testid="breadcrumbsSecondLevel"]:hover,
-.breadcrumbs .navigation-home-icon:hover{
-  background:#f5f5f8!important;
+.breadcrumbs a[data-testid="breadcrumbsSecondLevel"]:hover{
+  background-color:#f5f5f8!important;
   color:#5B2CDB!important;
 }
 
-/* ===== Poslední (aktuální) úroveň =====
-   `data-testid="breadcrumbsLastLevel"` je vždy jen jedna — ta, na které
-   návštěvník právě je. Nemá vlastní <a> (nedává smysl odkazovat sama na
-   sebe), proto se necílí na hover, jen na vzhled: tmavší, tučnější text,
-   ať je jasně vidět, kde uživatel skutečně je, oproti klikatelným
-   úrovním před ní. Ověřeno i na neobvykle dlouhém názvu (detail
-   produktu "Dell Latitude 5500, i5-8350U, 8GB, 256GB SSD, FHD") — text
-   se přirozeně zalomí, nic nepřetéká. */
+/* ===== Ikonka domů — vlastní SVG (v2) =====
+   `background-color` odděleně od `background-image` (ne zkratka
+   `background`), aby si hover mohl měnit jen barvu podkladové
+   pilulky a nesmazal obrázek ikonky. Ikonka v klidu tlumeně šedá
+   (`#5a5f6b`, stejná jako text odkazů), po najetí myší fialová
+   (`#5B2CDB`) — viz bod 2) v hlavičce souboru, proč jde o vlastní SVG
+   a ne o úpravu nativní ikonky. */
+.breadcrumbs .navigation-home-icon{
+  border-radius:8px!important;
+  background-color:transparent!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:20px 20px!important;
+  transition:background-color .15s ease;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a5f6b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5.5 9.5V20a1 1 0 0 0 1 1H9v-6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6h2.5a1 1 0 0 0 1-1V9.5'/%3E%3C/svg%3E")!important;
+}
+.breadcrumbs .navigation-home-icon:hover{
+  background-color:#f5f5f8!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B2CDB' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5.5 9.5V20a1 1 0 0 0 1 1H9v-6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6h2.5a1 1 0 0 0 1-1V9.5'/%3E%3C/svg%3E")!important;
+}
+
+/* ===== Oddělovač mezi úrovněmi — vlastní SVG šipka na `.navigation-
+   bullet` (v2) =====
+   `.navigation-bullet` je nativní Shoptet <span> s textem "/", který
+   Shoptet u každé mezilehlé úrovně vykresluje s `display:none` (ověřeno
+   živě) — aktivujeme ho a dáváme mu vlastní vzhled místo nativního
+   oddělovače na odkazu (viz bod 1) v hlavičce souboru). `font-size:0`
+   schová nativní text "/" (nechává ho v DOM kvůli struktuře/schema.org,
+   jen vizuálně zmizí), `flex-shrink:0` ať se nikdy nezmáčkne, i kdyby
+   byl název kategorie extrémně dlouhý a lišta se zalomila. */
+.breadcrumbs .navigation-bullet{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:16px!important;
+  height:16px!important;
+  margin:0 2px!important;
+  font-size:0!important;
+  flex-shrink:0!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:8px 14px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23c1bfe0' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3.5 10.5 8 6 12.5'/%3E%3C/svg%3E")!important;
+}
+
+/* ===== Poslední (aktuální) úroveň ===== */
 .breadcrumbs [data-testid="breadcrumbsLastLevel"] [itemprop="name"]{
   color:#171923!important;
   font-weight:600!important;
