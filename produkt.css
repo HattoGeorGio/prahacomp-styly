@@ -384,7 +384,16 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
    původní vzájemné pořadí se nemění.
 
    (Značka měla dřív "order:-3" tady v tomto sloupci — to je pryč, viz
-   sekce "Nadpis produktu + značka" výš, značka teď žije v hlavičce.) */
+   sekce "Nadpis produktu + značka" výš, značka teď žije v hlavičce.)
+
+   Kolo 8: klient chtěl navíc tabulku s variantami (Nové/Repasované
+   A/B/C) přesunout úplně nahoru — hned pod hlavičku (nadpis + Značka +
+   Novinka/hodnocení), ještě NAD krátký popis. Proto teď dostává
+   "order:-3" (o stupeň níž/dřív než popis na -2) — v DOM pořadí je
+   napevno mezi dostupností a tlačítkem "Přidat do košíku", ale díky
+   flex "order" se to vizuálně vůbec neřeší, jen se to přeřadí úplně
+   dopředu. Přidáváme jí i vlastní odstup dole (margin-bottom), teď už
+   nesedí mezi dvěma dalšími bloky s vlastním marginem jako dřív. */
 .p-info-wrapper{
   display:flex!important;
   flex-direction:column;
@@ -406,12 +415,9 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
 .p-info-wrapper > .p-meta-row p{
   margin:0!important;
 }
-/* Prázdná duplicitní tabulka `table.detail-parameters` (0px vysoká,
-   pravděpodobně jen pro schema.org mikrodata) měla i tak plný výchozí
-   prohlížečový margin-bottom (19px) — v layoutu neviditelná, ale
-   reálně odsouvala cenu/dostupnost/tlačítko o 19px níž zbytečně. */
-.p-info-wrapper table.detail-parameters{
-  margin:0!important;
+.p-info-wrapper > table.detail-parameters{
+  order:-3;
+  margin:0 0 20px!important;
 }
 .p-code{
   font-size:13px;
@@ -593,7 +599,16 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
 #simple-variants{
   display:flex!important;
   flex-wrap:wrap;
-  gap:8px;
+  gap:6px;
+}
+/* Shoptet si do tohoto řádku kromě 4 viditelných karet vykresluje i
+   skrytý "výchozí" radio bez popisku (jen pro reset formuláře,
+   value=""). Sám o sobě neviditelný, ale jako flex-položka si pořád
+   bral svoje místo (0px šířky + mezera k sousední kartě navíc) —
+   kolo 8 ho po přesunutí bloku nahoru a zúžení sloupce potřebovalo
+   vrátit, ať se 4 kartičky spolehlivě vejdou vedle sebe. */
+#simple-variants > span{
+  display:none!important;
 }
 label.advanced-parameter.variant-chip{
   width:auto!important;
@@ -602,6 +617,16 @@ label.advanced-parameter.variant-chip{
   margin:0!important;
   cursor:pointer;
 }
+/* Kolo 8: kartičky mírně zmenšené (odznak, mezery, padding) oproti
+   minulému kolu — po přesunutí bloku "Varianta" nahoru (viz sekce
+   "Pořadí bloků v pravém sloupci") je tam k dispozici užší sloupec,
+   než kolik měl blok dole u tlačítka, a klient chtěl všechny 4
+   kartičky vedle sebe v jedné řadě, ne aby se čtvrtá zalamovala dolů.
+   Zmenšení + zkrácené popisky u repasovaných kusů (viz produkt.js,
+   "Rep. A/B/C" místo "Repas. A/B/C") dohromady stačí, aby se 4
+   kartičky vešly vedle sebe i na běžných noteboolových šířkách
+   (ověřeno na 1280–1920px), na mobilu navíc ještě o kousek zmenšujeme
+   (viz media query níž). */
 label.advanced-parameter.variant-chip .advanced-parameter-inner{
   width:auto!important;
   height:auto!important;
@@ -609,11 +634,11 @@ label.advanced-parameter.variant-chip .advanced-parameter-inner{
   border:1.5px solid #e4e4ea!important;
   background:#fff!important;
   box-shadow:0 2px 8px rgba(20,20,40,.06)!important;
-  padding:7px 14px 7px 7px!important;
+  padding:6px 10px 6px 6px!important;
   display:flex!important;
   align-items:center;
   justify-content:flex-start;
-  gap:9px;
+  gap:6px;
   transition:border-color .15s ease,background .15s ease,box-shadow .15s ease,transform .15s ease;
 }
 label.advanced-parameter.variant-chip .advanced-parameter-inner:hover{
@@ -631,8 +656,8 @@ label.advanced-parameter.variant-chip .advanced-parameter-inner.yes-before::befo
    nezávisle na výběru. */
 label.advanced-parameter.variant-chip .variant-chip-avatar{
   flex-shrink:0;
-  width:26px;
-  height:26px;
+  width:22px;
+  height:22px;
   border-radius:8px;
   background:var(--chip-color,#5B2CDB);
   color:#fff;
@@ -670,13 +695,30 @@ label.variant-chip--grade-a{ --chip-color:#5B2CDB; --chip-bg:#f1ecfd; }
 label.variant-chip--grade-b{ --chip-color:#E8A23D; --chip-bg:#fdf3e4; }
 label.variant-chip--grade-c{ --chip-color:#64748B; --chip-bg:#eef1f4; }
 label.variant-chip--default{ --chip-color:#4d4d4d; --chip-bg:#f5f5f8; }
-/* Na mobilu ať je řádek "Varianta" pod popiskem, ne vedle něj v úzkém
-   sloupci tabulky — jinak by se štítky mačkaly na málo místa. */
+/* Kolo 8: štítek "Varianta" dáváme VŽDY nad řádek karet, ne vedle něj
+   v úzkém sloupci tabulky (dřív to platilo jen na mobilu — teď, po
+   přesunutí bloku úplně nahoru do užšího místa sloupce, by ten
+   sloupec štítku bral zbytečně přes 80px i na desktopu, co by jinak
+   mohly mít k dispozici kartičky). Bez vlastního "display" na řádku
+   stačí oběma buňkám dát display:block — jako blokové prvky se pak
+   samy zařadí pod sebe. */
+.p-info-wrapper > table.detail-parameters tr.variant-list th,
+.p-info-wrapper > table.detail-parameters tr.variant-list td{
+  display:block!important;
+  width:100%!important;
+  padding:0!important;
+}
+.p-info-wrapper > table.detail-parameters tr.variant-list th{
+  padding-bottom:8px!important;
+}
+/* Na mobilu je sloupec ještě o něco užší — kartičky proto zmenšujeme
+   ještě o kousek navíc, ať se pořád vejdou 4 vedle sebe v jedné řadě. */
 @media (max-width:480px){
-  tr.variant-list th,
-  tr.variant-list td{
-    display:block!important;
-    width:100%!important;
-    padding-bottom:4px!important;
+  label.advanced-parameter.variant-chip .variant-chip-avatar{
+    width:20px!important;
+    height:20px!important;
+  }
+  label.advanced-parameter.variant-chip .advanced-parameter-inner{
+    padding:6px 9px 6px 6px!important;
   }
 }

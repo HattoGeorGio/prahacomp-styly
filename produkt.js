@@ -10,7 +10,7 @@
    4) barevné popisové štítky s odznakem u variant (Nové/Repasované
       A/B/C) místo čtyř vizuálně identických koleček, viz
       setupVariantChips() níž
-   Načítá se přes <script src="...produkt.js?v=5"> v Zápatí — soubor
+   Načítá se přes <script src="...produkt.js?v=6"> v Zápatí — soubor
    samotný je na GitHubu spolu s CSS soubory, stejný princip jako
    style.css/kategorie.css/produkt.css (žádné kopírování kódu do
    administrace, jen jedna řádka <script src>). */
@@ -144,8 +144,10 @@
       }
       avatarEl.textContent = avatarText;
 
-      // "Repasované A" -> "Repas. A", ať se štítek zbytečně neroztahuje.
-      var shortLabel = value.replace(/^Repasované\s+/i, 'Repas. ');
+      // "Repasované A" -> "Rep. A" (kolo 8: ještě kratší než dřívější
+      // "Repas. A" — po přesunutí bloku nahoru je tam méně místa a
+      // potřebujeme, aby se vedle sebe vešly všechny 4 kartičky).
+      var shortLabel = value.replace(/^Repasované\s+/i, 'Rep. ');
       var textEl = inner.querySelector('.variant-chip-label');
       if(!textEl){
         textEl = document.createElement('span');
