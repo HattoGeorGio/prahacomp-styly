@@ -1,5 +1,5 @@
 /* =====================================================================
-   SIDEBAR.CSS — boční menu (aside.sidebar.sidebar-left), v1
+   SIDEBAR.CSS — boční menu (aside.sidebar.sidebar-left), v2
    KATEGORIE + TOP 10 PRODUKTŮ na detailu produktu i na výpisu kategorie.
    Nativně úplně bez vlastního stylu: holé bílé pozadí, ploché řádky bez
    odstupů a u aktivní kategorie fialový OBDÉLNÍKOVÝ pruh přes celou
@@ -38,14 +38,19 @@
       dává `.sidebar-inner{display:none}` pod 768px (ověřeno živě přesně
       na hranici 767/768px), mobilní varianta tu proto není potřeba.
 
-   Ikonku +/− u rozbalovacích kategorií (`.cat-trigger`) záměrně vůbec
-   nestylujeme a neměníme jí `position`/`left`/`top` — je to nativní
-   Shoptet ikona-font, pozicovaná absolutně vůči nejbližšímu positioned
-   předkovi (u hlavních kategorií `.topic`, u podkategorií přímo `<li>`,
-   ověřeno živě přes getComputedStyle), a její barva už sama správně
-   reaguje na aktivní/neaktivní stav přes proměnnou --color-primary.
-   Necháváme jí přesně tolik místa (padding-left), kolik si nativně
-   žádala, aby na ni text nikdy nenajel.
+   Ikonku +/− u rozbalovacích kategorií (`.cat-trigger`) necháváme z
+   větší části netknutou — je to nativní Shoptet ikona-font (barevný
+   glyf přes `color`, žádný background-image/mask/border), pozicovaná
+   absolutně vůči nejbližšímu positioned předkovi (u hlavních kategorií
+   `.topic`, u podkategorií přímo `<li>`, ověřeno živě přes
+   getComputedStyle). Neměníme jí `left`/`content`/font ani nic, co by
+   mohlo rozbít samotné vykreslení glyfu. Tři věci ale DOLADĚNY (v2,
+   podle zpětné vazby + vlastní ověření navíc): svislé vycentrování
+   (`top`) a barva ikonky ve DVOU různých aktivních stavech (hlavní
+   kategorie i podkategorie s vlastními podpoložkami) — všechno
+   vysvětleno přímo u příslušných pravidel níž. Necháváme jí i dál
+   přesně tolik místa (padding-left), kolik si nativně žádala, aby na
+   ni text nikdy nenajel.
    ===================================================================== */
 
 /* ===== Karta kolem KAŽDÉHO boxu v sidebaru =====
@@ -138,6 +143,35 @@
   margin-bottom:0!important;
 }
 
+/* Svislé vycentrování ikonky +/− (v2, podle zpětné vazby — dřív byla
+   nalepená blíž k horní hraně řádku, ne uprostřed).
+   Ikonka je `position:absolute` s pevným `top` v px, spočítaným pro
+   PŮVODNÍ nižší výšku řádku — naše řádky mají teď vyšší padding, takže
+   by pevných `top:6px`/`30px` sedělo výš, než je střed.
+   `top:50%`+`translateY(-50%)` by se normálně o tohle postaral samo,
+   NEZÁVISLE na konkrétní výšce řádku — jenže tady je skrytá past:
+   ikonka se nativně pozicuje vůči `.categories` divu / `<li>` (ten je
+   `position:relative`, ověřeno živě), ne vůči samotnému řádku `<a>` —
+   a ten div/li obaluje ROZBALENOU kategorii VČETNĚ celého seznamu
+   podpoložek pod ní. `top:50%` by se tak počítalo ze součtu výšky
+   řádku a všech viditelných potomků pod ním, a ikonka by "spadla"
+   někam doprostřed podseznamu, ne doprostřed svého vlastního řádku.
+   Řešení: řádek `<a>` sám prohlásíme za `position:relative` — jako
+   NEJBLIŽŠÍ (přímý) rodič ikonky má přednost před vzdálenějším divem/
+   li, takže se `top:50%` počítá jen z výšky samotného řádku, ať už je
+   sbalený nebo rozbalený. Nic dalšího uvnitř řádku není pozicované
+   absolutně, takže tahle změna nemá jiný vedlejší efekt; `left`
+   zůstává vizuálně na stejném místě, protože `<a>` nemá vlastní
+   padding/margin navíc oproti svému dřívějšímu positioned předkovi. */
+#categories .topic > a,
+#categories .categories ul li > a{
+  position:relative!important;
+}
+#categories .cat-trigger{
+  top:50%!important;
+  transform:translateY(-50%)!important;
+}
+
 /* --- Hlavní (top-level) kategorie — obalené v `.topic` ---
    Reset nativního "full-bleed" triku: `<a>` měla natvrdo `width:295px`
    (širší než 255px obsahové šířky boxu), teď necháme přirozeně
@@ -166,6 +200,18 @@
   background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
   color:#fff!important;
   font-weight:600!important;
+}
+/* Oprava (v2): při najetí myší na AKTIVNÍ (rozbalenou) kategorii
+   Shoptet nativně přebarvuje ikonku +/− zpátky na fialovou při
+   jakémkoli hoveru (ověřeno živě: `.cat-trigger` má na `:hover` vlastní
+   pravidlo pro `color`, nezávislé na tom, že text řádku zůstává bílý).
+   Na normálním (bílém/šedém) pozadí to nevadí, ale na naší tmavé
+   fialovo-zelené aktivní pilulce tím ikonka zmizela (fialová na
+   fialové). Vracíme jí bílou barvu, cíleně jen uvnitř aktivní
+   kategorie — hover i klid dohromady, ať to platí vždy. */
+#categories .topic.active .cat-trigger,
+#categories .topic.active > a:hover .cat-trigger{
+  color:#fff!important;
 }
 
 /* --- Podkategorie (vnořený `<ul>`) ---
@@ -202,6 +248,18 @@
   background:#eef0fc!important;
   color:#5B2CDB!important;
   font-weight:600!important;
+}
+/* Oprava (v2, odhaleno při ověřování výše uvedené opravy): aktivní
+   PODkategorie, která má navíc svoje vlastní podpoložky (tzn. má i
+   svou vlastní +/− ikonku, ne jen fialový text), dostává od Shoptetu
+   nativně BÍLOU barvu ikonky v tomhle stavu (ověřeno živě přes
+   getComputedStyle, nezávisle na naší CSS) — nativně totiž počítá s
+   tím, že aktivní stav bude mít tmavé pozadí. Naše aktivní podkategorie
+   ale má světlé fialkové pozadí (#eef0fc, viz řádek výš), takže bílá
+   ikonka na něm byla stejně neviditelná jako dřív fialová na fialové
+   u hlavní kategorie. Sjednocujeme ikonku s barvou textu řádku. */
+#categories .categories ul li.active > a .cat-trigger{
+  color:#5B2CDB!important;
 }
 
 /* =====================================================================
