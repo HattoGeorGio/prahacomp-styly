@@ -255,7 +255,73 @@ body.ordering-process #header .site-name{display:block!important;}
 #navigation .menu-level-2 a:hover,
 #navigation .menu-level-2 a:focus-visible{
   color:#5B2CDB!important;
-  background-color:#f5f2fc!important;
+  /* Pozadí za textem (background-color) je odstraněné od v18 — highlight
+     při najetí teď nese celý "kontejner" (viz níže), samostatná fialová
+     skvrna jen za textem uvnitř karty by vypadala nesourodě. */
+}
+
+/* ===== "Kontejnery" v rozbaleném podmenu (v18) =====
+   Klient chtěl, aby položky podkategorií v rozbaleném menu (ikona + název
+   + náhled pod-podkategorií) byly opticky oddělené jako samostatné
+   ohraničené karty s zaoblenými rohy (inspirace konkurenčním webem),
+   místo současného "holého" 4-sloupcového gridu bez jakéhokoli vizuálního
+   oddělení. Design (border-radius, barva okraje, stín, hover) je záměrně
+   sjednocený s existujícími kartami podkategorií na stránkách kategorií
+   (`.subcategories li a` v kategorie.css) — stejný vizuální jazyk napříč
+   webem.
+
+   DŮLEŽITÁ TECHNICKÁ PAST: položky `<li>` v `ul.menu-level-2` NEJSOU
+   šířené přes CSS vlastnost `width` (i když tak počítaný computed style
+   vypadá), ale přes `flex-basis:25%` nastavené Shoptetovou vlastní
+   šablonou — ve flexboxu má `flex-basis` přednost před `width`, pokud
+   není `auto`. Přepsat proto jde JEN přes `flex-basis` (ověřeno živě —
+   samotné přepsání `width` nemělo na rozložení žádný vliv, sloupce se
+   nezúžily). Mezery mezi kartami vznikají klasickým trikem
+   "zmenši základnu o 2×gap, přidej gap jako margin na obě strany" —
+   `flex-basis:calc(25% - 16px)` + `margin:8px` na `<li>` dá dohromady
+   znovu přesných 25% na položku, takže 4 karty pořád vyplní přesně celý
+   řádek (ověřeno živě na "Komponenty" s 8 položkami = 4+4, i na
+   "Notebooky" s 6 položkami = 4+2, kde druhý neúplný řádek správně
+   zůstává zarovnaný doleva, ne roztažený přes celou šířku).
+
+   VYCENTROVÁNÍ ("špičkově vycentrované", podle zadání klienta):
+   `<li>` má box-sizing:border-box (Shoptetův default), takže přidaný
+   padding/border NEROZBÍJÍ výše popsaný výpočet šířky. Uvnitř karty pak
+   sedí dvě věci vedle sebe (ikona `a.menu-image` + textový `div`), obě
+   nastavené na svisle vycentrované zarovnání (`align-items:center` na
+   `<li>`, beze změny, bylo tak už předtím) — díky tomu je i o kus níž
+   samotný obsah karty vždy na svislý střed. Karty ve STEJNÉM řádku ale
+   mívají různě dlouhý obsah (některé podkategorie mají náhled
+   pod-podkategorií pod názvem, jiné ne — ověřeno živě, "Notebooky" má v
+   jednom řádku 4 karty jen s názvem a v druhém 2 karty s náhledem navíc),
+   takže bez zásahu by karty v jednom řádku měly různou výšku. Řešení:
+   `align-items:stretch` na `ul.menu-level-2` (přebíjí Shoptetův default
+   `center`) protáhne všechny karty v řádku na stejnou výšku (podle
+   nejvyšší z nich) — a `align-items:center` na `<li>` pak uvnitř téhle
+   nové, delší karty vycentruje ikonu+text jako celek. Výsledek: karty v
+   řádku mají jednotnou výšku A obsah je uvnitř každé z nich dokonale na
+   střed, ověřeno živě přesným měřením (odsazení ikony shodných 15px ze
+   všech stran, odsazení textového bloku shodných ~33px nahoře/dole). */
+#navigation ul.menu-level-2{
+  align-items:stretch!important;
+  padding:10px!important;
+}
+#navigation ul.menu-level-2>li{
+  flex-basis:calc(25% - 16px)!important;
+  width:calc(25% - 16px)!important;
+  margin:8px!important;
+  box-sizing:border-box!important;
+  background:#fff!important;
+  border:1px solid #eef0f4!important;
+  border-radius:14px!important;
+  padding:14px!important;
+  box-shadow:0 2px 10px rgba(20,20,40,.06)!important;
+  transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease!important;
+}
+#navigation ul.menu-level-2>li:hover{
+  border-color:#5B2CDB!important;
+  box-shadow:0 8px 20px rgba(91,44,219,.15)!important;
+  transform:translateY(-2px)!important;
 }
 
 /* ===== Hlavní menu na mobilu (rozbalovací hamburger) =====
