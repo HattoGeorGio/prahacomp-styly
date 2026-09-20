@@ -7,9 +7,10 @@
    3) přesun Značky (vedle nadpisu H1, do hlavičky produktu) a kódu
       produktu (vedle "Detailní informace") z hlavičky dolů/vedle,
       viz setupLayout() níž
-   4) barevné popisové štítky u variant (Nové/Repasované A/B/C) místo
-      čtyř vizuálně identických koleček, viz setupVariantChips() níž
-   Načítá se přes <script src="...produkt.js?v=4"> v Zápatí — soubor
+   4) barevné popisové štítky s odznakem u variant (Nové/Repasované
+      A/B/C) místo čtyř vizuálně identických koleček, viz
+      setupVariantChips() níž
+   Načítá se přes <script src="...produkt.js?v=5"> v Zápatí — soubor
    samotný je na GitHubu spolu s CSS soubory, stejný princip jako
    style.css/kategorie.css/produkt.css (žádné kopírování kódu do
    administrace, jen jedna řádka <script src>). */
@@ -109,8 +110,9 @@
     // popisku vzájemně k nerozeznání. Text stavu ("Stav zboží: X") už
     // Shoptet do stránky vypisuje, jen skrytě — jako nativní tooltip
     // (data-original-title) u každé varianty. Přečteme ho a vypíšeme
-    // rovnou do štítku; barvu podle stavu (Nové/A/B/C) přidává CSS přes
-    // třídu, kterou tu jen určíme z textu.
+    // rovnou do štítku i s krátkým barevným odznakem (písmeno stavu);
+    // barvu podle stavu (Nové/A/B/C) přidává CSS přes třídu, kterou tu
+    // jen určíme z textu.
     var labels = container.querySelectorAll('label.advanced-parameter');
     Array.prototype.forEach.call(labels, function(label){
       var inner = label.querySelector('.advanced-parameter-inner');
@@ -121,15 +123,26 @@
 
       var words = value.split(/\s+/);
       var last = words[words.length - 1];
-      var key;
+      var key, avatarText;
       if(/^[A-D]$/.test(last)){
         key = 'grade-' + last.toLowerCase();
+        avatarText = last.toUpperCase();
       } else if(/^nov/i.test(value)){
         key = 'new';
+        avatarText = 'N';
       } else {
         key = 'default';
+        avatarText = value.charAt(0).toUpperCase();
       }
       label.classList.add('variant-chip', 'variant-chip--' + key);
+
+      var avatarEl = inner.querySelector('.variant-chip-avatar');
+      if(!avatarEl){
+        avatarEl = document.createElement('span');
+        avatarEl.className = 'variant-chip-avatar';
+        inner.appendChild(avatarEl);
+      }
+      avatarEl.textContent = avatarText;
 
       // "Repasované A" -> "Repas. A", ať se štítek zbytečně neroztahuje.
       var shortLabel = value.replace(/^Repasované\s+/i, 'Repas. ');

@@ -104,33 +104,86 @@ div.products div.product .btn.btn-cart.add-to-cart-button:hover{
 }
 
 /* ===== Slevový štítek na obrázku karty =====
-   Stejná úprava jako na detailu produktu (produkt.css) — Shoptetův
-   výchozí plný modrý kruh nahrazujeme zaobleným obdélníkem s fialovo-
-   zeleným přechodem, ať ladí se zbytkem webu. Vnitřní obsah (přeškrt-
-   nutá cena + "až -X %") necháváme beze změny, jen tvar/barvu venku.
-   Shoptet tu štítek defaultně skládá jako řádek (flex-direction:row) —
-   při užší kartě (mobil) se tak text zalamoval doprostřed slova
-   ("6 890" / "Kč" na dvou řádcích). Přepínáme na sloupec a zakazujeme
-   zalamování uvnitř slov, ať štítek zůstane čitelný v jakékoliv šířce
-   karty. */
-div.products div.product .flag.flag-discount{
+   Stejná úprava jako na detailu produktu (produkt.css) — klient chce
+   ve štítku samotném už jen procenta, ne přeškrtnutou cenu (ta je
+   dole u ceny karty, tam zůstává). `.price-standard` proto schováváme
+   a viditelné necháváme jen `.price-save`; čistý textový uzel "až"
+   mezi nimi (Shoptet ho vypisuje jako obyčejný text bez elementu, nejde
+   schovat selektorem) mizí přes trik font-size:0 na štítku + vlastní
+   velikost zpátky na `.price-save`.
+   Barva: červeno-oranžový přechod inspirovaný konkurencí (klient
+   poslal jabkolevne.cz jako referenci), ale schválně ne úplně stejná
+   plochá červená — a mírnější zaoblení (10px) místo jejich pilulky.
+   Skrytá past č. 1: nativní Shoptet styl na tenhle štítek dává
+   min-height:100px a max-width:0 (dřív to nevadilo, 3řádkový obsah to
+   beztak přerostl). Teď je obsah jen jeden krátký řádek, proto oboje
+   nulujeme i na obalu.
+   Skrytá past č. 2: u varianty bez slevy (0 %, např. "Nové") Shoptet
+   sám přidá štítku třídu `no-display` a schová ho — náš
+   `display:inline-flex!important` by to přebil, proto selektor cíleně
+   vylučuje `.no-display` stav.
+   Skrytá past č. 3 (tohle byl přesně ten "nalepený na rámečku" bug,
+   který klient nahlásil): karta produktu v kategorii má na wrapperu
+   štítku (`.flags.flags-extra`) navíc NATIVNĚ nastavené pevné `top`/
+   `left` v pixelech (zbytek z původního kruhového odznaku), zatímco my
+   nastavujeme `right`/`bottom`. Když jsou takhle nastavené všechny 4
+   strany najednou, prohlížeč štítek "natáhne" mezi pevný `left` a náš
+   `right` — vznikne úzký box, kam se procenta nevejdou, a slevový
+   štítek navíc měl ještě nativní `margin-right:-8px` (relikt kruhového
+   tvaru), takže výsledně seděl jen ~4px od okraje místo zamýšlených
+   12px — proto to "lepení na rámeček".
+   Řešení: wrapperu dáme `inset:0` (roztáhne se přes celou fotku),
+   zarovnání obsahu vyřešíme přes `padding:12px` + flexbox zarovnání
+   vpravo dolů (`justify-content:flex-end; align-items:flex-end`) —
+   tím pádem nezáleží na tom, co si Shoptet nastavil za pevné top/left,
+   a nulujeme i onu záškodnickou zápornou `margin` na štítku samotném. */
+div.products div.product .flag.flag-discount:not(.no-display){
   position:static!important;
+  display:inline-flex!important;
   width:auto!important;
   height:auto!important;
   min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
   border-radius:10px!important;
-  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
-  padding:6px 10px!important;
-  box-shadow:0 6px 14px -4px rgba(20,10,60,.4)!important;
-  flex-direction:column!important;
+  background:linear-gradient(135deg,#E63946 0%,#FF7A45 100%)!important;
+  padding:6px 12px!important;
+  box-shadow:0 6px 14px -4px rgba(198,40,40,.4)!important;
   align-items:center!important;
   justify-content:center!important;
   white-space:nowrap!important;
-  gap:2px!important;
+  font-size:0!important;
 }
-div.products div.product .extra-flags{
-  right:10px!important;
-  bottom:10px!important;
+div.products div.product .flag.flag-discount .price-standard{
+  display:none!important;
+}
+div.products div.product .flag.flag-discount .price-save{
+  display:inline-block!important;
+  font-size:13px!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:700!important;
+  color:#fff!important;
+  white-space:nowrap!important;
+}
+div.products div.product .flags.flags-extra{
+  position:absolute!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  padding:12px!important;
+  box-sizing:border-box!important;
 }
 
 /* ===== Tlačítko "Detail" (u produktů s více variantami) =====
