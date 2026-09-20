@@ -1,0 +1,267 @@
+/* =====================================================================
+   SIDEBAR.CSS — boční menu (aside.sidebar.sidebar-left), v1
+   KATEGORIE + TOP 10 PRODUKTŮ na detailu produktu i na výpisu kategorie.
+   Nativně úplně bez vlastního stylu: holé bílé pozadí, ploché řádky bez
+   odstupů a u aktivní kategorie fialový OBDÉLNÍKOVÝ pruh přes celou
+   šířku sidebaru (`.topic a` má natvrdo `width:295px`, i když samotný
+   box má vnitřní šířku jen 255px — tzv. "full-bleed" pruh, ověřeno živě
+   přes getComputedStyle). Sjednocujeme s kartovým jazykem zbytku webu
+   (bílá zaoblená karta s jemným stínem, stejně jako karta produktu v
+   kategorii, viz kategorie.css).
+
+   SCHVÁLNĚ SAMOSTATNÝ SOUBOR (na přání klienta) — sidebar je citlivá,
+   dynamická část webu (Shoptet do ní může kdykoliv přidat další box —
+   výrobce, štítky, nedávno navštívené, banner apod.) a klient nechce
+   riskovat, že úprava tady rozbije něco v hlavním style.css. Načítá se
+   vlastní <link> značkou v administraci, stejný princip jako
+   style.css/kategorie.css/produkt.css (žádné kopírování kódu do
+   administrace, jen jedna řádka <link>).
+
+   DVĚ ZÁSADY, KTERÉ SE TÁHNOU CELÝM SOUBOREM:
+   1) ODOLNOST VŮČI ZMĚNÁM OBSAHU — žádný selektor se neváže na
+      konkrétní ID kategorie, konkrétní počet položek nebo konkrétní
+      pořadí. Přidání/odebrání kategorie, podkategorie nebo položky
+      v TOP 10 nemůže nic rozbít, protože pravidla cílí jen na obecné
+      třídy (.topic, .categories, .active, .top-products…), ne na
+      jmenované položky. Karta (`.box`) a nadpis (`.pageElement__heading`)
+      jsou navíc stylované úplně obecně — pokud klient v administraci
+      zapne další box (filtr výrobce, štítky, banner…), automaticky
+      dostane stejnou kartu a základní vzhled seznamu/odkazů, aniž by
+      bylo nutné sem znovu zasahovat (viz sekce "Obecný základ" níž).
+   2) ŠÍŘKOVÁ NEZÁVISLOST — nikde se nepoužívá pevná šířka převzatá
+      z aktuálního nativního `width:295px` u `.topic a`. Místo toho se
+      ten "full-bleed" trik ruší (`width:auto`+`margin:0`) a řádek se
+      nechá přirozeně roztáhnout na 100 % šířky, kterou mu dá aktuální
+      obsah karty — funguje tedy stejně na 768px, 1024px, 1366px i
+      1920px bez ohledu na to, jestli/jak Shoptet nativní šířku sidebaru
+      časem změní. Sidebar je čistě DESKTOPOVÁ komponenta — Shoptet sám
+      dává `.sidebar-inner{display:none}` pod 768px (ověřeno živě přesně
+      na hranici 767/768px), mobilní varianta tu proto není potřeba.
+
+   Ikonku +/− u rozbalovacích kategorií (`.cat-trigger`) záměrně vůbec
+   nestylujeme a neměníme jí `position`/`left`/`top` — je to nativní
+   Shoptet ikona-font, pozicovaná absolutně vůči nejbližšímu positioned
+   předkovi (u hlavních kategorií `.topic`, u podkategorií přímo `<li>`,
+   ověřeno živě přes getComputedStyle), a její barva už sama správně
+   reaguje na aktivní/neaktivní stav přes proměnnou --color-primary.
+   Necháváme jí přesně tolik místa (padding-left), kolik si nativně
+   žádala, aby na ni text nikdy nenajel.
+   ===================================================================== */
+
+/* ===== Karta kolem KAŽDÉHO boxu v sidebaru =====
+   `.box-bg-variant`/`.box-bg-default` jsou nativní Shoptet třídy pro
+   střídavé pozadí boxů — přebíjíme obě na stejné bílé, ať všechny boxy
+   (současné i případné budoucí) vypadají jako jedna rodina karet.
+   Selektor cílí na JAKÝKOLI `.box` uvnitř `.sidebar-inner`, ne jen na
+   dnešní dva (kategorie/top10) — nový box zapnutý v administraci tak
+   dostane kartu automaticky. */
+.sidebar-inner .box{
+  background:#fff!important;
+  border-radius:14px!important;
+  box-shadow:0 3px 14px rgba(20,20,40,.09)!important;
+  padding:18px 16px!important;
+  margin:0 0 20px!important;
+  overflow:hidden!important;
+}
+.sidebar-inner .box:last-child{
+  margin-bottom:0!important;
+}
+
+/* ===== Nadpisy boxů ("Kategorie", "Top 10 produktů", případně další) =====
+   Malý gradientový pruh vlevo od textu — stejný motiv jako
+   fialovo-zelený gradient tlačítek jinde na webu, v miniatuře jako
+   "značka" nadpisu boxu. Obecné pro libovolný `.pageElement__heading`
+   uvnitř sidebaru. */
+.sidebar-inner .box .pageElement__heading{
+  display:flex!important;
+  align-items:center!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  letter-spacing:.5px!important;
+  text-transform:uppercase!important;
+  color:#171923!important;
+  padding:0 0 12px!important;
+  margin:0 0 14px!important;
+  border-bottom:1px solid #eef0f4!important;
+}
+.sidebar-inner .box .pageElement__heading::before{
+  content:'';
+  display:inline-block;
+  width:4px;
+  height:13px;
+  margin-right:8px;
+  border-radius:2px;
+  background:linear-gradient(180deg,#5B2CDB,#18A073);
+  flex-shrink:0;
+}
+
+/* ===== Obecný základ pro JAKÝKOLI další box (filtr, štítky, nedávno
+   navštívené…), který by Shoptet mohl v sidebaru časem zapnout =====
+   Bez `!important` a bez konkrétních tříd, aby to specifičtější pravidla
+   níž (kategorie, TOP 10) mohla kdykoliv přebít — funguje jako tichý
+   výchozí vzhled, ne jako vynucené pravidlo. Díky tomu nový box hned po
+   zapnutí vypadá jako součást webu, ne jako holý nativní seznam. */
+.sidebar-inner .box ul{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.sidebar-inner .box li > a{
+  display:block;
+  border-radius:8px;
+  padding:6px 8px;
+  transition:background .15s ease,color .15s ease;
+}
+.sidebar-inner .box li > a:hover{
+  background:#f5f5f8;
+}
+
+/* =====================================================================
+   STROM KATEGORIÍ (#categories)
+   ===================================================================== */
+#categories{
+  margin:0!important;
+  padding:0!important;
+}
+#categories ul{
+  list-style:none!important;
+  margin:0!important;
+  padding:0!important;
+}
+/* Odstup mezi jednotlivými hlavními kategoriemi (funguje pro libovolný
+   počet — nic tu neodkazuje na konkrétní kategorii). */
+#categories > .categories{
+  margin:0 0 2px!important;
+}
+#categories > .categories:last-child{
+  margin-bottom:0!important;
+}
+
+/* --- Hlavní (top-level) kategorie — obalené v `.topic` ---
+   Reset nativního "full-bleed" triku: `<a>` měla natvrdo `width:295px`
+   (širší než 255px obsahové šířky boxu), teď necháme přirozeně
+   vyplnit 100 % šířky karty. `padding-left:30px` kopíruje přesně
+   nativní odsazení (ověřeno živě), aby ikonka +/− (absolutně pozicovaná
+   vůči `.topic`) měla pořád svých 30px místa a text na ni nenajel. */
+#categories .topic > a{
+  display:flex!important;
+  align-items:center!important;
+  width:auto!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:9px 12px 9px 30px!important;
+  border-radius:9px!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:14px!important;
+  font-weight:500!important;
+  color:#333a45!important;
+  line-height:1.3!important;
+  transition:background .15s ease,color .15s ease;
+}
+#categories .topic > a:hover{
+  background:#f5f5f8!important;
+}
+#categories .topic.active > a{
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  color:#fff!important;
+  font-weight:600!important;
+}
+
+/* --- Podkategorie (vnořený `<ul>`) ---
+   Bez `.topic` obalu — aktivní stav je přímo na `<li class="active">`
+   (ověřeno živě). Podkategorie, které mají svoje vlastní další
+   podpoložky, dostávají navíc vlastní `.cat-trigger` ikonku přímo v
+   `<li>` (ne v `.topic`) — `padding-left:50px` kopíruje přesně nativní
+   odsazení pro tenhle hlubší stupeň, platí stejně pro položky s ikonkou
+   i bez ní (Shoptet to nativně dělá stejně, kvůli jednotnému zarovnání). */
+#categories .categories ul{
+  margin:2px 0 6px!important;
+  padding-left:8px!important;
+}
+#categories .categories ul li > a{
+  display:flex!important;
+  align-items:center!important;
+  width:auto!important;
+  max-width:none!important;
+  margin:0 0 1px!important;
+  padding:8px 12px 8px 50px!important;
+  border-radius:8px!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:13.5px!important;
+  font-weight:400!important;
+  color:#5a5f6b!important;
+  line-height:1.3!important;
+  transition:background .15s ease,color .15s ease;
+}
+#categories .categories ul li > a:hover{
+  background:#f5f5f8!important;
+  color:#171923!important;
+}
+#categories .categories ul li.active > a{
+  background:#eef0fc!important;
+  color:#5B2CDB!important;
+  font-weight:600!important;
+}
+
+/* =====================================================================
+   TOP 10 PRODUKTŮ (ol.top-products)
+   Nativní struktura řádku (ověřeno živě přes DOM výpis):
+     <li class="display-image">
+       <a class="top-products-image"><img></a>
+       <a class="top-products-content">
+         <span class="top-products-name">Název</span>
+         <strong>Cena</strong>
+       </a>
+     </li>
+   `<li>` je nativně už `display:flex` a číslo pořadí (`::before` s
+   `content:counter(top)`, čistě CSS počítadlo bez zásahu do HTML) má
+   Shoptet už teď vykreslené jako kulatý odznak PŘESNĚ v brand fialové
+   (--color-primary, ověřeno živě: rgb(91,44,219) = #5B2CDB) — proto se
+   tady vůbec nesahá na `::before`, je to už hotové a sedí. Upravuje se
+   jen prostor kolem řádku (padding, zaoblení, odstup mezi položkami,
+   hover) a typografie názvu/ceny. Cena nemá vlastní CSS třídu, je to
+   holý `<strong>` uvnitř `.top-products-content`. */
+ol.top-products{
+  list-style:none!important;
+  margin:0!important;
+  padding:0!important;
+}
+ol.top-products > li{
+  padding:8px!important;
+  margin:0 0 2px!important;
+  border-radius:10px!important;
+  transition:background .15s ease;
+}
+ol.top-products > li:last-child{
+  margin-bottom:0!important;
+}
+ol.top-products > li:hover{
+  background:#f7f6fb!important;
+}
+ol.top-products .top-products-image img{
+  border-radius:8px!important;
+  display:block!important;
+}
+ol.top-products .top-products-content{
+  min-width:0!important;
+}
+ol.top-products .top-products-name{
+  display:block!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:13px!important;
+  font-weight:500!important;
+  color:#333a45!important;
+  line-height:1.35!important;
+}
+ol.top-products > li:hover .top-products-name{
+  color:#5B2CDB!important;
+}
+ol.top-products .top-products-content strong{
+  display:block!important;
+  margin-top:2px!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:13.5px!important;
+  font-weight:700!important;
+  color:#5B2CDB!important;
+}
