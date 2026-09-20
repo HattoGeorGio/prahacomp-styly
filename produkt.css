@@ -8,19 +8,12 @@
 
 /* ===== Galerie fotek =====
    Hlavní obrázek byl bez rámečku úplně nalepený na bílé pozadí stránky
-   a náhledy pod ním (100×100px, dost velké) neměly žádné zaoblení ani
-   viditelné označení, který náhled je zrovna aktivní. Zmenšujeme náhledy
-   na 64px (méně "obrovský" pocit, blíž k tomu, jak to má konkurence) a
-   místo outline používáme dvojitý box-shadow (bílá mezera + fialový
-   prstenec) — outline totiž v prohlížeči NEKOPÍRUJE zaoblené rohy
-   (dělal ostrý roh přes zaoblený obrázek), box-shadow zaoblení
-   respektuje vždy přesně.
-   DŮLEŽITÉ: k zaoblenému rámečku patří i `overflow:hidden` na samotném
-   `a.p-thumbnail` — bez něj zůstane fotka uvnitř hranatá (border-radius
-   sám o sobě neořízne obsah) a i se správným box-shadow prstencem to
-   pak vypadá "rozbitě". Tohle byla skutečná příčina první opravy, co
-   ještě neseděla — teď je to živé a otestované (overflow:hidden i
-   box-shadow ring potvrzené i vizuálně přes 4x zoom).
+   — to zůstává opravené (jemný šedý rámeček + zaoblení). Náhledy jen
+   zmenšujeme na 64px (méně "obrovský" pocit) a necháváme jejich rámeček/
+   označení aktivní fotky ve výchozím Shoptet vzhledu — vlastní zaoblený
+   box-shadow prstenec (border-radius + overflow:hidden + box-shadow)
+   klientovi opakovaně působil jako "rozbitý rámeček", takže je záměrně
+   pryč, ať se tu nic nekouše s originálním stylem šablony.
    Sloupec s fotkou navíc omezujeme na max-width 480px — na velkých
    monitorech (Full HD) by bez tohoto omezení byla fotka zbytečně velká
    a celý pravý sloupec (cena/dostupnost/tlačítko) by se posunul tak
@@ -42,22 +35,11 @@
 a.p-thumbnail{
   width:64px!important;
   height:64px!important;
-  border-radius:8px!important;
-  overflow:hidden!important;
-  outline:none!important;
-  box-shadow:0 0 0 2px transparent;
-  transition:box-shadow .15s ease,transform .15s ease;
 }
 a.p-thumbnail img{
   width:100%!important;
   height:100%!important;
   object-fit:cover!important;
-}
-a.p-thumbnail:hover{
-  transform:translateY(-2px);
-}
-a.p-thumbnail.highlighted{
-  box-shadow:0 0 0 2px #fff,0 0 0 4px #5B2CDB!important;
 }
 
 /* ===== Přidat do košíku (množství + tlačítko) =====
@@ -65,10 +47,13 @@ a.p-thumbnail.highlighted{
    jedné zaoblené "krabičky" se stínem a z +/- tlačítek a políčka s
    množstvím děláme jeden ucelený "stepper" ovladač.
 
-   Tlačítko samotné je teď v "prémiovém" provedení — fialový přechod
-   (světlejší → tmavší, směrem ke stejné tmavě fialové, jakou má hover
-   všude jinde na webu), jemný stín pro pocit hloubky, ikonka košíku
-   vlevo od textu a při najetí myší se přechod rozjasní a tlačítko se
+   Tlačítko samotné má dvoubarevný přechod fialová → zelená — přesně
+   stejný gradient, jaký má hlavní tlačítko "Chci nezávaznou diagnostiku"
+   na www.prahacomputer.cz (ověřeno přímo v jeho CSS: 135deg, #5B2CDB →
+   #7A3FE0 → #18A073). Klient výslovně nechtěl tlačítko "jen fialové" —
+   tohle je ta "pěkná barevnost", na kterou odkazoval. Jemný stín pro
+   pocit hloubky, ikonka košíku vlevo od textu a při najetí myší se
+   celý přechod rozjasní (obě barvy, ne jen fialová) a tlačítko se
    nadzvedne (translateY) i s výraznějším stínem — má to působit jako
    ta jedna hlavní akce na stránce, ne jako další obyčejné tlačítko.
    Vyšší (52px místo 44px) a s vlastním stínem, ať je to na první
@@ -128,8 +113,8 @@ a.p-thumbnail.highlighted{
   font-size:16px!important;
   font-weight:600!important;
   letter-spacing:.2px;
-  background:linear-gradient(135deg,#6d3ef0 0%,#5B2CDB 55%,#4419A8 100%)!important;
-  box-shadow:0 10px 24px -6px rgba(91,44,219,.55),inset 0 1px 0 rgba(255,255,255,.25)!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  box-shadow:0 10px 24px -6px rgba(20,10,60,.45),inset 0 1px 0 rgba(255,255,255,.25)!important;
   transition:transform .18s ease,box-shadow .18s ease,background .18s ease!important;
 }
 /* Ikonka košíku před textem tlačítka — čistý SVG obrys (žádný obrázek
@@ -145,13 +130,13 @@ a.p-thumbnail.highlighted{
   background-size:contain;
 }
 .add-to-cart .btn.add-to-cart-button:hover{
-  background:linear-gradient(135deg,#7c4bff 0%,#6633e6 55%,#4d1ec2 100%)!important;
-  box-shadow:0 14px 30px -6px rgba(91,44,219,.65),inset 0 1px 0 rgba(255,255,255,.3)!important;
+  background:linear-gradient(135deg,#6d3ef0 0%,#8a54e8 45%,#1dbb84 100%)!important;
+  box-shadow:0 14px 30px -6px rgba(20,10,60,.55),inset 0 1px 0 rgba(255,255,255,.3)!important;
   transform:translateY(-2px);
 }
 .add-to-cart .btn.add-to-cart-button:active{
   transform:translateY(0);
-  box-shadow:0 6px 14px -4px rgba(91,44,219,.5),inset 0 1px 0 rgba(255,255,255,.2)!important;
+  box-shadow:0 6px 14px -4px rgba(20,10,60,.45),inset 0 1px 0 rgba(255,255,255,.2)!important;
 }
 
 /* ===== Ikony Tisk / Zeptat se / Sdílet =====
