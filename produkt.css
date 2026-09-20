@@ -1,6 +1,6 @@
 /* =====================================================================
    PRODUKT.CSS — detail produktu (galerie, přidání do košíku, ikony
-   akcí, doplňkové parametry, taby, cena/dostupnost, krátký popis)
+   akcí, doplňkové parametry, taby, pořadí bloků, cena/dostupnost/popis)
    ===================================================================== */
 
 .p-image{
@@ -9,28 +9,37 @@
   overflow:hidden;
   background:#fff;
 }
+.p-thumbnails-inner > div{
+  margin-right:8px;
+}
 a.p-thumbnail{
-  border-radius:10px!important;
-  overflow:hidden;
-  outline-style:solid!important;
-  outline-width:2px!important;
-  outline-color:transparent!important;
-  outline-offset:2px;
-  transition:outline-color .15s ease,transform .15s ease;
+  width:64px!important;
+  height:64px!important;
+  border-radius:8px!important;
+  outline:none!important;
+  box-shadow:0 0 0 2px transparent;
+  transition:box-shadow .15s ease,transform .15s ease;
+}
+a.p-thumbnail img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
 }
 a.p-thumbnail:hover{ transform:translateY(-2px); }
-a.p-thumbnail.highlighted{ outline-color:#5B2CDB!important; }
+a.p-thumbnail.highlighted{
+  box-shadow:0 0 0 2px #fff,0 0 0 4px #5B2CDB!important;
+}
 
 .add-to-cart{
   display:flex!important;
   align-items:center!important;
   flex-wrap:wrap;
-  gap:12px;
+  gap:10px;
   background:#fff;
   border:1px solid #eef0f4;
   border-radius:14px;
   box-shadow:0 3px 14px rgba(20,20,40,.08);
-  padding:12px 14px;
+  padding:10px 12px;
 }
 .add-to-cart .quantity{
   display:flex;
@@ -60,6 +69,7 @@ a.p-thumbnail.highlighted{ outline-color:#5B2CDB!important; }
 .add-to-cart .quantity button.decrease:hover{ background:#eee9fb; }
 .add-to-cart .btn.add-to-cart-button{
   border-radius:10px!important;
+  height:44px!important;
   flex:1 1 200px;
 }
 .add-to-cart .btn.add-to-cart-button:hover{
@@ -179,12 +189,27 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
   font-weight:600;
 }
 
+.p-info-wrapper{
+  display:flex!important;
+  flex-direction:column;
+}
+.p-info-wrapper > .p-short-description{
+  order:-2;
+  margin-top:0!important;
+  margin-bottom:18px!important;
+}
+.p-info-wrapper > .p-short-description + p{
+  order:-1;
+  margin-bottom:20px!important;
+}
+
+.p-final-price-wrapper{ margin-bottom:12px!important; }
 .p-final-price-wrapper strong.price-final{
-  font-size:34px!important;
+  font-size:28px!important;
   font-weight:700!important;
   color:#0A0E17!important;
 }
-.availability-value{ font-size:16px!important; }
+.availability-value{ margin-bottom:14px!important; font-size:15px!important; }
 .availability-label{ display:inline-flex!important; align-items:center; gap:8px; }
 .availability-label::before{
   content:"";
@@ -198,16 +223,16 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
   background:#f9f9fb;
   border:1px solid #eef0f4;
   border-radius:14px;
-  padding:18px 20px;
-  margin:16px 0;
+  padding:14px 16px;
+  margin:0 0 18px;
 }
 .p-short-description p,
 .p-short-description li,
 .p-short-description span{
   font-family:'Poppins',sans-serif!important;
   color:#1a1a1a!important;
-  font-size:15px!important;
-  line-height:1.6!important;
+  font-size:14px!important;
+  line-height:1.55!important;
 }
-.p-short-description ul{ margin:10px 0 0!important; padding-left:20px!important; }
-.p-short-description li{ margin-bottom:6px; }
+.p-short-description ul{ margin:8px 0 0!important; padding-left:20px!important; }
+.p-short-description li{ margin-bottom:5px; }
