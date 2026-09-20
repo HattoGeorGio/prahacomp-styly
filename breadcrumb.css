@@ -1,5 +1,5 @@
 /* =====================================================================
-   BREADCRUMB.CSS — drobečková navigace (.breadcrumbs-wrapper), v3
+   BREADCRUMB.CSS — drobečková navigace (.breadcrumbs-wrapper), v4
    Lišta hned pod hlavním fialovo-zeleným menu, která ukazuje, kde na
    webu se návštěvník právě nachází (ikonka domů → kategorie →
    podkategorie → aktuální stránka). Je to SDÍLENÁ komponenta — stejná
@@ -76,6 +76,30 @@
       dostává každá `[itemprop="itemListElement"]` (obalový `<span>`
       jedné úrovně) `display:inline-flex` — obecné pravidlo, platí pro
       libovolný počet úrovní.
+
+   OPRAVA v4: i po v3 klient nahlásil, že přes ikonku domů je vidět
+   "zdvojená střecha" — obrys nové (opravené) ikonky je čistý, ale nad/
+   pod ním prosvítal kousek té PŮVODNÍ nativní ikonky. Příčina: naše
+   vlastní SVG je kreslené jen tahem (`fill:none`, `stroke` pár px
+   silný) — naprostá většina jeho 20×20px plochy je průhledná, kreslí se
+   jen tenká linka obrysu. `.navigation-home-icon` přitom v klidovém
+   stavu měl `background-color:transparent`. Dřívější test (viz bod 2
+   výše), který "prokázal", že vlastní `background-image` nativní
+   ikonku bez zbytku překreslí, používal ale plnou neprůhlednou barvu
+   (jednolitý čtverec) — ta samozřejmě zakryje cokoliv pod sebou úplně.
+   Jakmile je ale naše vrstva většinově průhledná (jen tenký obrys),
+   průhlednými místy prosvítá to, co leží POD ní — a tam, jak se
+   ukázalo, pořád něco nativního je (byť jsme nikdy nedohledali čím přesně
+   se to vykresluje, viz bod 2 výše). V klidovém stavu to vytvářelo
+   viditelný "duch" střechy pod naší vlastní. V hover stavu je přitom
+   `background-color:#f5f5f8` (neprůhledná) — proto tam být tento
+   artefakt neměl.
+   OPRAVA: klidový stav ikonky domů teď taky dostává neprůhlednou
+   `background-color` (bílá, `#fff` — barva, na které lišta reálně leží,
+   ověřeno přes `getComputedStyle` na `<body>`), stejně jako to už dřív
+   měl hover stav. Neprůhledná vrstva pod naším SVG tak spolehlivě
+   zakryje cokoliv nativního pod ní, průhlednými mezerami v obrysu domečku
+   už neprosvítá nic cizího — jen čisté bílé pozadí lišty.
    ===================================================================== */
 
 /* ===== Základní rámec lišty ===== */
@@ -122,7 +146,8 @@
   color:#5B2CDB!important;
 }
 
-/* ===== Ikonka domů — vlastní SVG (v2, tvar opraven v3) =====
+/* ===== Ikonka domů — vlastní SVG (v2, tvar opraven v3, podklad
+   opraven v4) =====
    `background-color` odděleně od `background-image` (ne zkratka
    `background`), aby si hover mohl měnit jen barvu podkladové
    pilulky a nesmazal obrázek ikonky. Ikonka v klidu tlumeně šedá
@@ -131,10 +156,14 @@
    a ne o úpravu nativní ikonky. Domeček je JEDNA uzavřená cesta
    (střecha+tělo dohromady, zaoblené dolní rohy) + samostatné dveře —
    ve v2 to byly dvě cesty, jejichž linie se v rozích přesně nepotkávaly
-   a na malé ploše to působilo rozbitě (oprava v3, viz hlavička souboru). */
+   a na malé ploše to působilo rozbitě (oprava v3, viz hlavička souboru).
+   `background-color` v klidovém stavu je od v4 neprůhledná bílá
+   (`#fff`), ne `transparent` — náš obrys je jen tahem (většina plochy
+   průhledná) a průhledným pozadím pod ním prosvítal kousek nativní
+   ikonky ("zdvojená střecha", oprava v4, viz hlavička souboru). */
 .breadcrumbs .navigation-home-icon{
   border-radius:8px!important;
-  background-color:transparent!important;
+  background-color:#fff!important;
   background-repeat:no-repeat!important;
   background-position:center!important;
   background-size:20px 20px!important;
