@@ -249,18 +249,29 @@ body.ordering-process #header .site-name{display:block!important;}
 }
 
 /* Rozbalené podmenu (2. úroveň) — vlastní čitelná barva nezávislá na
-   hlavní liště + jasný hover stav namísto Shoptet defaultu. */
+   hlavní liště + jasný hover stav namísto Shoptet defaultu. Platí pro
+   OBĚ varianty (mobilní i desktopová/tabletová), beze změny od v14. */
 #navigation .menu-level-2{background:#fff!important;}
 #navigation .menu-level-2 a{color:#222!important;font-weight:400;}
 #navigation .menu-level-2 a:hover,
 #navigation .menu-level-2 a:focus-visible{
   color:#5B2CDB!important;
-  /* Pozadí za textem (background-color) je odstraněné od v18 — highlight
-     při najetí teď nese celý "kontejner" (viz níže), samostatná fialová
-     skvrna jen za textem uvnitř karty by vypadala nesourodě. */
+  background-color:#f5f2fc!important;
+}
+/* Na desktopu/tabletu (≥768px, tam kde teď žijí "kontejnery" níže) je
+   pozadí za textem při najetí zbytečné a vypadalo by nesourodě — celý
+   "kontejner" má vlastní hover (fialový okraj + stín + nadzvednutí, viz
+   níže), takže tady ho vypínáme. NESMÍ to být bez media query (to byla
+   chyba v18) — na mobilu (<768px) se má zachovat původní jemné fialové
+   podbarvení položky při dotyku/fokusu, přesně jak to bylo od v14. */
+@media(min-width:768px){
+  #navigation .menu-level-2 a:hover,
+  #navigation .menu-level-2 a:focus-visible{
+    background-color:transparent!important;
+  }
 }
 
-/* ===== "Kontejnery" v rozbaleném podmenu (v18) =====
+/* ===== "Kontejnery" v rozbaleném podmenu (v18, opraveno v19) =====
    Klient chtěl, aby položky podkategorií v rozbaleném menu (ikona + název
    + náhled pod-podkategorií) byly opticky oddělené jako samostatné
    ohraničené karty s zaoblenými rohy (inspirace konkurenčním webem),
@@ -269,6 +280,21 @@ body.ordering-process #header .site-name{display:block!important;}
    sjednocený s existujícími kartami podkategorií na stránkách kategorií
    (`.subcategories li a` v kategorie.css) — stejný vizuální jazyk napříč
    webem.
+
+   DŮLEŽITÁ CHYBA VE v18 (opravena zde ve v19): celé pravidlo bylo omylem
+   BEZ `@media(min-width:768px)`, takže se aplikovalo úplně všude —
+   včetně mobilního rozbalovacího hamburger-menu (<768px), které používá
+   STEJNÉ HTML třídy (`ul.menu-level-2`>`li`), ale je to úplně jiná
+   komponenta (jednoduchý svislý seznam na celou obrazovku, ne hover
+   mega-menu) a klient tam žádné kontejnery nechtěl — jen čistý text, jak
+   to bylo předtím. Klient to nahlásil živě (screenshot mobilního menu
+   ukázal fialový ohraničený box kolem jedné z položek). Celé pravidlo je
+   teď zabalené v `@media(min-width:768px)` — přesně stejný zlomový bod,
+   jaký šablona Shoptetu sama používá na přepnutí mezi barevnou
+   horizontální lištou (desktop/tablet) a bílým rozbalovacím hamburger
+   menu (mobil), viz sekce "Menu na mobilu" i vycentrování šipky výš v
+   tomto souboru — takže přesně kopíruje existující, už ověřenou hranici
+   šablony, ne nový odhad.
 
    DŮLEŽITÁ TECHNICKÁ PAST: položky `<li>` v `ul.menu-level-2` NEJSOU
    šířené přes CSS vlastnost `width` (i když tak počítaný computed style
@@ -302,26 +328,53 @@ body.ordering-process #header .site-name{display:block!important;}
    řádku mají jednotnou výšku A obsah je uvnitř každé z nich dokonale na
    střed, ověřeno živě přesným měřením (odsazení ikony shodných 15px ze
    všech stran, odsazení textového bloku shodných ~33px nahoře/dole). */
-#navigation ul.menu-level-2{
-  align-items:stretch!important;
-  padding:10px!important;
+@media(min-width:768px){
+  #navigation ul.menu-level-2{
+    align-items:stretch!important;
+    padding:10px!important;
+  }
+  #navigation ul.menu-level-2>li{
+    flex-basis:calc(25% - 16px)!important;
+    width:calc(25% - 16px)!important;
+    margin:8px!important;
+    box-sizing:border-box!important;
+    background:#fff!important;
+    border:1px solid #eef0f4!important;
+    border-radius:14px!important;
+    padding:14px!important;
+    box-shadow:0 2px 10px rgba(20,20,40,.06)!important;
+    transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease!important;
+  }
+  #navigation ul.menu-level-2>li:hover{
+    border-color:#5B2CDB!important;
+    box-shadow:0 8px 20px rgba(91,44,219,.15)!important;
+    transform:translateY(-2px)!important;
+  }
 }
-#navigation ul.menu-level-2>li{
-  flex-basis:calc(25% - 16px)!important;
-  width:calc(25% - 16px)!important;
-  margin:8px!important;
-  box-sizing:border-box!important;
-  background:#fff!important;
-  border:1px solid #eef0f4!important;
-  border-radius:14px!important;
-  padding:14px!important;
-  box-shadow:0 2px 10px rgba(20,20,40,.06)!important;
-  transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease!important;
-}
-#navigation ul.menu-level-2>li:hover{
-  border-color:#5B2CDB!important;
-  box-shadow:0 8px 20px rgba(91,44,219,.15)!important;
-  transform:translateY(-2px)!important;
+
+/* TABLET (768–1199px), v19: čtyři sloupce jsou na tuhle šířku príliš
+   nacpané — samotná ikona (116px + svých 40px paddingu ze Shoptet
+   šablony) + naše kontejnerové odsazení (margin+padding+border ≈ 46px na
+   kartu) spotřebuje většinu z ~≤300px, kolik na kartu při 4 sloupcích na
+   tabletu zbývá — na text pak nezbývá skoro nic a láme se mimo box.
+   Přesně tohle klient nahlásil ("na tabletu se to celé rozháže"). Od
+   768px do 1199px (typický rozsah tabletů na šířku i na výšku, stejné
+   dělení jako Bootstrap sm/md, který tahle šablona v základu používá)
+   proto přepínáme na 2 sloupce místo 4 — každé kartě zbyde min. ~300px
+   i na nejužší 768px, což je dost na ikonu i na dva řádky textu bez
+   přetékání. Od 1200px výš (běžný desktop) zůstávají original 4 sloupce
+   z pravidla výše.
+   POZNÁMKA: tohle přepočítané rozmezí nebylo možné ověřit živě přímo na
+   tabletu (tahle vývojová session běží ve fixní desktopové obrazovce,
+   nejde v ní simulovat menší šířku okna) — vychází z přesných rozměrů
+   ikony/paddingu naměřených výše a ze standardního tablet/desktop
+   zlomu. Po nasazení prosím zkontroluj přímo na svém tabletu, jestli to
+   sedí — kdyby ne, hranice 1199px se dá snadno posunout. */
+@media(min-width:768px) and (max-width:1199px){
+  #navigation ul.menu-level-2>li{
+    flex-basis:calc(50% - 16px)!important;
+    width:calc(50% - 16px)!important;
+  }
 }
 
 /* ===== Hlavní menu na mobilu (rozbalovací hamburger) =====
