@@ -7,20 +7,15 @@
    dlouhý popis), ať to jde upravovat bez rizika pro zbytek webu.
    ===================================================================== */
 
-/* Font Montserrat pro nadpis kategorie — na webu není nikde jinde
-   načtený (celý e-shop běží na Poppins/Exo 2 z vlastního Shoptet
-   fontového balíčku), proto ho sem musíme dotáhnout sami. Načítáme jen
-   řezy 600 a 700 (víc na nadpis nepotřebujeme), ať se zbytečně
-   nenačítá celá rodina. */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap');
-
 /* ===== Nadpis kategorie (H1, např. "Počítače") =====
-   Shoptet defaultně vykresluje vlastním "Exo 2". Měníme jen font a
-   trochu přidáváme na řezu (600 = semibold), aby Montserrat vynikl —
-   velikost/barvu necháváme, jak je nastavil šablonový/brand styl. */
+   Shoptet defaultně vykresluje vlastním "Exo 2". Zkoušeli jsme Montserrat,
+   klientovi se ale nelíbil — místo toho zůstáváme u brand fontu Poppins
+   (ten je na webu už načtený nativně přes Shoptet, není potřeba žádný
+   @import) a nadpis jen ztučňujeme (700 = bold), aby na stránce kategorie
+   vynikl. Velikost/barvu necháváme, jak je nastavil šablonový/brand styl. */
 .category-title{
-  font-family:'Montserrat',sans-serif!important;
-  font-weight:600!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:700!important;
 }
 
 /* ===== Stručný popis kategorie (".category-perex") =====
