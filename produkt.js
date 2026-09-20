@@ -147,7 +147,7 @@
       // "Repasované A" -> "Rep. A" (kolo 8: ještě kratší než dřívější
       // "Repas. A" — po přesunutí bloku nahoru je tam méně místa a
       // potřebujeme, aby se vedle sebe vešly všechny 4 kartičky).
-      var shortLabel = value.replace(/^Repasované\s+/i, 'Rep. ');
+      var shortLabel = value.replace(/^Repasované\s+/i, 'Stav ');
       var textEl = inner.querySelector('.variant-chip-label');
       if(!textEl){
         textEl = document.createElement('span');
