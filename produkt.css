@@ -232,57 +232,40 @@ div.link-icons.link-icons-panel a.link-icon:hover{
   background:#f5f5f8;
 }
 
-/* ===== Doplňkové parametry (rozbalovací) =====
-   Dřív prostá tabulka bez interakce. Z nadpisu děláme klikací
-   "hlavičku" se šipkou a tabulku schováváme pod ni (viz JS blok — bez
-   něj se tabulka nerozbalí, protože potřebuje kliknutím přepínat
-   třídu). Zároveň tabulce dáváme čistší vzhled (zebra řádky, odstupy). */
-.extended-description h3.params-toggle{
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  background:#f5f5f8;
-  border-radius:10px;
-  padding:14px 16px;
-  margin:0!important;
-  user-select:none;
-}
-.extended-description h3.params-toggle::after{
-  content:"";
-  width:9px;
-  height:9px;
-  flex-shrink:0;
-  border-right:2px solid #5B2CDB;
-  border-bottom:2px solid #5B2CDB;
-  transform:rotate(45deg);
-  transition:transform .2s ease;
-}
-.extended-description h3.params-toggle.open::after{
-  transform:rotate(-135deg);
-}
+/* ===== Rozbalovací "harmonika" — sdílená pro Detailní popis produktu
+   i Doplňkové parametry =====
+   Obě sekce dřív vypadaly jinak (tahle harmonika vznikla dřív a byla
+   jednodušší — šedé pozadí, šipka přes ::after, sbalení přes
+   max-height s odhadovaným stropem). Klient chtěl obě sjednotit, proto
+   "Doplňkové parametry" teď používají úplně STEJNOU komponentu jako
+   "Detailní popis produktu" níž (h3.pp-detail-toggle / vnořené
+   <button class="pp-detail-toggle-btn"> / .pp-detail-collapse) — JS
+   (produkt.js) obě sestavuje přes jednu sdílenou funkci (buildToggle),
+   takže vzhled i chování jsou zaručeně identické a nemůžou se do
+   budoucna při další úpravě "rozejít".
+
+   Tady dole zůstává jen vzhled samotné tabulky s parametry (zebra
+   řádky, odstupy) — ten je specifický jen pro tenhle panel. Rozvržení
+   řádků (display:block/flex) je schválně omezené na
+   ".extended-description", aby se nedotklo JINÉ tabulky se stejnou
+   třídou "detail-parameters" použité jinde na stránce (výběr varianty
+   Nové/Repasované A/B/C nahoře u nadpisu, viz ".p-info-wrapper >
+   table.detail-parameters" níž v souboru). */
 table.detail-parameters{
   width:100%;
   border-collapse:collapse;
 }
-table.detail-parameters.params-collapsible{
-  max-height:0;
-  overflow:hidden;
-  display:block;
-  transition:max-height .35s ease;
-}
-table.detail-parameters.params-collapsible.open{
-  max-height:3000px;
-}
-table.detail-parameters.params-collapsible tbody{
+.extended-description table.detail-parameters{
   display:block;
 }
-table.detail-parameters.params-collapsible tr{
+.extended-description table.detail-parameters tbody{
+  display:block;
+}
+.extended-description table.detail-parameters tr{
   display:flex;
   border-bottom:1px solid #f0f0f3;
 }
-table.detail-parameters.params-collapsible tr:nth-child(even){
+.extended-description table.detail-parameters tr:nth-child(even){
   background:#fafafc;
 }
 table.detail-parameters th{
@@ -300,29 +283,23 @@ table.detail-parameters td{
 }
 
 /* ===== Detailní popis produktu (rolování) =====
-   Stejný princip jako skrývací lišta u dlouhého popisu kategorie
-   (kategorie-popis.css/.js) — jen napojený na existující nadpis
-   ".basic-description h3" ("Detailní popis produktu"), místo aby se
-   vytvářelo úplně nové tlačítko s jiným textem. Klient chtěl přesně
-   tenhle text zachovaný, proto JS (produkt.js, setupBasicDescription)
-   nadpis nemaže ani nepřepisuje — jen do něj vloží skutečné <button>
-   (nadpis <h3> zůstává v DOM, jen jeho obsahem je teď klikací tlačítko
-   se stejným textem), a všechno, co za nadpisem následovalo (odstavce,
-   seznamy), přesune do nového sbalitelného obalu za ním.
+   Existující nadpis (".basic-description h3", "Detailní popis
+   produktu") zůstává v DOM beze změny textu ani tagu — JS (produkt.js,
+   sdílená funkce buildToggle(), volaná ze setupBasicDescriptionToggle
+   i ze setupParams výš) do něj jen vloží skutečné <button> se stejným
+   textem, a všechno, co za nadpisem následovalo (odstavce, seznamy),
+   přesune do nového sbalitelného obalu za ním. Selektor níž je záměrně
+   BEZ scope na ".basic-description" (obecné "h3.pp-detail-toggle"),
+   protože tutéž třídu teď dostává i nadpis "Doplňkové parametry" výš —
+   oba nadpisy tak mají zaručeně stejný reset (bez rámečku/pozadí).
 
    DŮLEŽITÉ pro SEO: nadpis zůstává h3 (nemění se na div/span), jeho
-   text je nedotčený, a popisný text pod ním se jen vizuálně sbaluje
+   text je nedotčený, a obsah pod ním se jen vizuálně sbaluje
    (grid-template-rows 0fr→1fr, stejná robustní technika jako u
    kategorie — žádný odhadovaný "strop" výšky), nikdy nemaže z DOM.
    Google tenhle vzor (nadpis + sbalitelný obsah, tzv. accordion) bere
-   jako plnohodnotně indexovaný.
-
-   Vizuálně stejná "rodina" jako lišta u kategorie (jemně fialová karta,
-   fialový akcent, otáčecí šipka), jen zarovnaná doleva místo na střed —
-   je to totiž skutečný nadpis sekce, ne obecná výzva k akci, a stejné
-   zarovnání (titulek vlevo, šipka vpravo) používá i sousední
-   "Doplňkové parametry" panel vedle. */
-.basic-description h3.pp-detail-toggle{
+   jako plnohodnotně indexovaný. */
+h3.pp-detail-toggle{
   margin:0 0 16px!important;
   padding:0!important;
   border:0!important;

@@ -1,16 +1,21 @@
 /* PRODUKT.JS — patří k produkt.css (detail produktu).
-   Řeší čtyři věci, které Shoptet sám neumí / kde je potřeba přesunout
+   Řeší pět věcí, které Shoptet sám neumí / kde je potřeba přesunout
    nebo doplnit prvky mimo jejich výchozí místo/podobu v DOM:
    1) ikony Tisk/Zeptat se/Sdílet — schované za tlačítko "•••", navíc
       přesunuté vedle "Skladem"
-   2) tabulku "Doplňkové parametry" schovanou pod klikací nadpis
-   3) přesun Značky (vedle nadpisu H1, do hlavičky produktu) a kódu
+   2) rozbalovací "harmoniku" pro "Detailní popis produktu" (nadpis
+      zůstává h3 se stejným textem, jen s vloženým <button>), viz
+      buildToggle() + setupBasicDescriptionToggle() níž
+   3) tutéž harmoniku i pro tabulku "Doplňkové parametry" — obě sekce
+      sdílejí jednu funkci (buildToggle), takže vypadají i chovají se
+      naprosto stejně, viz setupParams() níž
+   4) přesun Značky (vedle nadpisu H1, do hlavičky produktu) a kódu
       produktu (vedle "Detailní informace") z hlavičky dolů/vedle,
       viz setupLayout() níž
-   4) barevné popisové štítky s odznakem u variant (Nové/Repasované
+   5) barevné popisové štítky s odznakem u variant (Nové/Repasované
       A/B/C) místo čtyř vizuálně identických koleček, viz
       setupVariantChips() níž
-   Načítá se přes <script src="...produkt.js?v=6"> v Zápatí — soubor
+   Načítá se přes <script src="...produkt.js?v=8"> v Zápatí — soubor
    samotný je na GitHubu spolu s CSS soubory, stejný princip jako
    style.css/kategorie.css/produkt.css (žádné kopírování kódu do
    administrace, jen jedna řádka <script src>). */
@@ -50,48 +55,25 @@
     }
   }
 
-  function setupParams(){
-    var headings = document.querySelectorAll('.extended-description h3');
-    Array.prototype.forEach.call(headings, function(h){
-      if(h.textContent.trim() !== 'Doplňkové parametry' || h.dataset.enhanced) return;
-      h.dataset.enhanced = '1';
-      var table = h.nextElementSibling;
-      if(!table || table.tagName !== 'TABLE') return;
-      h.classList.add('params-toggle');
-      table.classList.add('params-collapsible');
-      h.addEventListener('click', function(){
-        h.classList.toggle('open');
-        table.classList.toggle('open');
-      });
-    });
-  }
+  // Sdílená "harmonika" pro Detailní popis produktu i Doplňkové
+  // parametry — obě sekce ji volají stejně (viz níž), takže mají
+  // zaručeně identický vzhled i chování a nemůžou se do budoucna při
+  // další úpravě "rozejít".
+  // heading: existující <h3> nadpis, jehož text se přesune do nového
+  //   <button> (nadpis samotný zůstává v DOM beze změny tagu/textu).
+  // contentEls: pole DOM prvků, které se přesunou do sbalitelného
+  //   obalu za nadpisem (odstavce a seznamy popisu, nebo tabulka
+  //   parametrů).
+  // idBase: id pro nový obal (kvůli aria-controls).
+  function buildToggle(heading, contentEls, idBase){
+    if(!heading || !contentEls.length) return;
 
-  function setupBasicDescriptionToggle(){
-    var basicDesc = document.querySelector('.basic-description');
-    if(!basicDesc || basicDesc.dataset.toggleDone) return;
-
-    var heading = basicDesc.querySelector('h3');
-    if(!heading) return;
-
-    // Vše, co v DOM následuje za nadpisem (odstavce, seznamy...) —
-    // tohle jde do sbalitelného obalu. Pokud by za nadpisem nic nebylo
-    // (prázdný popis), lištu vůbec nevytváříme.
-    var contentEls = [];
-    var node = heading.nextElementSibling;
-    while(node){
-      contentEls.push(node);
-      node = node.nextElementSibling;
-    }
-    if(!contentEls.length) return;
-
-    basicDesc.dataset.toggleDone = '1';
     heading.classList.add('pp-detail-toggle');
 
-    // Text nadpisu ("Detailní popis produktu") zůstává přesně stejný —
-    // jen ho přesuneme dovnitř nového <button>, ať je nadpis pořád h3
-    // (kvůli SEO/struktuře), ale klikatelný je skutečný button prvek
-    // (nativní klávesnicová ovladatelnost, žádné ruční ošetřování
-    // Enter/mezerníku).
+    // Text nadpisu zůstává přesně stejný — jen ho přesuneme dovnitř
+    // nového <button>, ať je nadpis pořád h3 (kvůli SEO/struktuře), ale
+    // klikatelný je skutečný button prvek (nativní klávesnicová
+    // ovladatelnost, žádné ruční ošetřování Enter/mezerníku).
     var headingText = heading.textContent.trim();
     heading.textContent = '';
 
@@ -114,12 +96,15 @@
 
     var outer = document.createElement('div');
     outer.className = 'pp-detail-collapse';
-    outer.id = 'pp-basic-description';
+    outer.id = idBase;
     var inner = document.createElement('div');
     inner.className = 'pp-detail-collapse-inner';
     outer.appendChild(inner);
+
+    // Obal vložíme přesně tam, kde byl první přesouvaný prvek (hned za
+    // nadpisem), pak do něj přesuneme všechny přesouvané prvky.
+    heading.parentNode.insertBefore(outer, contentEls[0]);
     contentEls.forEach(function(el){ inner.appendChild(el); });
-    basicDesc.appendChild(outer);
 
     btn.setAttribute('aria-controls', outer.id);
 
@@ -128,6 +113,39 @@
       btn.classList.toggle('pp-open', isOpen);
       btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     });
+  }
+
+  function setupParams(){
+    var headings = document.querySelectorAll('.extended-description h3');
+    Array.prototype.forEach.call(headings, function(h){
+      if(h.textContent.trim() !== 'Doplňkové parametry' || h.dataset.toggleDone) return;
+      var table = h.nextElementSibling;
+      if(!table || table.tagName !== 'TABLE') return;
+      h.dataset.toggleDone = '1';
+      buildToggle(h, [table], 'pp-params');
+    });
+  }
+
+  function setupBasicDescriptionToggle(){
+    var basicDesc = document.querySelector('.basic-description');
+    if(!basicDesc || basicDesc.dataset.toggleDone) return;
+
+    var heading = basicDesc.querySelector('h3');
+    if(!heading) return;
+
+    // Vše, co v DOM následuje za nadpisem (odstavce, seznamy...) —
+    // tohle jde do sbalitelného obalu. Pokud by za nadpisem nic nebylo
+    // (prázdný popis), lištu vůbec nevytváříme.
+    var contentEls = [];
+    var node = heading.nextElementSibling;
+    while(node){
+      contentEls.push(node);
+      node = node.nextElementSibling;
+    }
+    if(!contentEls.length) return;
+
+    basicDesc.dataset.toggleDone = '1';
+    buildToggle(heading, contentEls, 'pp-basic-description');
   }
 
   function setupLayout(){

@@ -610,6 +610,48 @@ body.ordering-process #header .site-name{display:block!important;}
   color:#0f7a56!important;
 }
 
+/* ===== Náhled košíku (popup-widget.cart-widget) na tabletu =====
+   Shoptetova vlastní šablona přepíná náhled košíku na celoobrazovkový
+   panel (position:fixed;bottom:0;left:0;width:100%) při JAKÉKOLI šířce
+   pod 992px — tedy úplně stejně na tabletu i na mobilu, žádnou
+   zvláštní "tabletovou" variantu šablona nemá (ověřeno přímo v jejím
+   zdrojovém CSS). Na mobilu to dává smysl (košík vyplní celou, úzkou
+   obrazovku jako běžné mobilní okno), ale na tabletu (768–991px,
+   ověřeno ŽIVĚ na simulované šířce ~800px) tím kolem obsahu vznikala
+   obrovská prázdná plocha — jedna položka v košíku uprostřed skoro
+   prázdné celé obrazovky. Přesně tohle klient nahlásil a poslal snímek
+   obrazovky.
+
+   Řešení: ve stejném rozmezí, ve kterém už vlastní styl přepíná ikonu
+   košíku na "pilulku" s cenou (#header .cart-count výš,
+   min-width:768px), vracíme náhledu košíku malé ukotvené okno vpravo
+   nahoře — stejný princip jako na desktopu (malé okno, ne
+   celoobrazovkový panel), jen šířkou přizpůsobené užšímu tabletu.
+   "top:124px" je stejná hodnota, kterou pro tuhle šířku (výška
+   hlavičky) používá i sám Shoptet o pár řádků výš u pravidla pro
+   celoobrazovkový panel — přebíráme ji, ať okno začíná přesně pod
+   hlavičkou. Trojúhelníkovou "špičku" okna (::before), na desktopu
+   vypočítanou podle vystředění (left:50%+margin-left), na tomhle
+   rozlišení radši schováváme, než abychom ji dopočítávali pro nově
+   ukotvený box — robustnější než spoléhat na přesný výpočet, který by
+   se rozjel při jakékoli budoucí změně výšky hlavičky. */
+@media(min-width:768px) and (max-width:991px){
+  .popup-widget.cart-widget{
+    position:fixed!important;
+    top:124px!important;
+    bottom:auto!important;
+    left:auto!important;
+    right:16px!important;
+    width:380px!important;
+    max-width:calc(100% - 32px)!important;
+    max-height:70vh!important;
+    overflow-y:auto!important;
+  }
+  .popup-widget.cart-widget::before{
+    display:none!important;
+  }
+}
+
 /* ===== Tlačítka Do košíku ===== */
 .btn.btn-cart.add-to-cart-button,.btn-cart,.btn-conversion,a.btn-cart,a.btn-conversion{
   background:#5B2CDB!important;border-color:#5B2CDB!important;color:#fff!important;
