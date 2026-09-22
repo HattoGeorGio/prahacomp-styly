@@ -30,11 +30,16 @@
   // ===== Odkazy pro sloupce a spodní pruh — jedno centrální místo, kde
   // je do budoucna snadné cokoliv přidat/upravit/přeuspořádat. =====
 
-  // "Výkup a servis" — stejné cílové adresy jako položky "SERVIS" /
-  // "VÝKUP ZBOŽÍ" v hlavním menu (viz claude/eshop-menu-servis-odkaz-v1.md),
-  // schválně beze změny, ať je chování v celém e-shopu jednotné.
+  // "Výkup a servis" — cílové adresy potvrzené klientem přímo (konkrétní
+  // kotvy na firemním webu, ne jen kořenová doména):
+  // https://www.prahacomputer.cz/#servis-pc  = servis
+  // https://www.prahacomputer.cz/#vykup      = výkup
+  // Pozn.: položka "SERVIS" v hlavním menu (viz
+  // claude/eshop-menu-servis-odkaz-v1.md) zatím míří jen na kořenovou
+  // doménu bez kotvy — klient zatím žádal upravit jen patičku, menu
+  // beze změny (lze sjednotit později, bude-li chtít).
   var SERVICE_LINKS = [
-    {href:'https://www.prahacomputer.cz', label:'Servis počítačů a notebooků', blank:true},
+    {href:'https://www.prahacomputer.cz/#servis-pc', label:'Servis počítačů a notebooků', blank:true},
     {href:'https://www.prahacomputer.cz/#vykup', label:'Výkup a odkup techniky', blank:true}
   ];
 
