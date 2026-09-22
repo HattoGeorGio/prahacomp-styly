@@ -52,8 +52,12 @@
   background:transparent;
 }
 
+/* Značkový blok (logo+slogan) je vycentrovaný na VŠECH šířkách obrazovky
+   (ne jen na mobilu) — přesně podle živé patičky prahacomputer.cz, kde
+   je značka vycentrovaná i na desktopu, zatímco sloupce s odkazy zůstávají
+   zarovnané doleva (ověřeno živě na reálném webu). */
 .pp-footer-brand{
-  padding-right:24px;
+  text-align:center;
 }
 .pp-footer-logo{
   display:inline-block;
@@ -65,7 +69,7 @@
   display:block;
 }
 .pp-footer-tagline{
-  margin:0;
+  margin:0 auto;
   color:rgba(255,255,255,.6)!important;
   font-family:'Poppins',sans-serif;
   font-size:14px;
@@ -73,13 +77,16 @@
   max-width:320px;
 }
 
-/* Nadpisy sloupců — bílé, tučné, jemně rozpálené (stejný jazyk jako
-   ostatní nadpisy na tmavém pozadí webu, viz produkt.css/style.css). */
+/* Nadpisy sloupců — značková fialová #5B2CDB (přesná barva ověřená live
+   výtahem computed stylu z prahacomputer.cz: rgb(91,44,219) = #5B2CDB —
+   stejný odstín, jaký web jinde používá pro accent/CTA prvky), tučné,
+   Poppins (stejný jazyk jako ostatní nadpisy na tmavém pozadí webu, viz
+   produkt.css/style.css). */
 .pp-footer-col h3{
   margin:0 0 18px!important;
   padding:0!important;
   border:0!important;
-  color:#fff!important;
+  color:#5B2CDB!important;
   font-family:'Poppins',sans-serif!important;
   font-size:16px!important;
   font-weight:600!important;
@@ -225,17 +232,6 @@
     padding:40px 24px 28px;
     gap:32px;
     text-align:center;
-  }
-  .pp-footer-brand{
-    padding-right:0;
-  }
-  .pp-footer-logo{
-    margin-left:auto;
-    margin-right:auto;
-  }
-  .pp-footer-tagline{
-    margin-left:auto;
-    margin-right:auto;
   }
   .pp-footer-contact li{
     justify-content:center;
