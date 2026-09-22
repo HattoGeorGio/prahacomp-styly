@@ -1,0 +1,255 @@
+/* =====================================================================
+   FOOTER.CSS — patička e-shopu (#footer)
+   Patří k footer.js, který do nativní Shoptet patičky (jinak jen tenký
+   pruh s podpisem Shoptetu a copyrightem) vkládá nové bloky se sloupci
+   ("Výkup a servis" / "Hlavní kategorie" / "Kontakt") a doplňuje spodní
+   pruh o IČO/DIČ a právní odkazy. Tenhle soubor stylizuje jak nové
+   vložené bloky, tak zůstávající nativní prvky (podpis Shoptetu, odkaz
+   na cookies), ať vypadají jako jeden souvislý celek.
+
+   Vzhled je navržený podle živé patičky firemního webu prahacomputer.cz
+   (tmavě modročerná #0A0E17 — stejná barva jako hlavička e-shopu,
+   viz style.css, sekce "Hlavička") — tmavý blok se 4 sloupci nahoře a
+   užší spodní pruh s copyrightem/právními odkazy dole.
+   ===================================================================== */
+
+/* ===== Základ patičky ===== */
+#footer{
+  background:#0A0E17!important;
+  margin-top:40px;
+}
+#footer .sr-only{
+  position:absolute!important;
+  width:1px;height:1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+}
+
+/* ===== Horní blok se sloupci (logo+slogan, Výkup a servis, Hlavní
+   kategorie, Kontakt) =====
+   "repeat(auto-fit,minmax(200px,1fr))" místo pevného počtu sloupců —
+   robustní vůči budoucímu přidání/ubrání sloupce (kdyby klient chtěl
+   např. přidat pátý sloupec), nemusí se pak nikde přepočítávat žádná
+   procenta. Značkový sloupec (.pp-footer-brand) dostává dvojnásobnou
+   šířku přes "grid-column:span 2" na širších obrazovkách (viz media
+   query níž), na užších se stejně jako ostatní zalomí na vlastní řádek.
+
+   ZÁMĚRNĚ NEPOUŽÍVÁME nativní Shoptet třídu ".container" (jak je použitá
+   např. u ".footer-bottom" pár řádků níž) — zkoušeno živě, tahle třída
+   má v šabloně e-shopu i vlastní bílé pozadí (zřejmě určené pro světlé
+   obsahové plochy jinde na webu), které by na tmavém pozadí patičky
+   vytvořilo ošklivý bílý obdélník. Šířku/odsazení místo toho počítáme
+   sami (max-width+margin:auto), beze změny do budoucna nezávisle na
+   tom, k čemu si Shoptet ".container" jinde na webu použije. */
+.pp-footer-main{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:40px;
+  max-width:1400px;
+  margin:0 auto;
+  padding:56px 24px 40px;
+  box-sizing:border-box;
+  background:transparent;
+}
+
+.pp-footer-brand{
+  padding-right:24px;
+}
+.pp-footer-logo{
+  display:inline-block;
+  margin-bottom:16px;
+}
+.pp-footer-logo img{
+  max-height:56px;
+  width:auto;
+  display:block;
+}
+.pp-footer-tagline{
+  margin:0;
+  color:rgba(255,255,255,.6)!important;
+  font-family:'Poppins',sans-serif;
+  font-size:14px;
+  line-height:1.6;
+  max-width:320px;
+}
+
+/* Nadpisy sloupců — bílé, tučné, jemně rozpálené (stejný jazyk jako
+   ostatní nadpisy na tmavém pozadí webu, viz produkt.css/style.css). */
+.pp-footer-col h3{
+  margin:0 0 18px!important;
+  padding:0!important;
+  border:0!important;
+  color:#fff!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:16px!important;
+  font-weight:600!important;
+  letter-spacing:.02em;
+}
+.pp-footer-col ul{
+  list-style:none!important;
+  margin:0!important;
+  padding:0!important;
+}
+.pp-footer-col li{
+  margin:0 0 12px!important;
+}
+.pp-footer-col a{
+  color:rgba(255,255,255,.65)!important;
+  font-family:'Poppins',sans-serif;
+  font-size:14px;
+  text-decoration:none!important;
+  transition:color .15s ease;
+}
+.pp-footer-col a:hover,
+.pp-footer-col a:focus-visible{
+  color:#18A073!important;
+}
+
+/* ===== Sloupec Kontakt — malé ikonky (telefon/obálka/pin) =====
+   Stejná technika jako šipka u kategorií v style.css: čistá SVG ikona
+   (bílý obrys) jako ::before pozadí místo textového znaku/emoji — ostré
+   na jakékoli velikosti obrazovky, žádný závislý font. */
+.pp-footer-contact li{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+.pp-footer-contact li::before{
+  content:"";
+  flex-shrink:0;
+  width:16px;
+  height:16px;
+  margin-top:2px;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+  opacity:.7;
+}
+.pp-footer-contact-tel::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
+}
+.pp-footer-contact-mail::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cpolyline points='22,6 12,13 2,6'/%3E%3C/svg%3E");
+}
+.pp-footer-contact-pin::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E");
+}
+.pp-footer-contact li a{
+  line-height:1.4;
+}
+
+/* ===== Spodní pruh (nativní .footer-bottom — podpis Shoptetu +
+   copyright + nově doplněné IČO/DIČ a právní odkazy) =====
+   Necháváme jako flex řádek, který se na užší obrazovce sám zalomí —
+   žádné pevné pozice, roste/mění se podle skutečné délky textu. */
+#footer .footer-bottom{
+  background:transparent!important;
+  border-top:1px solid rgba(255,255,255,.1)!important;
+  padding:20px 24px!important;
+  max-width:1400px;
+  margin:0 auto!important;
+  box-sizing:border-box;
+  display:flex!important;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px 24px;
+}
+#footer .footer-bottom #signature{
+  display:inline-flex!important;
+  align-items:center;
+  gap:8px;
+  order:2;
+  opacity:.55;
+}
+#footer .footer-bottom #signature .title{
+  color:rgba(255,255,255,.6)!important;
+  font-size:12px!important;
+}
+#footer .footer-bottom .copyright{
+  order:1;
+  color:rgba(255,255,255,.55)!important;
+  font-family:'Poppins',sans-serif;
+  font-size:13px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 10px;
+}
+#footer .footer-bottom .copyright strong{
+  color:rgba(255,255,255,.75)!important;
+  font-weight:600;
+}
+.pp-footer-ico{
+  white-space:nowrap;
+}
+.pp-footer-legal-links{
+  display:inline-flex;
+  flex-wrap:wrap;
+  gap:6px 14px;
+}
+.pp-footer-legal-links a{
+  color:rgba(255,255,255,.55)!important;
+  text-decoration:none!important;
+}
+.pp-footer-legal-links a:hover,
+.pp-footer-legal-links a:focus-visible{
+  color:#18A073!important;
+  text-decoration:underline!important;
+}
+#footer .footer-bottom .cookies-settings{
+  color:rgba(255,255,255,.55)!important;
+  text-decoration:underline!important;
+  font-size:13px;
+}
+#footer .footer-bottom .cookies-settings:hover{
+  color:#18A073!important;
+}
+
+/* ===== Širší obrazovky (>=992px): značka dostane dvojnásobnou šířku
+   sloupce, ať slogan nemá zbytečně úzký text a zbylé 3 sloupce mají
+   rovnoměrně zbytek řádku. Pod 992px (tablet/mobil výš v gridu) se
+   .pp-footer-brand chová stejně jako ostatní sloupce (auto-fit výše se
+   o zalamování postará samo). */
+@media(min-width:992px){
+  .pp-footer-brand{
+    grid-column:span 2;
+  }
+}
+
+/* ===== Mobil (<768px): sloupce na střed, spodní pruh taky na střed a
+   pod sebou (signature/copyright), ať se na úzké obrazovce nic
+   nemačká vedle sebe. ===== */
+@media(max-width:767px){
+  .pp-footer-main{
+    padding:40px 24px 28px;
+    gap:32px;
+    text-align:center;
+  }
+  .pp-footer-brand{
+    padding-right:0;
+  }
+  .pp-footer-logo{
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .pp-footer-tagline{
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .pp-footer-contact li{
+    justify-content:center;
+    text-align:left;
+  }
+  #footer .footer-bottom{
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+  }
+  #footer .footer-bottom .copyright{
+    justify-content:center;
+  }
+  .pp-footer-legal-links{
+    justify-content:center;
+  }
+}
