@@ -237,6 +237,24 @@
     justify-content:center;
     text-align:left;
   }
+  /* Adresa (pin) byla na mobilu nalepená na levý okraj sloupce, ne
+     vycentrovaná jako telefon/e-mail nad ní — přestože má stejné
+     `justify-content:center` výš. Příčina: text adresy je dost dlouhý
+     na to, aby se `<a>` bez vlastního omezení šířky natáhl skoro na
+     celou šířku sloupce (živě naměřeno: 299px ze 325px dostupných —
+     spolu s ikonkou vlevo (16px) a mezerou (10px) to je fakticky
+     100 % šířky sloupce). Když obsah řádku vyplňuje celou dostupnou
+     šířku, `justify-content:center` nemá žádný prostor nazbyt a
+     centrování se prostě nemá jak projevit — přesně proto telefon/
+     e-mail (krátký text) vypadají vycentrované a adresa ne.
+     Řešení: adrese omezíme šířku (procentuálně, ne pevným px — robustní
+     i při budoucí změně adresy/fontu), ať zůstane dost místa po
+     stranách a centrování je vidět, stejně jako u zbytku sloupce.
+     Živě ověřeno na 390px: rovnoměrných ~23px po obou stranách bloku
+     ikonka+adresa. */
+  .pp-footer-contact-pin a{
+    max-width:78%;
+  }
   #footer .footer-bottom{
     flex-direction:column;
     justify-content:center;
