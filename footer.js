@@ -11,13 +11,13 @@
 
    Klient chce místo toho bohatou patičku ve stylu firemního webu
    prahacomputer.cz: logo + slogan, sloupce s odkazy ("Výkup a servis",
-   "Hlavní kategorie", "Kontakt") a spodní pruh s IČO/DIČ a právními
-   odkazy (Obchodní podmínky/Reklamace/GDPR).
+   "Užitečné odkazy", "Kontakt") a spodní pruh jen s IČO/DIČ (právní
+   odkazy žijí teď ve sloupci "Užitečné odkazy", ne dole).
 
    Řešení: před existující nativní pruh (#footer .footer-bottom) vložíme
    nový blok se sloupci, a do samotného nativního pruhu jen DOPLNÍME
-   (nic nemažeme) IČO/DIČ a právní odkazy vedle stávajícího copyright
-   textu — podpis Shoptetu i odkaz na cookies zůstávají zcela beze změny.
+   (nic nemažeme) IČO/DIČ vedle stávajícího copyright textu — podpis
+   Shoptetu i odkaz na cookies zůstávají zcela beze změny.
 
    Poznámka k odkazu "Reklamace": e-shop zatím nemá samostatnou stránku
    reklamačního řádu (ověřeno v administraci → Stránky — existují jen
@@ -25,7 +25,13 @@
    osobních údajů"). Reklamační řád bývá obvykle součástí obchodních
    podmínek, proto odkaz "Reklamace" prozatím míří na /obchodni-podminky/
    — až bude mít samostatnou stránku, stačí tu jen upravit "href" u
-   jedné položky níž (viz LEGAL_LINKS). */
+   jedné položky níž (viz USEFUL_LINKS).
+
+   REVIZE (2. kolo): na žádost klienta sloupec "Hlavní kategorie" nahrazen
+   sloupcem "Užitečné odkazy" (Obchodní podmínky/Zásady zpracování osobních
+   údajů/Reklamace/Jak nakupovat/Kontakt) — tyto odkazy se tím pádem ze
+   spodní lišty odstranily (byly by duplicitní). Adresa v Kontaktu je teď
+   klikací odkaz na Google Mapy. */
 (function(){
   // ===== Odkazy pro sloupce a spodní pruh — jedno centrální místo, kde
   // je do budoucna snadné cokoliv přidat/upravit/přeuspořádat. =====
@@ -43,22 +49,21 @@
     {href:'https://www.prahacomputer.cz/#vykup', label:'Výkup a odkup techniky', blank:true}
   ];
 
-  // "Hlavní kategorie" — 4 hlavní kategorie e-shopu (stejné jako první
-  // úroveň hlavního menu).
-  var CATEGORY_LINKS = [
-    {href:'/pocitace/', label:'Počítače'},
-    {href:'/notebooky/', label:'Notebooky'},
-    {href:'/komponenty/', label:'Komponenty'},
-    {href:'/prislusenstvi/', label:'Příslušenství'}
+  // "Užitečné odkazy" — právní a informační odkazy, dřív žily jen ve
+  // spodní liště, teď mají vlastní sloupec (nahrazuje "Hlavní kategorie").
+  // "Jak nakupovat" href ověřen živě v DOM (nativní stránka Shoptetu,
+  // stejná jako v horní liště). "Reklamace" — viz poznámka výš, zatím
+  // beze změny míří na /obchodni-podminky/.
+  var USEFUL_LINKS = [
+    {href:'/obchodni-podminky/', label:'Obchodní podmínky'},
+    {href:'/podminky-ochrany-osobnich-udaju/', label:'Zásady zpracování osobních údajů'},
+    {href:'/obchodni-podminky/', label:'Reklamace'},
+    {href:'/jak-nakupovat/', label:'Jak nakupovat'},
+    {href:'/kontakty/', label:'Kontakt'}
   ];
 
-  // Spodní pruh — právní a informační odkazy vedle copyright textu.
-  var LEGAL_LINKS = [
-    {href:'/kontakty/', label:'Kontakt'},
-    {href:'/obchodni-podminky/', label:'Obchodní podmínky'},
-    {href:'/obchodni-podminky/', label:'Reklamace'},
-    {href:'/podminky-ochrany-osobnich-udaju/', label:'Zásady zpracování osobních údajů'}
-  ];
+  // Odkaz na Google Mapy pro adresu v Kontaktu — přesná adresa firmy.
+  var MAPS_LINK = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Kolbenova 912/5c, 190 00 Praha 9');
 
   function buildColumn(title, links){
     var col = document.createElement('div');
@@ -94,7 +99,10 @@
     var items = [
       {type:'tel', href:'tel:+420606350650', label:'+420 606 350 650'},
       {type:'mail', href:'mailto:servis@prahacomp.cz', label:'servis@prahacomp.cz'},
-      {type:'pin', href:null, label:'Kolbenova 912/5c, 190 00 Praha 9 – Vysočany'}
+      // Adresa je klikací odkaz rovnou na Google Mapy (nová záložka) —
+      // stejná technika (blank:true → target/rel) jako u vnějších odkazů
+      // v buildColumn().
+      {type:'pin', href:MAPS_LINK, label:'Kolbenova 912/5c, 190 00 Praha 9 – Vysočany', blank:true}
     ];
     items.forEach(function(item){
       var li = document.createElement('li');
@@ -103,6 +111,10 @@
         var a = document.createElement('a');
         a.href = item.href;
         a.textContent = item.label;
+        if(item.blank){
+          a.target = '_blank';
+          a.rel = 'noopener';
+        }
         li.appendChild(a);
       } else {
         li.textContent = item.label;
@@ -151,14 +163,16 @@
     main.className = 'pp-footer-main';
     main.appendChild(buildBrand());
     main.appendChild(buildColumn('Výkup a servis', SERVICE_LINKS));
-    main.appendChild(buildColumn('Hlavní kategorie', CATEGORY_LINKS));
+    main.appendChild(buildColumn('Užitečné odkazy', USEFUL_LINKS));
     main.appendChild(buildContactColumn());
 
     footer.insertBefore(main, bar);
 
-    // Do nativního copyright bloku doplníme IČO/DIČ a právní odkazy —
-    // vkládáme je těsně PŘED odkaz na cookies, ať zůstane (jak bývá
-    // zvykem) úplně poslední v pořadí.
+    // Do nativního copyright bloku doplníme jen IČO/DIČ — právní odkazy
+    // (Obchodní podmínky/Reklamace/GDPR/Kontakt) teď žijí ve sloupci
+    // "Užitečné odkazy" výš, takže by tu dole byly zbytečně duplicitní.
+    // Vkládáme těsně PŘED odkaz na cookies, ať zůstane (jak bývá zvykem)
+    // úplně poslední v pořadí.
     var copyright = bar.querySelector('.copyright');
     var cookiesLink = copyright && copyright.querySelector('.cookies-settings');
     if(copyright && cookiesLink){
@@ -166,16 +180,6 @@
       ico.className = 'pp-footer-ico';
       ico.textContent = 'IČO 14219689 · DIČ CZ14219689';
       copyright.insertBefore(ico, cookiesLink);
-
-      var legalLinks = document.createElement('span');
-      legalLinks.className = 'pp-footer-legal-links';
-      LEGAL_LINKS.forEach(function(l){
-        var a = document.createElement('a');
-        a.href = l.href;
-        a.textContent = l.label;
-        legalLinks.appendChild(a);
-      });
-      copyright.insertBefore(legalLinks, cookiesLink);
     }
   }
 
