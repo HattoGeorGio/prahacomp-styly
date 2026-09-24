@@ -160,6 +160,32 @@ a.p-thumbnail img{
   margin-left:auto;
   margin-top:0!important;
 }
+/* Skrytá past č. 3 (mobilní vodorovné rolování na KAŽDÉ stránce
+   produktu): `.social-buttons` je jiný, samostatný nativní Shoptet
+   prvek než naše vlastní karta výš (`div.link-icons.link-icons-panel`
+   — ten je pro Tisk/Zeptat se/Sdílet a funguje normálně dál, tohohle
+   se fix netýká). Shoptet mu sám dává třídu `no-display`, ale i tak
+   se vykresluje s `display:flex` — to je nesrovnalost přímo ve
+   výchozím Shoptet CSS (ověřeno živě: nikde v tomhle souboru
+   `.social-buttons` bez "-wrapper" neřešíme, jen jsme si toho
+   nevšimli, protože na širokých obrazovkách je to neškodné — 81px
+   široký panel se vejde vedle wrapperu). Jenže `.social-buttons-
+   wrapper` je teď jen úzké 40px tlačítko "•••" u pravého okraje
+   sloupce (přesunuté produkt.js), takže na mobilu ten position:
+   absolute panel čouhá desítky pixelů za pravý okraj obrazovky —
+   vizuálně neviditelně (mimo viewport), ale pořád reálně rozšiřuje
+   celou stránku, proto vodorovné rolování všude, kde je tenhle blok
+   (tj. každý detail produktu). Řešení: dovnutit schování, které samo
+   od Shoptetu nezabírá — vyšší specificita (dvě třídy) + !important,
+   ať to spolehlivě přebije, ať je zdrojové pořadí Shoptetova CSS
+   jakékoli. Selektor cílí jen na stav `.no-display` (přesně jak ho
+   Shoptet sám nastavuje), takže pokud by Shoptet tenhle panel někdy
+   sám aktivně zobrazil (třídu odebral), tohle pravidlo se ho
+   nedotkne. Živě ověřeno na mobilu (390px): scrollWidth přesně
+   odpovídá clientWidth, žádné vodorovné rolování. */
+.social-buttons.no-display{
+  display:none!important;
+}
 .link-icons-toggle{
   display:inline-flex;
   align-items:center;
@@ -618,7 +644,7 @@ ul.p-detail-tabs li.shp-tab.active a.shp-tab-link{
    zobrazoval i přeškrtnutou původní cenu — klient chce ve štítku
    samotném už jen procenta (původní cena zůstává tam, kde má být,
    totiž přeškrtnutá vedle finální ceny pod fotkou — tu Shoptet
-   vypisuje sám a nikdo ji tam nemazal).
+   vypisuje sám a nikdo ji tam nemazel).
    Cenu (`.price-standard`) proto schováváme přímo v tomhle štítku a
    necháváme viditelné jen `.price-save` (to "-X %"). Mezi oběma je v
    DOM navíc čistý textový uzel "až" (Shoptet ho tam vypisuje jako
