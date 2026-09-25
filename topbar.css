@@ -1,0 +1,181 @@
+/* =====================================================================
+   TOPBAR.CSS — horní lišta e-shopu (.top-navigation-bar)
+   Nativní Shoptet lišta nad hlavičkou (#header) obsahuje: telefon
+   ("Zákaznická podpora: ..."), rozbalovací menu se 3 odkazy (Jak
+   nakupovat / Obchodní podmínky / Podmínky ochrany osobních údajů) a
+   napravo tlačítko "Přihlášení" + 3 ikonky pro mobil/tablet (hledat /
+   přihlášení / menu).
+
+   Klient chce místo toho jen: telefon (výrazně "vypíchnutý"), e-mail
+   (nový — Shoptet ho v téhle liště nativně nemá, doplňuje ho
+   topbar.js) a Přihlášení — BEZ rozbalovacího menu, protože Jak
+   nakupovat / Obchodní podmínky / GDPR teď žijí v patičce (viz
+   claude/eshop-style-footer-v1.md, sloupec "Užitečné odkazy", 2. kolo
+   revize). Reklamace, FAQ, Hodnocení obchodu a měna/jazyk (jak je má
+   konkurence hellocomp.cz — ověřeno živě, hellocomp naopak nemá žádný
+   kontakt v této liště) se záměrně neřeší, mimo aktuální zadání.
+
+   Vzhled: tmavě modročerná #0A0E17 — STEJNÁ barva jako hlavička (#header)
+   hned pod touto lištou (ověřeno živě: header má computed
+   background-color rgb(10,14,23) = #0A0E17) — obě splynou v jeden
+   souvislý tmavý pás bez viditelného švu, žádný bílý pruh jako u
+   konkurence. Tenký barevný přechodový pruh dole (stejný gradient
+   fialová→zelená #5B2CDB → #7A3FE0 → #18A073, jaký má tlačítko
+   "Přidat do košíku" v produkt.css/kategorie.css — sjednocující prvek
+   napříč webem) odděluje lištu od hlavičky elegantní barevnou čárou
+   místo obyčejného ohraničení. Telefon je zvýrazněný značkovou zelenou
+   #18A073 a tučným řezem (klientovo "pěkně umístěný a vypíchnutý"),
+   e-mail střídmější (bílá s nižší opacitou), obojí s drobnou SVG
+   ikonkou (stejná technika jako ikonky v patičce — čistý obrys, žádný
+   závislý font/obrázek na serveru, ostré na jakékoli velikosti
+   obrazovky).
+   ===================================================================== */
+
+.top-navigation-bar{
+  position:relative;
+  background:#0A0E17!important;
+  border-bottom:0!important;
+}
+/* Tenký barevný přechodový pruh — odděluje lištu od tmavé hlavičky pod
+   ní elegantněji než obyčejná linka; přesně stejný gradient jako hlavní
+   CTA tlačítko napříč webem (viz produkt.css .add-to-cart-button). */
+.top-navigation-bar::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:2px;
+  background:linear-gradient(90deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%);
+  opacity:.85;
+  pointer-events:none;
+}
+.top-navigation-bar .container{
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between!important;
+}
+
+/* Rozbalovací nativní menu (Jak nakupovat / Obchodní podmínky / GDPR)
+   — pryč, tyhle 3 odkazy teď žijí v patičce (sloupec "Užitečné
+   odkazy"). Container má justify-content:space-between výš, takže
+   kontakty zůstanou vlevo a Přihlášení/ikonky vpravo i bez tohoto
+   prostředního bloku, beze změny na jakékoli šířce obrazovky. */
+.top-navigation-menu{
+  display:none!important;
+}
+
+/* ===== Kontakty (telefon + e-mail) ===== */
+.top-navigation-contacts{
+  display:flex!important;
+  align-items:center;
+  gap:22px;
+}
+/* Popisek "Zákaznická podpora:" pryč — ikonky + barevný telefon mluví
+   samy za sebe, čistší a "luxusnější" minimalistický vzhled. */
+.top-navigation-contacts > strong{
+  display:none!important;
+}
+
+.project-phone{
+  display:inline-flex!important;
+  align-items:center;
+  gap:7px;
+  color:#18A073!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:700!important;
+  font-size:14px!important;
+  letter-spacing:.02em;
+  transition:color .15s ease;
+}
+.project-phone::before{
+  content:"";
+  width:14px;height:14px;
+  flex-shrink:0;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2318A073' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
+}
+.project-phone:hover{
+  color:#1dbb84!important;
+}
+
+/* E-mail — doplněný přes topbar.js (Shoptet ho v téhle liště nativně
+   nemá), hned za telefonem, oddělený tenkou svislou čárou. */
+.pp-topbar-email{
+  display:inline-flex!important;
+  align-items:center;
+  gap:7px;
+  padding-left:22px;
+  border-left:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.65)!important;
+  font-family:'Poppins',sans-serif;
+  font-weight:500;
+  font-size:13px;
+  text-decoration:none!important;
+  transition:color .15s ease;
+}
+.pp-topbar-email::before{
+  content:"";
+  width:14px;height:14px;
+  flex-shrink:0;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+  opacity:.7;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cpolyline points='22,6 12,13 2,6'/%3E%3C/svg%3E");
+}
+.pp-topbar-email:hover{
+  color:#18A073!important;
+}
+.pp-topbar-email:hover::before{
+  opacity:1;
+}
+
+/* ===== Pravá strana — Přihlášení + mobilní ikonky (hledat / přihlášení
+   / menu) — necháváme nativní funkčnost (otevírání panelů) beze změny,
+   jen barvy přizpůsobené tmavému pozadí. ===== */
+.top-navigation-tools{
+  display:flex!important;
+  align-items:center;
+}
+.top-nav-button-login{
+  color:rgba(255,255,255,.8)!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:500!important;
+  font-size:13px!important;
+  background:transparent!important;
+  transition:color .15s ease;
+}
+.top-nav-button-login:hover{
+  color:#18A073!important;
+}
+.responsive-tools a{
+  color:rgba(255,255,255,.8)!important;
+  transition:color .15s ease;
+}
+.responsive-tools a:hover{
+  color:#18A073!important;
+}
+
+/* ===== Mobil/tablet (<992px, stejný zlom jako nativní přepnutí na
+   ikonky u Shoptetu): kratší mezery, ať telefon i e-mail mají dost
+   místa vedle ikonek a nic se nezalomí na dva řádky uvnitř tak nízké
+   lišty. ===== */
+@media(max-width:991px){
+  .top-navigation-contacts{
+    gap:14px;
+  }
+  .pp-topbar-email{
+    padding-left:14px;
+  }
+}
+
+/* ===== Velmi úzké obrazovky (<400px): e-mail schovaný (zůstává jen
+   telefon + Přihlášení/ikonky) — e-mail je i tak vždy dostupný v
+   patičce (sloupec Kontakt), takže se neztrácí, jen tady na
+   nejužších telefonech nezabírá místo. ===== */
+@media(max-width:399px){
+  .pp-topbar-email{
+    display:none!important;
+  }
+}
