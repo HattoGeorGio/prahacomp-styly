@@ -20,15 +20,29 @@
    background-color rgb(10,14,23) = #0A0E17) — obě splynou v jeden
    souvislý tmavý pás bez viditelného švu, žádný bílý pruh jako u
    konkurence. Tenký barevný přechodový pruh dole (stejný gradient
-   fialová→zelená #5B2CDB → #7A3FE0 → #18A073, jaký má tlačítko
+   fialová→zelená `#5B2CDB → #7A3FE0 → #18A073`, jaký má tlačítko
    "Přidat do košíku" v produkt.css/kategorie.css — sjednocující prvek
    napříč webem) odděluje lištu od hlavičky elegantní barevnou čárou
-   místo obyčejného ohraničení. Telefon je zvýrazněný značkovou zelenou
-   #18A073 a tučným řezem (klientovo "pěkně umístěný a vypíchnutý"),
-   e-mail střídmější (bílá s nižší opacitou), obojí s drobnou SVG
-   ikonkou (stejná technika jako ikonky v patičce — čistý obrys, žádný
-   závislý font/obrázek na serveru, ostré na jakékoli velikosti
-   obrazovky).
+   místo obyčejného ohraničení.
+
+   REVIZE 2 (klientovo živé zpětné vazba po nasazení v1/v2): telefon i
+   e-mail přebarveny ze zelené/bílé na fialovou `#9B87F5` (světlejší
+   odstín značkové `#5B2CDB` — na tmavém pozadí #0A0E17 má čistá značková
+   fialová `#5B2CDB` kontrastní poměr jen ~2.6:1, nečitelné; `#9B87F5` má
+   ~6.6:1, bezpečně nad WCAG AA). Telefon zůstává vizuálně "hlavní" (plná
+   barva, tučnější řez), e-mail podřízenější (stejná fialová, nižší
+   opacita) — stejná hierarchie jako předtím, jen fialová místo
+   zelená/bílá. Řez telefonu odlehčen ze 700 na 600 (klient: "ošklivý
+   font" — 700 na 14px v tak nízké liště působilo příliš "nabité");
+   gradientní pruh dole zůstává beze změny (fialová i zelená pořád spolu
+   ladí). Zároveň přidána "obrana" proti zalomení/overlapu na úzkých
+   šířkách — `white-space:nowrap` + `flex-shrink:0` na telefonu i
+   e-mailu, `flex-wrap:nowrap` na containeru a kontaktech — i když se
+   nahlášený overlap nepodařilo reprodukovat živě na žádné testované
+   šířce 320–1920px, tohle je nejpravděpodobnější technická příčina
+   (text by se při nedostatku místa mohl zalomit na 2 řádky uvnitř nízké
+   lišty a "přesahovat" do hlavičky pod ní) a je to bezpečné do budoucna
+   i kdyby se text/font na klientově zařízení choval jinak.
    ===================================================================== */
 
 .top-navigation-bar{
@@ -52,6 +66,7 @@
   display:flex!important;
   align-items:center;
   justify-content:space-between!important;
+  flex-wrap:nowrap!important;
 }
 
 /* Rozbalovací nativní menu (Jak nakupovat / Obchodní podmínky / GDPR)
@@ -68,10 +83,11 @@
    .top-navigation-contacts vlastní bílé pozadí (rgb(255,255,255)) — na
    světlé výchozí liště neviditelné, ale na naší tmavé (#0A0E17) to
    vytvořilo velký bílý obdélník přes telefon i e-mail. Nulujeme ho, ať
-   se ukáže tmavé pozadí .top-navigation-bar pod ním. */
+   se ukáže tmavé pozadí `.top-navigation-bar` pod ním. */
 .top-navigation-contacts{
   display:flex!important;
   align-items:center;
+  flex-wrap:nowrap!important;
   gap:22px;
   background:transparent!important;
 }
@@ -84,13 +100,18 @@
 .project-phone{
   display:inline-flex!important;
   align-items:center;
+  flex-shrink:0;
+  white-space:nowrap;
   gap:7px;
-  color:#18A073!important;
+  color:#9B87F5!important;
   font-family:'Poppins',sans-serif!important;
-  font-weight:700!important;
+  font-weight:600!important;
   font-size:14px!important;
-  letter-spacing:.02em;
+  letter-spacing:.01em;
   transition:color .15s ease;
+}
+.project-phone span{
+  white-space:nowrap;
 }
 .project-phone::before{
   content:"";
@@ -99,10 +120,10 @@
   background-repeat:no-repeat;
   background-position:center;
   background-size:contain;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2318A073' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239B87F5' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
 }
 .project-phone:hover{
-  color:#1dbb84!important;
+  color:#B9A6F7!important;
 }
 
 /* E-mail — doplněný přes topbar.js (Shoptet ho v téhle liště nativně
@@ -110,10 +131,12 @@
 .pp-topbar-email{
   display:inline-flex!important;
   align-items:center;
+  flex-shrink:0;
+  white-space:nowrap;
   gap:7px;
   padding-left:22px;
   border-left:1px solid rgba(255,255,255,.15);
-  color:rgba(255,255,255,.65)!important;
+  color:rgba(155,135,245,.8)!important;
   font-family:'Poppins',sans-serif;
   font-weight:500;
   font-size:13px;
@@ -127,11 +150,11 @@
   background-repeat:no-repeat;
   background-position:center;
   background-size:contain;
-  opacity:.7;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cpolyline points='22,6 12,13 2,6'/%3E%3C/svg%3E");
+  opacity:.8;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239B87F5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cpolyline points='22,6 12,13 2,6'/%3E%3C/svg%3E");
 }
 .pp-topbar-email:hover{
-  color:#18A073!important;
+  color:#9B87F5!important;
 }
 .pp-topbar-email:hover::before{
   opacity:1;
@@ -143,6 +166,7 @@
 .top-navigation-tools{
   display:flex!important;
   align-items:center;
+  flex-shrink:0;
 }
 .top-nav-button-login{
   color:rgba(255,255,255,.8)!important;
@@ -150,17 +174,18 @@
   font-weight:500!important;
   font-size:13px!important;
   background:transparent!important;
+  white-space:nowrap;
   transition:color .15s ease;
 }
 .top-nav-button-login:hover{
-  color:#18A073!important;
+  color:#9B87F5!important;
 }
 .responsive-tools a{
   color:rgba(255,255,255,.8)!important;
   transition:color .15s ease;
 }
 .responsive-tools a:hover{
-  color:#18A073!important;
+  color:#9B87F5!important;
 }
 
 /* ===== Mobil/tablet (<992px, stejný zlom jako nativní přepnutí na
