@@ -863,3 +863,175 @@ label.variant-chip--default{ --chip-color:#4d4d4d; --chip-bg:#f5f5f8; }
     padding:6px 9px 6px 6px!important;
   }
 }
+
+
+/* ===== Taby Diskuze + Značka — nadpis a karty v jednotném stylu webu =====
+   Klient chtěl karty "Diskuze" a "Značka" (dva ze tří tabů pod tlačítkem
+   "Přidat do košíku") ve stejném designu, jaký web používá jinde —
+   konkrétně stejný vzor jako homepage.css (bold Montserrat nadpis s
+   gradientním pruhem pod textem, viz sekce "Novinky"/"Poslední komentáře"
+   na hlavní stránce) a stejná "krabička" karta, jakou má např. Přidat do
+   košíku nebo krátký popis (bílé pozadí, jemný rámeček, zaoblení, stín).
+
+   Nadpis "Diskuze" (h2, nativně Shoptetův výchozí font "Exo 2" 400)
+   dostává STEJNÉ ošetření jako nadpisy na homepage — scope přes
+   "#discussionWrapper h2", ať se nedotkne jiných h2 na stránce.
+   Tab "Značka" v DOM žádný vlastní nadpis nemá (text "Značka HP" je jen
+   v samotném tabu nahoře) — tady tedy jen karta kolem textu, žádný nový
+   nadpis navíc (nevymýšlíme text, který nebyl v zadání).
+
+   Tlačítka "Přidat komentář" a "Odpovědět" u jednotlivého komentáře mají
+   v DOM STEJNOU sadu tříd (.add-comment.btn.btn-sm.btn-secondary) — jedno
+   pravidlo scoped na "#discussionWrapper" stačí pro obě. Barvu (fialový
+   rámeček) měl Shoptet nastavenou už nativně, jen hranaté rohy a bez
+   hoveru — doplňujeme zaoblení do pilulky + hover přechod stejným
+   gradientem, jaký má tlačítko "Přidat do košíku" výš na stránce.
+
+   Avatar (".vote-initials") byl nativně plná barva podle hashe jména
+   (např. modrá) — sjednoceno na stejný fialovo-zelený gradient jako
+   zbytek webu. Tahle třída je mimochodem sdílená i s "Poslední komentáře"
+   na homepage (homepage.css), takže se stejný gradientní avatar
+   automaticky promítne i tam — bonus konzistence, ne vedlejší efekt k
+   řešení.
+
+   ".vote-content" (text komentáře + tlačítko Odpovědět) má padding-left
+   56px = šířka avataru (44px) + mezera (12px) v ".vote-header", aby text
+   vizuálně navazoval pod jménem/datem, ne pod avatarem — na mobilu
+   (≤479px) se odsazení ruší a avatar zmenšuje, ať zbyde víc místa na
+   text v užším sloupci.
+
+   Živě otestováno na produktu "HP ProDesk 400 G6 DM" (má 1 reálný
+   komentář) na šířkách 320–1920px — žádné přetečení karty ani textu,
+   ověřeno i vizuálně (screenshoty desktop 1568px + mobil 375px). */
+#discussionWrapper h2{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  font-family:'Montserrat',sans-serif!important;
+  font-weight:700!important;
+  font-size:24px!important;
+  line-height:1.2!important;
+  letter-spacing:-0.02em!important;
+  color:#0A0E17!important;
+  margin:0 0 20px!important;
+}
+#discussionWrapper h2::after{
+  content:"";
+  display:block;
+  width:48px;
+  height:3px;
+  margin-top:10px;
+  border-radius:3px;
+  background:linear-gradient(90deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%);
+}
+#discussionWrapper .btn.btn-sm.btn-secondary{
+  border-radius:999px!important;
+  border:1.5px solid #5B2CDB!important;
+  color:#5B2CDB!important;
+  background:#fff!important;
+  padding:8px 18px!important;
+  transition:background .15s ease,color .15s ease,box-shadow .15s ease,transform .15s ease;
+}
+#discussionWrapper .btn.btn-sm.btn-secondary:hover{
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  border-color:transparent!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px -4px rgba(91,44,219,.35);
+  transform:translateY(-1px);
+}
+.votes-wrap.discussion{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.vote-wrap{
+  background:#fff;
+  border:1px solid #eef0f4;
+  border-radius:14px;
+  box-shadow:0 2px 10px rgba(20,20,40,.05);
+  padding:16px 18px;
+}
+.vote-header{
+  display:flex!important;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:8px;
+}
+.vote-pic{
+  flex-shrink:0;
+}
+.vote-initials{
+  width:44px!important;
+  height:44px!important;
+  border-radius:50%!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  color:#fff!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:700!important;
+  font-size:16px!important;
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+.vote-title{
+  display:block;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:600!important;
+  font-size:15px!important;
+  color:#1a1a1a!important;
+}
+.vote-name{
+  font-family:'Poppins',sans-serif!important;
+  font-size:13px!important;
+  color:#5B2CDB!important;
+  font-weight:500!important;
+}
+.vote-rating{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.vote-time{
+  font-family:'Poppins',sans-serif!important;
+  font-size:12px!important;
+  color:#8a8f98!important;
+}
+.vote-content{
+  font-family:'Poppins',sans-serif!important;
+  font-size:14px!important;
+  color:#4d4d4d!important;
+  line-height:1.6!important;
+  padding-left:56px;
+}
+.vote-content .add-comment.btn.btn-sm.btn-secondary{
+  margin-top:8px!important;
+  padding:6px 14px!important;
+  font-size:12px!important;
+}
+#manufacturerDescription{
+  background:#f9f9fb;
+  border:1px solid #eef0f4;
+  border-left:4px solid #5B2CDB;
+  border-radius:14px;
+  padding:18px 20px;
+}
+#manufacturerDescription p,
+#manufacturerDescription span{
+  font-family:'Poppins',sans-serif!important;
+  color:#4d4d4d!important;
+  font-size:14px!important;
+  line-height:1.65!important;
+}
+@media(max-width:479px){
+  .vote-content{
+    padding-left:0;
+    margin-top:6px;
+  }
+  .vote-initials{
+    width:38px!important;
+    height:38px!important;
+    font-size:14px!important;
+  }
+}
