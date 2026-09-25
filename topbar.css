@@ -64,10 +64,16 @@
 }
 
 /* ===== Kontakty (telefon + e-mail) ===== */
+/* Skrytá past (živě odhalená hned po nasazení): nativní Shoptet styl dává
+   .top-navigation-contacts vlastní bílé pozadí (rgb(255,255,255)) — na
+   světlé výchozí liště neviditelné, ale na naší tmavé (#0A0E17) to
+   vytvořilo velký bílý obdélník přes telefon i e-mail. Nulujeme ho, ať
+   se ukáže tmavé pozadí .top-navigation-bar pod ním. */
 .top-navigation-contacts{
   display:flex!important;
   align-items:center;
   gap:22px;
+  background:transparent!important;
 }
 /* Popisek "Zákaznická podpora:" pryč — ikonky + barevný telefon mluví
    samy za sebe, čistší a "luxusnější" minimalistický vzhled. */
