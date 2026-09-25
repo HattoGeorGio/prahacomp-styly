@@ -1,0 +1,96 @@
+/* =====================================================================
+   HOMEPAGE.CSS — nadpisy sekcí na úvodní stránce e-shopu
+   (.homepage-group-title "Novinky" + h2 "Poslední komentáře" /
+   "Poslední hodnocení" uvnitř .latest-contribution-wrapper)
+
+   Zadání: nadpis "Novinky" (a stejně tak "Poslední komentáře" a "Poslední
+   hodnocení" dole na stránce) v našem tučném Montserratu, "pokročilá"
+   úprava v designu celého webu, fungující na mobilu/tabletu/desktopu.
+
+   Montserrat + tučný řez + těsné stopování písmen (-0.02em) + tmavě
+   modročerná #0A0E17 je přesně to, čím prahacomputer.cz (marketingový web
+   klienta) odlišuje své nadpisy od běžného textu — ověřeno živě na
+   www.prahacomputer.cz přes getComputedStyle: H1 "Diagnostika, která..."
+   = Montserrat 700, letter-spacing -1.28px na 51.2px (=-0.025em); H2
+   "Opravy na komponentové úrovni..." = Montserrat 700, -0.9px na 36px
+   (taky přesně -0.025em), barva rgb(10,14,23) na světlém pozadí. Tenhle
+   soubor přenáší STEJNÝ systém na tři analogické nadpisy uvnitř e-shopu,
+   místo aby vymýšlel nový.
+
+   Krátký přechodový pruh pod textem (gradient fialová→zelená, identický
+   s `#navigation`, patičkou a horní lištou) je stejný sjednocující prvek,
+   jaký web používá všude jinde — bez potřeby vymýšlet nový text/copy,
+   který nebyl součástí zadání. Šířka pruhu je pevná v px (64px / 48px),
+   ne v % — bezpečné na jakékoli šířce sloupce, včetně nejužšího 245px
+   sloupce "Poslední komentáře" na 320px mobilu (živě přeměřeno).
+
+   Montserrat v e-shopu dosud NEBYL načtený (jen Poppins přes style.css)
+   — tenhle soubor si ho proto sám importuje, stejně jako by to udělal
+   jakýkoli budoucí soubor, který by Montserrat jako první potřeboval.
+
+   Selektory: `.homepage-group-title` je Shoptetova obecná třída pro
+   JAKÝKOLI nadpis produktové skupiny na homepage (numerický sufix
+   `homepage-products-heading-5` je vázaný na konkrétní blok a mohl by se
+   při přeuspořádání v administraci změnit — cílíme proto na stabilní
+   obecnou třídu, ne na něj). `.latest-contribution-wrapper h2` cílí na
+   oba nadpisy dole zároveň (na stránce jsou v tomhle wrapperu jen tyhle
+   dva h2, žádné jiné) — méně kódu, stejný výsledek jako dva samostatná
+   pravidla.
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
+
+/* ===== "Novinky" (a jakýkoli další homepage produktový blok) ===== */
+.homepage-group-title{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  font-family:'Montserrat',sans-serif!important;
+  font-weight:700!important;
+  font-size:clamp(24px,3vw,32px)!important;
+  line-height:1.15!important;
+  letter-spacing:-0.02em!important;
+  color:#0A0E17!important;
+}
+.homepage-group-title::after{
+  content:"";
+  display:block;
+  width:64px;
+  height:4px;
+  margin-top:14px;
+  border-radius:4px;
+  background:linear-gradient(90deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%);
+}
+
+@media(max-width:767px){
+  /* Native odsazení nahoře (57px) bylo odměřené pro klidný, prostorný
+     desktop layout — na mobilu zbytečně zvětšuje vzdálenost od bannerů
+     nad tím. Zmenšujeme jen na mobilu, spodní odstup (19px) necháváme
+     beze změny všude (dost místa k prvnímu řádku produktů). */
+  .homepage-group-title{
+    margin-top:32px!important;
+  }
+}
+
+/* ===== "Poslední komentáře" + "Poslední hodnocení" (patička homepage) ===== */
+.latest-contribution-wrapper h2{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  margin:0 0 20px!important;
+  font-family:'Montserrat',sans-serif!important;
+  font-weight:700!important;
+  font-size:clamp(19px,4vw,24px)!important;
+  line-height:1.2!important;
+  letter-spacing:-0.02em!important;
+  color:#0A0E17!important;
+}
+.latest-contribution-wrapper h2::after{
+  content:"";
+  display:block;
+  width:48px;
+  height:3px;
+  margin-top:10px;
+  border-radius:3px;
+  background:linear-gradient(90deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%);
+}
