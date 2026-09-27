@@ -31,7 +31,7 @@
        .variant-chip--new v produkt.css — jednotný jazyk "zelená =
        pozitivní/nový stav" napříč webem).
      - Akce = stejná červeno-oranžová rodina jako slevový štítek "-X %"
-       (.flag-discount) — obojí signalizuje totéž (aktuální zvýhodnení),
+       (.flag-discount) — obojí signalizuje totéž (aktuální zvýhodnění),
        dává smysl, aby spolu vizuálně ladily, i když jde o dvě různé
        CSS třídy/situace (klidně se mohou zobrazit současně, viz "Herní
        PC Ryzen 5 5500" — má Novinka+Akce nahoře i -30 % dole).
@@ -39,7 +39,7 @@
        "doporučujeme/redakční tip", odlišná od zelené i červené, ať se
        tři štítky nikdy vizuálně nepletou, i kdyby se u jednoho produktu
        sešly všechny najednou.
-   ===================================================================== === */
+   ===================================================================== */
 
 .flag.flag-new,
 .flag.flag-action,
