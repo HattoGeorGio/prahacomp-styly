@@ -82,17 +82,6 @@ div.products div.product .p > a.image img{
 div.products div.product .p-in{
   padding:16px 16px 20px!important;
 }
-/* Štítek "Novinka" byl přilepený přesně do rohu (top:0;left:0) — po
-   zaoblení obrázku by tak z poloviny "visel" mimo zaoblenou hranu.
-   Posouváme ho o kousek dovnitř, aby seděl uvnitř zaobleného rohu, a
-   zaoblujeme i jeho vlastní ostré hrany, ať ladí se zbytkem karty. */
-div.products div.product .flags.flags-default{
-  top:10px!important;
-  left:10px!important;
-}
-div.products div.product .flag.flag-new{
-  border-radius:6px!important;
-}
 /* Tlačítko "Do košíku" — barvu (fialová) už nastavuje základní
    style.css přes obecné pravidlo pro .btn-cart, tady jen přidáváme
    zaoblení a jemné zvýraznění stínem při najetí myší. */
