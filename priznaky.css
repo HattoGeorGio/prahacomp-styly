@@ -1,6 +1,6 @@
 /* =====================================================================
-   PRIZNAKY.CSS — příznaky "Novinka", "Akce" a "Tip" (administrací
-   nastavitelné štítky produktu)
+   PRIZNAKY.CSS — příznaky "Novinka", "Akce", "Tip" a "Výprodej"
+   (administrací nastavitelné štítky produktu)
    Samostatný soubor od kategorie.css/produkt.css/homepage.css. Tenhle
    typ štítku (na rozdíl od slevového "-X %", který zůstává v
    kategorie.css/produkt.css beze změny, viz .flag-discount) se objevuje
@@ -16,13 +16,14 @@
    v budoucnu "rozejít" mezi stránkami.
 
    V administraci (Produkty -> Přehled) má každý produkt čtyři sloupce-
-   přepínače: Akce, Novinka, Tip, Výprodej. Ověřeno přímo ve zdrojovém
-   CSS šablony Shoptetu (main-11.less...css), že prvním třem odpovídají
-   reálné CSS třídy `.flag-action` / `.flag-new` / `.flag-tip` (Výprodej
-   žádnou vlastní vizuální třídu v šabloně nemá — buď nemá na webu
-   žádný badge, nebo sdílí `.flag-action`). "Tip" klient teď u žádného
-   produktu nemá zapnutý, ale styl je připravený dopředu — až ho někdy
-   zapne, bude rovnou v jednotném stylu webu, ne v nativní tyrkysové.
+   přepínače: Akce, Novinka, Tip, Výprodej. Ověřeno přímo v živém DOM
+   produktu, že jim odpovídají reálné CSS třídy `.flag-action` /
+   `.flag-new` / `.flag-tip` / `.flag-custom1` — poslední jmenovaná je
+   Shoptetův obecný "vlastní štítek" slot bez výchozího stylu v šabloně
+   (proto ho nešlo najít v kompilovaném CSS šablony, jen přímo na
+   vykreslené stránce). "Tip" klient teď u žádného produktu nemá
+   zapnutý, ale styl je připravený dopředu — až ho někdy zapne, bude
+   rovnou v jednotném stylu webu, ne v nativní tyrkysové.
 
    Barvy podle významu, ale ve stejné "rodině" jako zbytek webu
    (zaoblená pilulka, tučný Poppins, bílý text, jemný barevný stín —
@@ -39,11 +40,17 @@
        "doporučujeme/redakční tip", odlišná od zelené i červené, ať se
        tři štítky nikdy vizuálně nepletou, i kdyby se u jednoho produktu
        sešly všechny najednou.
+     - Výprodej = rezavě-oranžová (vychází z nativní barvy Shoptetu pro
+       tenhle štítek, #BE5718 — jen jí dáváme stejný gradient/pilulku/
+       stín jako ostatním třem), schválně odlišná od "Akce" (ta je víc
+       červeno-růžová), ať i při zapnutí všech čtyř příznaků najednou
+       zůstane každý na první pohled jiný.
    ===================================================================== */
 
 .flag.flag-new,
 .flag.flag-action,
-.flag.flag-tip{
+.flag.flag-tip,
+.flag.flag-custom1{
   display:inline-flex!important;
   align-items:center!important;
   border-radius:8px!important;
@@ -68,6 +75,10 @@
   background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 100%)!important;
   box-shadow:0 4px 12px -3px rgba(91,44,219,.4)!important;
 }
+.flag.flag-custom1{
+  background:linear-gradient(135deg,#BE5718 0%,#E0812E 100%)!important;
+  box-shadow:0 4px 12px -3px rgba(190,87,24,.4)!important;
+}
 
 /* ===== Karta produktu (kategorie + homepage) =====
    Wrapper štítků (.flags.flags-default) sedí v levém horním rohu fotky
@@ -81,7 +92,8 @@
    otestováno na "Herní PC Ryzen 5 5500..."), řadí je Shoptet přirozeně
    pod sebe — přidáváme jen mezeru mezi nimi, ať na sebe nejsou
    nalepené, a `align-items:flex-start`, ať štítky různé šířky (Novinka
-   vs. Akce vs. Tip) zůstanou zarovnané k levému okraji, ne na střed. */
+   vs. Akce vs. Tip vs. Výprodej) zůstanou zarovnané k levému okraji,
+   ne na střed. */
 div.products div.product .flags.flags-default{
   top:10px!important;
   left:10px!important;
