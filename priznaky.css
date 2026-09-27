@@ -1,0 +1,116 @@
+/* =====================================================================
+   PRIZNAKY.CSS — příznaky "Novinka", "Akce" a "Tip" (administrací
+   nastavitelné štítky produktu)
+   Samostatný soubor od kategorie.css/produkt.css/homepage.css. Tenhle
+   typ štítku (na rozdíl od slevového "-X %", který zůstává v
+   kategorie.css/produkt.css beze změny, viz .flag-discount) se objevuje
+   na TŘECH různých místech webu se STEJNOU dvojicí CSS tříd — Shoptet
+   je nevytváří zvlášť pro každou stránku, ale sdílí je globálně:
+     1) karta produktu ve výpisu kategorie (div.products div.product
+        .flags.flags-default, position:absolute, levý horní roh fotky)
+     2) stejná karta na homepage v sekci "Novinky" (identický markup)
+     3) hlavička detailu produktu (.flags.flags-default.flags-inline,
+        position:static, v řádku vedle hvězdičkového hodnocení)
+   Proto žije v JEDNOM samostatném souboru místo duplikace ve třech —
+   změna vzhledu štítku se tak vždy projeví všude najednou a nemůže se
+   v budoucnu "rozejít" mezi stránkami.
+
+   V administraci (Produkty -> Přehled) má každý produkt čtyři sloupce-
+   přepínače: Akce, Novinka, Tip, Výprodej. Ověřeno přímo ve zdrojovém
+   CSS šablony Shoptetu (main-11.less...css), že prvním třem odpovídají
+   reálné CSS třídy `.flag-action` / `.flag-new` / `.flag-tip` (Výprodej
+   žádnou vlastní vizuální třídu v šabloně nemá — buď nemá na webu
+   žádný badge, nebo sdílí `.flag-action`). "Tip" klient teď u žádného
+   produktu nemá zapnutý, ale styl je připravený dopředu — až ho někdy
+   zapne, bude rovnou v jednotném stylu webu, ne v nativní tyrkysové.
+
+   Barvy podle významu, ale ve stejné "rodině" jako zbytek webu
+   (zaoblená pilulka, tučný Poppins, bílý text, jemný barevný stín —
+   stejný vzor jako slevový štítek "-X %" v kategorie.css/produkt.css):
+     - Novinka = zelená (stejná barva jako "Nové" u variant produktu,
+       .variant-chip--new v produkt.css — jednotný jazyk "zelená =
+       pozitivní/nový stav" napříč webem).
+     - Akce = stejná červeno-oranžová rodina jako slevový štítek "-X %"
+       (.flag-discount) — obojí signalizuje totéž (aktuální zvýhodnení),
+       dává smysl, aby spolu vizuálně ladily, i když jde o dvě různé
+       CSS třídy/situace (klidně se mohou zobrazit současně, viz "Herní
+       PC Ryzen 5 5500" — má Novinka+Akce nahoře i -30 % dole).
+     - Tip = brand fialová (stejný gradient jako tlačítka na webu) —
+       "doporučujeme/redakční tip", odlišná od zelené i červené, ať se
+       tři štítky nikdy vizuálně nepletou, i kdyby se u jednoho produktu
+       sešly všechny najednou.
+   ===================================================================== === */
+
+.flag.flag-new,
+.flag.flag-action,
+.flag.flag-tip{
+  display:inline-flex!important;
+  align-items:center!important;
+  border-radius:8px!important;
+  padding:5px 11px!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  line-height:1.2!important;
+  letter-spacing:.15px;
+  color:#fff!important;
+  white-space:nowrap!important;
+}
+.flag.flag-new{
+  background:linear-gradient(135deg,#18A073 0%,#1FBE8E 100%)!important;
+  box-shadow:0 4px 12px -3px rgba(24,160,115,.45)!important;
+}
+.flag.flag-action{
+  background:linear-gradient(135deg,#E63946 0%,#FF7A45 100%)!important;
+  box-shadow:0 4px 12px -3px rgba(198,40,40,.4)!important;
+}
+.flag.flag-tip{
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 100%)!important;
+  box-shadow:0 4px 12px -3px rgba(91,44,219,.4)!important;
+}
+
+/* ===== Karta produktu (kategorie + homepage) =====
+   Wrapper štítků (.flags.flags-default) sedí v levém horním rohu fotky
+   (position:absolute, posunuto 10px od kraje — stejné zdůvodnění jako u
+   slevového štítku v pravém dolním rohu: po zaoblení rohů karty by
+   štítek přilepený přesně do rohu z poloviny "visel" mimo zaoblenou
+   hranu). Dřív tohle (jen top/left + border-radius na samotném
+   flag-new) žilo jako dílčí zásah v kategorie.css — přesunuto sem, ať
+   je vlastnictví celé komponenty na jednom místě.
+   Když má produkt víc příznaků najednou (např. Novinka i Akce, živě
+   otestováno na "Herní PC Ryzen 5 5500..."), řadí je Shoptet přirozeně
+   pod sebe — přidáváme jen mezeru mezi nimi, ať na sebe nejsou
+   nalepené, a `align-items:flex-start`, ať štítky různé šířky (Novinka
+   vs. Akce vs. Tip) zůstanou zarovnané k levému okraji, ne na střed. */
+div.products div.product .flags.flags-default{
+  top:10px!important;
+  left:10px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:6px!important;
+}
+
+/* ===== Hlavička detailu produktu =====
+   Tady je wrapper (.flags-inline) normální součástí řádku vedle
+   hvězdičkového hodnocení — rodič (.p-detail-info) má už nativně
+   display:flex;align-items:center, takže větší štítek (padding +
+   zaoblení) zůstává na stejné ose jako hvězdičky i po zvětšení. Shoptet
+   tu více příznaků řadí vedle sebe (ne pod sebe jako na kartě), proto
+   `inline-flex` s vodorovnou mezerou mezi štítky a odstupem od hvězd. */
+.flags.flags-default.flags-inline{
+  display:inline-flex!important;
+  gap:6px!important;
+  margin-right:10px!important;
+}
+
+/* Na mobilu (≤479px, stejný zlom jako jinde v tomhle projektu) je
+   sloupec zúžený — když se sejde víc štítků + hvězdičky na jednom
+   řádku hlavičky produktu, necháváme je volně zalomit na další řádek
+   (Shoptet to tak dělá nativně, jen dorovnáváme svislou mezeru mezi
+   řádky po zalomení, ať štítky a hvězdičky nejsou nalepené na sebe). */
+@media(max-width:479px){
+  .flags.flags-default.flags-inline{
+    margin-bottom:6px;
+  }
+}
