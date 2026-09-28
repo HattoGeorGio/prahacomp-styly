@@ -432,6 +432,94 @@ body.ordering-process #header .site-name{display:block!important;}
 }
 .search-form .search-whisperer{z-index:9999;}
 
+/* ===== Header-top na tabletu (768–1199px): rovnoměrné třetiny =====
+   Nativní header-top rozděluje logo/vyhledávání/košík na TŘI STEJNÉ
+   sloupce (flex-basis:33.3333% na všech třech, ověřeno živě přes
+   getComputedStyle — je to ze šablony, do jejího zdroje kvůli CORS
+   není vidět, ale chování je jasné a opakovatelné na 768px i 1199px).
+   Na širokém desktopu to nevadí — třetina je vždycky širší, než kolik
+   vyhledávací pole samo potřebuje (má vlastní strop max-width:480px
+   výš), takže se prostě vycentruje s prázdným místem kolem. Ale v
+   rozmezí 768–1199px (stejné pásmo jako tabletová oprava mega-menu o
+   pár řádků výš) klesne třetina na pouhých ~228–303px — do toho se
+   vejde sotva polovina vyhledávacího pole, placeholder "Napište, co
+   hledáte" se ořízl doprostřed slova (klient nahlásil, poslal snímek
+   z mobilu v tabletové šířce). Logo (má vlastní přirozený strop
+   ~242px, ověřeno živě) ani ikona košíku (potřebuje jen desítky
+   pixelů) svou třetinu vůbec nevyužijí — zbytečně jen "drží" prostor,
+   který by se hodil vyhledávání.
+   Řešení: logo a košík dostávají jen tolik místa, kolik potřebuje
+   jejich obsah (flex:0 1 auto), uvolněný prostor jde vyhledávání
+   (flex:1 1 auto — samo se zastaví na svém stropu 480px, viz výš).
+   Header-top ZŮSTÁVÁ nowrap (viz poznámka u hlavičky úplně nahoře) —
+   měníme jen POMĚR šířek uvnitř řádku, ne jeho zalamování, ať
+   nedojde k rozbití pozice vysunovacích panelů košíku/vyhledávání,
+   která na jednořádkové hlavičce závisí. */
+@media(min-width:768px) and (max-width:1199px){
+  #header .header-top .site-name-wrapper,
+  #header .header-top .navigation-buttons{
+    flex:0 1 auto!important;
+    width:auto!important;
+  }
+  #header .header-top .search{
+    flex:1 1 auto!important;
+    width:auto!important;
+  }
+}
+
+/* ===== Tlačítko "Více" — přetečené položky hlavního menu =====
+   (.menu-helper, data-testid="hamburgerMenu")
+   Když se na dané šířce nevejdou všechny položky hlavního menu do
+   jednoho řádku (typicky "VÝKUP ZBOŽÍ" na tabletu, viz klientův
+   snímek), Shoptet je nativně schová za tohle tlačítko — čtverec s
+   ikonou tří čárek ("hamburger"). Zdroj bílých čárek se v šabloně
+   nepodařilo dohledat (žádný nativní background-image/box-shadow/mask
+   na elementu ani jeho ::before/::after, ověřeno živě přes
+   getComputedStyle — stejná situace jako kdysi u ikonky domů v
+   breadcrumb.css v1, viz tamní changelog). Stejná osvědčená technika
+   jako tam: nativní ::after (plný čtverec bez zaoblení) se vypíná a
+   nahrazuje vlastní, plně kontrolovanou SVG ikonkou přímo na
+   `.menu-helper`, v brand fialové se zaoblením, ať tlačítko konečně
+   vypadá jako součást webu, ne jako neupravený nativní prvek.
+   Samotný rozbalený panel (`.menu-helper .menu-level-1`, kompletní
+   duplikát celého menu) přebírá STEJNÝ, už živě ověřený bílý styl
+   jako mobilní rozbalovací hamburger menu o pár řádků níž (stejné CSS
+   třídy `.menu-level-1`/`>li>a`, jen navíc přes `.menu-helper`, aby
+   platilo i v tomhle tabletovém rozmezí, kde se mobilní pravidlo pod
+   767px ještě nepoužije). */
+#navigation .menu-helper::after{
+  content:none!important;
+}
+#navigation .menu-helper{
+  background-color:#5B2CDB!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='4' y1='7' x2='20' y2='7'/%3E%3Cline x1='4' y1='12' x2='20' y2='12'/%3E%3Cline x1='4' y1='17' x2='20' y2='17'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:18px 18px!important;
+  border-radius:8px!important;
+  transition:background-color .15s ease;
+}
+#navigation .menu-helper:hover{
+  background-color:#4a23b3!important;
+}
+@media(min-width:768px) and (max-width:1199px){
+  #navigation .menu-helper,
+  #navigation .menu-helper .menu-level-1{
+    background:#fff!important;
+  }
+  #navigation .menu-helper .menu-level-1>li>a{
+    color:#1a1a1a!important;
+    font-weight:600;
+  }
+  #navigation .menu-helper .menu-level-1>li>a:hover,
+  #navigation .menu-helper .menu-level-1>li>a:focus-visible,
+  #navigation .menu-helper .menu-level-1>li.exp>a{
+    color:#5B2CDB!important;
+    background-color:#f5f2fc!important;
+  }
+}
+
+
 /* ===== Košík — tlačítko v hlavičce =====
    Ikona dostává kolečko s přechodem fialová→zelená na OBOU velikostech
    obrazovky teď — jen v jiné velikosti. Na desktopu je to beze změny
