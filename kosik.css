@@ -1,0 +1,522 @@
+/* =====================================================================
+   KOSIK.CSS — stránka nákupního košíku (/kosik/, krok "Nákupní košík")
+   Nový, samostatný soubor (viz dohoda s klientem: každá větší část webu
+   = vlastní soubor, aby chyba v jednom nemohla rozbít fungující části
+   v jiném) — kompletní redesign celé stránky košíku, sjednocený vzhled
+   desktop/mobil, úklid "rozsypaného" textu na mobilu (holé řádky
+   Dostupnost/Cena za m.j./Součet bez jakéhokoli ohraničení) a
+   dokončení vzhledu prázdného košíku, kde nadpis "Váš nákupní košík je
+   prázdný" seděl přímo na tmavém pozadí stránky (fotka komponentů) a
+   byl kvůli tmavému textu na tmavém pozadí prakticky nečitelný.
+   Barvy/zaoblení/stíny sladěné se zbytkem webu (kategorie.css,
+   produkt.css): brand fialová #5B2CDB, přechod
+   #5B2CDB→#7A3FE0→#18A073, zelená "doprava zdarma" #eafaf3/#0f7a56,
+   zaoblení karet 14-16px, stín 0 3px 14px rgba(20,20,40,.09).
+   ===================================================================== */
+
+/* ===== Hlavní karta levého sloupce (obsah košíku i prázdný košík) =====
+   `.cart-content` je nativně jen neviditelný wrapper (žádné pozadí, bez
+   paddingu) — použité na TŘECH různých místech stránky (levý sloupec,
+   pravý box "Potřebujete pomoc?", pravý box "Celkem za zboží"), proto
+   cílíme přes `.col-md-8 > .cart-content`, ať se karta netýká i
+   postranních boxů (ty mají svoje vlastní pravidlo níže). Stejná
+   karta obaluje jak vyplněný košík (krokovadlo + tabulka + dárky/
+   doprava), tak prázdný košík (nadpis je mimo ni, viz níže, ale obsah
+   "Podívejte se na nabídku"/"Zkuste vyhledávání" uvnitř ano). */
+.col-md-8 > .cart-content{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 3px 14px rgba(20,20,40,.09);
+  padding:28px;
+}
+
+/* Krokovadlo (Nákupní košík / Doprava & platba / Informace o vás)
+   necháváme obsahově beze změny — používá nativní Shoptet CSS counter
+   (`content:counter(steps)`) s barvou #5B2CDB, tedy přesně naší brand
+   fialovou, takže je vizuálně už teď plně sladěné s webem. Přidáváme
+   jen odstup od obsahu pod ním. */
+.cart-header{
+  margin:0 0 24px!important;
+}
+
+/* ===== Tabulka produktů — desktop/tablet (nad 767px) =====
+   Nativně úplně bez stylu: buňky nalepené na sebe, obrázek bez
+   zaoblení, ceny stejným řezem písma jako popisky. Přidáváme jemné
+   oddělovací linky mezi produkty (na místo dřívější "slepené" tabulky),
+   zaoblený obrázek, sjednocenou typografii cen a kompaktní pilulkové
+   krokovadlo množství + kulaté tlačítko na odebrání místo holé ikonky
+   bez rámečku. */
+.cart-table{
+  width:100%!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+}
+.cart-table tbody tr.removeable{
+  border-bottom:1px solid #eef0f4;
+}
+.cart-table tbody tr.removeable:last-of-type{
+  border-bottom:none;
+}
+.cart-table td{
+  padding:20px 10px!important;
+  vertical-align:middle!important;
+  border:none!important;
+}
+.cart-table td.cart-p-image{
+  width:86px;
+  padding-left:0!important;
+}
+.cart-table td.cart-p-image img{
+  border-radius:12px!important;
+  border:1px solid #eef0f4;
+  display:block;
+}
+.cart-table td.p-name .main-link{
+  color:#1f1f1f!important;
+  font-size:15px;
+  font-weight:600;
+  line-height:1.4;
+  text-decoration:none;
+}
+.cart-table td.p-name .main-link:hover{
+  color:#5B2CDB!important;
+}
+.cart-table td.p-name .main-link-variant{
+  display:block;
+  margin-top:4px;
+  font-size:13px;
+  font-weight:400;
+  color:#8a8f98;
+}
+
+/* Dostupnost — jen jemné doladění řezu, zelená tečka (nativní ::before)
+   zůstává beze změny. */
+.cart-table .availability-label{
+  font-family:'Poppins',sans-serif!important;
+  font-weight:600;
+}
+.cart-table .availability-amount{
+  color:#8a8f98;
+  font-size:13px;
+}
+
+/* Ceny — sjednocená typografie, "Součet" vizuálně nejsilnější (je to
+   částka za řádek), jednotková cena podřazená. */
+.cart-table .price-final{
+  font-family:'Poppins',sans-serif!important;
+  color:#1f1f1f;
+}
+.cart-table .p-price .price-final{
+  font-weight:600;
+  font-size:14px;
+}
+.cart-table .p-price .unit-value{
+  color:#8a8f98;
+  font-size:12px;
+  margin-left:2px;
+}
+.cart-table .p-total .price-final{
+  font-weight:700!important;
+  font-size:17px!important;
+}
+.cart-table .p-total{
+  white-space:nowrap;
+}
+
+/* Krokovadlo množství — kompaktní pilulka [−][1][+] místo nativních
+   volně poletujících šipek/inputu bez rámečku. */
+.cart-table .quantity{
+  display:inline-flex!important;
+  align-items:center;
+  border:1px solid #e4e4ea;
+  border-radius:10px;
+  overflow:hidden;
+  background:#fafafc;
+}
+.cart-table .quantity label{
+  margin:0!important;
+  display:inline-flex;
+}
+.cart-table .quantity input.amount{
+  width:38px;
+  border:none!important;
+  background:transparent!important;
+  text-align:center;
+  font-weight:600;
+  font-size:14px;
+  padding:8px 0!important;
+  box-shadow:none!important;
+  -moz-appearance:textfield;
+}
+.cart-table .quantity input.amount::-webkit-inner-spin-button,
+.cart-table .quantity input.amount::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+.cart-table .quantity button.increase,
+.cart-table .quantity button.decrease{
+  width:30px;
+  height:34px;
+  border:none!important;
+  background:transparent!important;
+  color:#5B2CDB;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .15s ease;
+}
+.cart-table .quantity button.increase:hover,
+.cart-table .quantity button.decrease:hover{
+  background:#eef0f4!important;
+}
+
+/* Tlačítko "Odstranit z košíku" — nativní ikonka (icon-font "shoptet")
+   zůstává, jen jí dáváme kulaté ohraničené tlačítko a barvu při hoveru
+   (červenkavá — jasná signalizace mazání). */
+.cart-table button.remove-item{
+  width:32px!important;
+  height:32px!important;
+  border-radius:50%!important;
+  border:1px solid #eef0f4!important;
+  background:#fafafc!important;
+  color:#8a8f98!important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:background .15s ease,border-color .15s ease,color .15s ease;
+}
+.cart-table button.remove-item:hover{
+  background:#fdeceb!important;
+  border-color:#f3b8b3!important;
+  color:#d9483c!important;
+}
+
+/* ===== Dárky a slevy / Doprava zdarma =====
+   Sekce pod tabulkou — nativně jen h2 + dva sloupce (levý pro budoucí
+   dárky/slevy, pravý s hláškou o dopravě zdarma). Design banneru
+   dopravy sjednocen se stejnou zeleno-bílou paletou, jakou používá
+   баner "Dopravu máte zdarma!" v mini-košíku v hlavičce
+   (#eafaf3/#0f7a56, viz style.css) — na webu tak vypadá jako jedna a
+   ta samá vizuální komponenta, ne dvě různé hlášky. Sekce je vždy v
+   normálním dokumentovém toku (žádné absolutní pozicování), takže se
+   nemůže překrýt s boxem "Celkem za zboží"/tlačítkem POKRAČOVAT
+   vedle — ten je navíc v samostatném pravém sloupci mimo tento tok. */
+.cart-summary{
+  margin-top:8px;
+  padding-top:20px;
+  border-top:1px solid #eef0f4;
+}
+.cart-summary > h2.h4{
+  font-size:15px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  color:#1f1f1f;
+  margin:0 0 14px;
+}
+.extras-wrapper{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.extras-col{
+  flex:1 1 260px;
+}
+.extra.delivery{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#eafaf3;
+  color:#0f7a56;
+  border-radius:12px;
+  padding:12px 18px;
+}
+.extra.delivery::before{
+  color:#0f7a56!important;
+}
+.extra.delivery strong{
+  color:#0f7a56;
+  font-weight:700;
+}
+
+/* ===== Mobil (≤767px) — nativní Shoptet přepne tabulku na "štítky":
+   buňky se stanou blokovými řádky a objeví se popisky (Dostupnost,
+   Počet, Cena za m.j., Součet), které předtím byly na desktopu
+   schované jen jako sr-only-like pomůcka. Bez stylu to vypadá jako
+   rozsypaný text bez jakékoli struktury — každý produkt teď dostává
+   vlastní ohraničenou kartu s jasně odděleným popiskem/hodnotou na
+   každém řádku. ===== */
+@media(max-width:767px){
+  .col-md-8 > .cart-content{
+    padding:18px;
+    border-radius:14px;
+  }
+  .cart-table,
+  .cart-table tbody{
+    display:block;
+    width:100%;
+  }
+  .cart-table tbody tr.removeable{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    grid-template-areas:
+      "image name"
+      "avail avail"
+      "qty qty"
+      "price total";
+    gap:10px 14px;
+    padding:16px 4px;
+    border:1px solid #eef0f4;
+    border-radius:14px;
+    margin-bottom:14px;
+    background:#fafafc;
+  }
+  .cart-table tbody tr.removeable:last-of-type{
+    margin-bottom:0;
+  }
+  .cart-table td{
+    padding:0!important;
+    display:block;
+  }
+  .cart-table td.cart-p-image{
+    grid-area:image;
+    width:64px;
+  }
+  .cart-table td.cart-p-image img{
+    width:64px;
+    height:64px;
+    object-fit:cover;
+  }
+  .cart-table td.p-name{
+    grid-area:name;
+    align-self:center;
+  }
+  .cart-table td.p-availability{
+    grid-area:avail;
+    padding-top:8px!important;
+    border-top:1px dashed #e4e4ea;
+  }
+  .cart-table td.p-quantity{
+    grid-area:qty;
+  }
+  .cart-table td.p-price{
+    grid-area:price;
+  }
+  .cart-table td.p-total{
+    grid-area:total;
+    text-align:right;
+  }
+  /* Popisky (Dostupnost/Počet/Cena za m.j./Součet) — malé, tlumené,
+     nad hodnotou, místo splývání s ní na jednom řádku. */
+  .cart-table .p-label{
+    display:block!important;
+    font-size:11px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+    color:#a2a6b0;
+    margin-bottom:4px;
+  }
+  .cart-table td.p-availability .p-label{
+    display:inline!important;
+    margin-right:6px;
+  }
+  .cart-table .quantity{
+    width:max-content;
+  }
+  .cart-table td.p-total .p-total-inner,
+  .cart-table td.p-total form.inline{
+    display:inline-block;
+  }
+  .cart-table td.p-total{
+    display:flex!important;
+    flex-direction:column;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .cart-table button.remove-item{
+    margin-top:8px;
+  }
+
+  .cart-summary{
+    margin-top:16px;
+    padding-top:16px;
+  }
+  .extras-col{
+    flex:1 1 100%;
+  }
+}
+
+/* ===== Pravý sloupec — "Potřebujete pomoc?" ===== */
+.sidebar-in-cart .cart-content.checkout-box-wrapper{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 3px 14px rgba(20,20,40,.09);
+  padding:22px 24px;
+  margin-bottom:20px;
+}
+.sidebar-in-cart .cart-content.checkout-box-wrapper > h2.h4{
+  font-size:14px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  color:#8a8f98;
+  margin:0 0 14px;
+}
+.sidebar-in-cart .box.box-bg-default{
+  background:transparent!important;
+  padding:0!important;
+}
+.sidebar-in-cart .contact-box strong{
+  display:block;
+  font-size:15px;
+  color:#1f1f1f;
+  margin-bottom:8px;
+}
+.sidebar-in-cart .contact-box ul{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.sidebar-in-cart .contact-box li{
+  margin-bottom:6px;
+}
+.sidebar-in-cart .contact-box a{
+  color:#5B2CDB;
+  font-weight:500;
+  text-decoration:none;
+}
+.sidebar-in-cart .contact-box a:hover{
+  text-decoration:underline;
+}
+
+/* ===== Pravý sloupec — "Celkem za zboží" + tlačítka ===== */
+.sidebar-in-cart .cart-content.summary-wrapper{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 3px 14px rgba(20,20,40,.09);
+  padding:22px 24px;
+}
+.sidebar-in-cart .summary-wrapper .box.box-bg-default{
+  background:transparent!important;
+  padding:0!important;
+}
+.sidebar-in-cart .price-wrapper{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+.sidebar-in-cart .price-wrapper .price-label{
+  font-size:14px;
+  font-weight:600;
+  color:#1f1f1f;
+}
+.sidebar-in-cart .price-wrapper .price{
+  font-size:24px;
+  font-weight:700;
+  color:#1f1f1f;
+  font-family:'Poppins',sans-serif;
+}
+
+/* Tlačítko POKRAČOVAT — plná gradientní pilulka, stejná rodina jako
+   ostatní hlavní CTA na webu (Detail/Přidat do košíku/Otevřít filtr).
+   Nativně mělo `.btn-conversion` bez skutečného zaoblení/gradientu na
+   téhle konkrétní kombinaci tříd (`.btn.btn-lg.btn-conversion.next-
+   step-forward`), proto explicitně přebíjíme. */
+.next-step{
+  display:flex;
+  flex-direction:column-reverse;
+  gap:10px;
+}
+a.next-step-forward.btn{
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  border:none!important;
+  border-radius:50px!important;
+  padding:16px 24px!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  color:#fff!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:600!important;
+  font-size:15px!important;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  box-shadow:0 8px 20px -6px rgba(20,10,60,.45)!important;
+  transition:box-shadow .18s ease,transform .18s ease,background .18s ease!important;
+}
+a.next-step-forward.btn:hover{
+  background:linear-gradient(135deg,#6d3ef0 0%,#8a54e8 45%,#1dbb84 100%)!important;
+  box-shadow:0 12px 26px -6px rgba(20,10,60,.55)!important;
+  transform:translateY(-1px);
+  color:#fff!important;
+}
+a.next-step-back.btn{
+  border:none!important;
+  background:transparent!important;
+  color:#8a8f98!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:500!important;
+  font-size:13px!important;
+  text-align:center;
+  padding:4px!important;
+  text-decoration:underline;
+}
+a.next-step-back.btn:hover{
+  color:#5B2CDB!important;
+}
+
+/* ===== Prázdný košík =====
+   Nadpis "Váš nákupní košík je prázdný" byl nativně mimo jakoukoli
+   kartu — seděl přímo na tmavém pozadí stránky (fotka komponentů),
+   tmavý text na tmavém pozadí byl prakticky nečitelný. Dáváme mu
+   vlastní bílou "titulkovou" kartu ve stejném stylu jako zbytek webu,
+   čímž se problém s kontrastem řeší úplně (černý text je teď na bílé
+   ploše) a nadpis navíc vypadá jako záměrná součást designu, ne jako
+   zapomenutý zbytek nativní šablony. */
+.cart-heading{
+  background:#fff!important;
+  border-radius:16px;
+  box-shadow:0 3px 14px rgba(20,20,40,.09);
+  padding:26px 28px!important;
+  margin:0 0 20px!important;
+  font-size:24px!important;
+  font-weight:700!important;
+  color:#1f1f1f!important;
+}
+.empty-cart-boxes{
+  margin:0;
+}
+.empty-cart-boxes h3{
+  font-size:15px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  color:#8a8f98;
+  margin:0 0 14px;
+}
+.empty-cart-boxes ul{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.empty-cart-boxes li{
+  margin-bottom:8px;
+}
+.empty-cart-boxes li a{
+  color:#5B2CDB;
+  font-weight:500;
+  text-decoration:none;
+}
+.empty-cart-boxes li a:hover{
+  text-decoration:underline;
+}
+@media(max-width:767px){
+  .cart-heading{
+    padding:20px!important;
+    font-size:20px!important;
+  }
+}
