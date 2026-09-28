@@ -423,18 +423,30 @@
    ostatní hlavní CTA na webu (Detail/Přidat do košíku/Otevřít filtr).
    Nativně mělo `.btn-conversion` bez skutečného zaoblení/gradientu na
    téhle konkrétní kombinaci tříd (`.btn.btn-lg.btn-conversion.next-
-   step-forward`), proto explicitně přebíjíme. */
+   step-forward`), proto explicitně přebíjíme.
+   DŮLEŽITÉ: na kroku 1 košíku je to `<a>`, ale na kroku 2 (doprava a
+   platba) a pravděpodobně i na kroku 3 (dokončení objednávky) je to
+   nativně `<button>` (submit tlačítko formuláře) se stejnými třídami
+   `btn next-step-forward` — proto selektor NEVÁŽEME na konkrétní tag
+   (žádné `a.`/`button.`), aby platil na všech třech krocích stejně;
+   totéž pro tlačítko "Zpět" (next-step-back), i když to je zatím
+   ověřeně `<a>` na všech testovaných krocích — pro jistotu bez
+   vázání na tag i tady. Přidán i reset výchozího vzhledu tlačítka
+   (appearance/cursor), který `<a>` nepotřebuje, ale `<button>` ano. */
 .next-step{
   display:flex;
   flex-direction:column-reverse;
   gap:10px;
 }
-a.next-step-forward.btn{
+.next-step-forward.btn{
   display:flex!important;
   align-items:center;
   justify-content:center;
   gap:8px;
   width:100%;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  cursor:pointer;
   border:none!important;
   border-radius:50px!important;
   padding:16px 24px!important;
@@ -448,13 +460,20 @@ a.next-step-forward.btn{
   box-shadow:0 8px 20px -6px rgba(20,10,60,.45)!important;
   transition:box-shadow .18s ease,transform .18s ease,background .18s ease!important;
 }
-a.next-step-forward.btn:hover{
+.next-step-forward.btn:hover{
   background:linear-gradient(135deg,#6d3ef0 0%,#8a54e8 45%,#1dbb84 100%)!important;
   box-shadow:0 12px 26px -6px rgba(20,10,60,.55)!important;
   transform:translateY(-1px);
   color:#fff!important;
 }
-a.next-step-back.btn{
+.next-step-forward.btn:focus-visible{
+  outline:none;
+  box-shadow:0 8px 20px -6px rgba(20,10,60,.45)!important,0 0 0 3px rgba(91,44,219,.25)!important;
+}
+.next-step-back.btn{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  cursor:pointer;
   border:none!important;
   background:transparent!important;
   color:#8a8f98!important;
@@ -465,7 +484,7 @@ a.next-step-back.btn{
   padding:4px!important;
   text-decoration:underline;
 }
-a.next-step-back.btn:hover{
+.next-step-back.btn:hover{
   color:#5B2CDB!important;
 }
 
