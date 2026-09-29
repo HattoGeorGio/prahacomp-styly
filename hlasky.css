@@ -1,0 +1,229 @@
+/* =====================================================================
+   HLASKY.CSS — systémové hlášky e-shopu (".messages" > ".msg")
+   Zadání klienta: nastylovat hlášku "Produkt byl přidán do košíku",
+   která se zobrazí po kliknutí na "Přidat do košíku" na detailu produktu.
+
+   Živě ověřeno (DOM po kliknutí na "Přidat do košíku"):
+   <div class="messages">
+     <div class="msg msg-success" role="alert" data-testid="notifierMessage">
+       <div class="container"><span>Produkt byl přidán do
+         <a href="/kosik/">nákupního košíku</a></span></div>
+     </div>
+   </div>
+   `.messages` je jeden sdílený, na stránce vždy přítomný kontejner
+   (přímé dítě <body>, mimo hlavní `.overall-wrapper` s obsahem stránky)
+   — Shoptet do něj vkládá VŠECHNY systémové hlášky, nejen tuhle: stejný
+   mechanismus (`.msg` + čtyři varianty `.msg-success`/`.msg-notice`,
+   `.msg-info`, `.msg-warning`, `.msg-error`) používá i pro chybové/
+   varovné/informační hlášky jinde na webu (např. špatný slevový kupón,
+   chyba na objednávkovém formuláři). V nativním CSS šablony (ověřeno
+   prohledáním kompilovaného main.css) tenhle mechanismus vypadá takto:
+     .msg{border:1px solid;padding:19px 10px;width:100%;opacity:.99;
+          transition:opacity .3s ease-out}
+     .msg.hidden{opacity:0}                      (mizení po zavření)
+     .msg.msg-success,.msg.msg-notice{background:#3c840f;border-color:#426d0c}
+     .msg.msg-info{background:#3531ff;border-color:#0d31ff}
+     .msg.msg-warning{background:#c75300;border-color:#ae2b00}
+     .msg.msg-error{background:#d33a36;border-color:#c42b41}
+   Protože `.overall-wrapper` (hlavička + obsah stránky) je vyvedený
+   mimo normální tok (proto `.messages`, ač je za ním v HTML, vykresluje
+   souřadnice od úplného vrcholu stránky), hláška se nativně zobrazí
+   jako plný pruh přes CELOU šířku obrazovky, přilepený na úplný vršek
+   — přesně přes hlavičku/logo webu (živě ověřeno: šířka = šířka
+   viewportu, výška ~97 px na desktopu kvůli nativnímu paddingu 38px
+   nahoře/dole). To je přesně to "neelegantní" chování, které má tenhle
+   soubor opravit.
+
+   Protože je `.messages` jediný sdílený kontejner pro všechny čtyři typy
+   hlášek (ne jen pro "přidáno do košíku"), a oprava vyžaduje zásah do
+   POZICE tohoto sdíleného kontejneru (jinak by hláška dál ležela přes
+   hlavičku i po perfektním nastylování barvy/písma uvnitř), stylujeme
+   rovnou všechny čtyři varianty jednotně — ne jen tu jednu, o kterou si
+   klient řekl. Jinak by po zásahu do `.messages` (přesun z celoširokého
+   pruhu do plovoucí karty) zůstaly ostatní tři typy (chyba/varování/
+   info) vizuálně rozbité (nativní barvy na kartě navržené pro nový
+   bílý vzhled by nesouhlasily) — sjednocením se navíc konečně vyřeší i
+   to, že libovolná systémová hláška kdekoli na webu dosud překrývala
+   hlavičku stránky.
+
+   Vzhled: plovoucí "toast" karta vpravo nahoře (moderní e-shopový
+   vzor), bílé pozadí + výrazný stín (žádná plná barva na pozadí),
+   kulatá barevná ikonka vlevo nese význam (✓/i/!/✕) — barvy převzaté
+   z existující brand palety webu (zelená #18A073 stejná jako u štítku
+   "Novinka" a tlačítek, fialová #5B2CDB stejná jako brand/CTA barva,
+   oranžová/červená ze štítků "Výprodej"/"Akce" v priznaky.css), aby
+   hláška zapadla do zbytku webu a nepůsobila jako cizí prvek. Zaoblení
+   14 px a stín stejné rodiny jako karty produktů v kategorie.css/
+   produkt.css/kosik.css (jen silnější, "vznášející se" verze, protože
+   jde o plovoucí prvek nad obsahem, ne o kartu v layoutu stránky).
+   Jemná animace při objevení (nadlehčení + prolnutí) a zachované plynulé
+   mizení přes nativní `.hidden` třídu (jen doplněné o posun stranou, ať
+   engineer to nepůsobí jako "problikne a zmizí").
+   ===================================================================== */
+
+/* ===== Kontejner hlášek — z celoširokého pruhu na vršku stránky na
+   plovoucí kartu vpravo nahoře. `position:fixed` odpoutá kontejner od
+   jeho místa v HTML toku (viz vysvětlení výše, proč tam nativně "visí"
+   přes hlavičku) a `max-width` + `width:auto` mu zabrání roztáhnout se
+   přes celou šířku obrazovky. `flex-direction:column` + `gap` navíc
+   robustně vyřeší i vzácný případ, kdy by se objevily dvě hlášky
+   najednou — srovnají se pod sebe se stejnou mezerou, místo aby se
+   překrývaly. ===== */
+.messages{
+  position:fixed!important;
+  top:16px!important;
+  right:16px!important;
+  left:auto!important;
+  bottom:auto!important;
+  width:auto!important;
+  max-width:380px!important;
+  z-index:9999!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:10px!important;
+}
+
+@media(max-width:480px){
+  /* Na malém mobilu je 380px karta u pravého okraje zbytečně úzká a
+     nechává na levé straně velkou nevyužitou mezeru — karta se místo
+     toho roztáhne přes (skoro) celou šířku obrazovky s 12px okrajem po
+     stranách, běžný mobilní vzor pro toast notifikace. */
+  .messages{
+    top:12px!important;
+    left:12px!important;
+    right:12px!important;
+    max-width:none!important;
+  }
+}
+
+/* ===== Karta samotné hlášky =====
+   Přebíjíme nativní plnou barvu pozadí/orámování (`.msg{border:1px
+   solid;...}` a barevné `.msg-success`/`.msg-error`/... pozadí) bílou
+   kartou se stínem — barva/význam hlášky teď nese jen kulatá ikonka
+   vlevo (viz níže), ne celé pozadí. `position:relative` je nutné kvůli
+   ikonce zavření v pravém horním rohu (`::after`, position:absolute). */
+.messages .msg{
+  position:relative!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  gap:12px!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+  background:#fff!important;
+  border:none!important;
+  border-radius:14px!important;
+  box-shadow:0 12px 32px rgba(20,20,40,.18)!important;
+  padding:16px 34px 16px 16px!important;
+  cursor:pointer;
+  font-family:'Poppins',sans-serif!important;
+  font-size:14px!important;
+  line-height:1.5!important;
+  color:#0A0E17!important;
+  transition:opacity .3s ease-out,transform .3s ease-out!important;
+  animation:pcHlaskaIn .35s cubic-bezier(.16,1,.3,1);
+}
+
+/* Zavírání — necháváme nativní mechanismus (JS přidá `.hidden`, po
+   doběhnutí přechodu prvek sám zmizí z DOM), jen k prolnutí (nativně
+   jen `opacity`) přidáváme jemný posun stranou, ať odchod hlášky
+   vypadá stejně "doladěně" jako její příchod. Vyšší specificita
+   (3 třídy) než `.messages .msg` výš zaručuje, že tohle při zavírání
+   vyhraje bez ohledu na pořadí v souboru. */
+.messages .msg.hidden{
+  opacity:0!important;
+  transform:translateX(24px)!important;
+}
+
+@keyframes pcHlaskaIn{
+  from{opacity:0;transform:translateY(-10px) scale(.97);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+
+/* Tenký "×" v rohu — čistě vizuální nápověda "dá se zavřít kliknutím"
+   (celá karta je klikací, viz `cursor:pointer` výš — nativní chování,
+   necháváme beze změny, jen naznačujeme kam kliknout). Bez vlastního
+   JS/tlačítka — jen dekorace přes ::after. */
+.messages .msg::after{
+  content:"✕";
+  position:absolute;
+  top:14px;
+  right:14px;
+  font-size:11px;
+  line-height:1;
+  color:#9aa0ad;
+}
+
+/* ===== Kulatá ikonka vlevo — nese barvu/význam hlášky =====
+   Základ (rozměr, tvar, zarovnání) společný pro všechny 4 varianty v
+   jednom pravidle, barva/symbol (`content`) pak zvlášť pro každou —
+   dvě pravidla na stejný prvek se v CSS bez konfliktu sečtou. Barvy
+   schválně převzaté z existující brand palety webu (ne nové nativní
+   modrá/oranžová/červená), ať hláška vypadá jako přirozená součást
+   webu: zelená = stejná jako štítek "Novinka" a tlačítka (pozitivní
+   stav), fialová = brand/CTA barva (informační), oranžová/červená ze
+   štítků "Výprodej"/"Akce" v priznaky.css (varování/chyba). */
+.messages .msg.msg-success::before,
+.messages .msg.msg-notice::before,
+.messages .msg.msg-info::before,
+.messages .msg.msg-warning::before,
+.messages .msg.msg-error::before{
+  flex:0 0 30px!important;
+  width:30px!important;
+  height:30px!important;
+  border-radius:50%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin-top:1px;
+  color:#fff!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:15px!important;
+  font-weight:700!important;
+  line-height:1!important;
+}
+.messages .msg.msg-success::before,
+.messages .msg.msg-notice::before{
+  content:"✓";
+  background:#18A073!important;
+}
+.messages .msg.msg-info::before{
+  content:"i";
+  background:#5B2CDB!important;
+  font-style:italic;
+  font-family:Georgia,'Times New Roman',serif!important;
+}
+.messages .msg.msg-warning::before{
+  content:"!";
+  background:#E0812E!important;
+}
+.messages .msg.msg-error::before{
+  content:"✕";
+  background:#E63946!important;
+  font-size:13px!important;
+}
+
+/* ===== Text hlášky =====
+   Nativně bílý text (na dřívějším barevném pozadí) — teď na bílé kartě
+   přebarvujeme zpět na tmavou "brand" barvu webu (stejná #0A0E17 jako
+   nadpisy v homepage.css). `.container` byl nativně jen obalový div bez
+   vlastního významu — necháváme mu růst přes zbylý prostor karty vedle
+   ikonky. Odkaz (např. "nákupního košíku" vedoucí na /kosik/) zvýrazňujeme
+   brand fialovou s podtržením, ať je jasně vidět, že je klikací. */
+.messages .msg,
+.messages .msg .container span{
+  color:#0A0E17!important;
+}
+.messages .msg .container{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  padding:0!important;
+  margin:0!important;
+}
+.messages .msg a{
+  color:#5B2CDB!important;
+  font-weight:600!important;
+  text-decoration:underline!important;
+}
+.messages .msg a:hover{
+  color:#18A073!important;
+}
