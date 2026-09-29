@@ -44,35 +44,63 @@
       zadané stránky, dostává stejné vizuální zpracování v tomto
       souboru, ať obě stránky spolu ladí.
 
+   ===== Changelog v2 =====
+   Klient nahlásil (se dvěma screenshoty — stránka Zalman a pro srovnání
+   stránka kategorie Notebooky), že nadpis značky (H1) je zbytečně
+   nacpaný do stejného boxu jako popis a odkaz na web výrobce, zatímco
+   na stránce kategorie je nadpis samostatně NAD kartou s popisem
+   (`.category-title` + `.category-perex` jsou sourozenci, ne jedno
+   vnořené do druhého) — chtěl to sjednotit, že to tak bude vypadat
+   lépe než všechno v jednom gridu.
+
+   V DOM je ale u značky nadpis (H1) i zbytek (strong + p) SOUROZENCI v
+   jednom společném `<div class="manufacturerDetail">` (na rozdíl od
+   kategorie, kde jsou to už od Shoptetu oddělené prvky) — čistě CSS
+   nejde nadpis vizuálně "vyndat" z boxu, aniž by box obsahoval i jeho
+   plochu. Řešení: nový `znacka.js` (stejný princip jako `kategorie-popis.js`
+   u sbalovací lišty) po načtení stránky přesune všechno, co je za H1
+   (strong s odkazem, popisný odstavec — cokoli to je, bez vázání na
+   konkrétní počet/tag), do nového obalového `<div class="manufacturer-info-box">`
+   hned za H1. H1 samotné zůstává NA MÍSTĚ, mimo box — box (`.manufacturer-info-box`)
+   pak dostává přesně stejné vizuální zpracování jako `.category-perex`
+   na kategorii (stejné pozadí, fialový pruh vlevo, zaoblení, stín,
+   shodný padding i mezera pod boxem), aby obě stránky (kategorie i
+   značka) vypadaly stejně. Původní box na `.manufacturerDetail` (který
+   obepínal i H1) byl proto odstraněn.
+
    ===================================================================== */
 
-/* ===== Úvodní blok značky — "hero" karta =====
-   Celý blok (nadpis + odkaz na web výrobce + popis) dostává jednotnou
-   kartu ve stejném vizuálním jazyce jako `.category-perex` (světle
-   fialové pozadí, silnější fialový pruh vlevo, zaoblení, jemný stín) —
-   na rozdíl od `.category-perex` ale karta obsahuje i H1, protože u
-   stránky značky je celý úvod (název + web výrobce + popis) jeden
-   uzavřený celek ("vizitka" značky), ne jen doplňkový text pod
-   samostatným nadpisem. */
-.manufacturerDetail{
+/* ===== Info karta značky (web výrobce + popis) — `.manufacturer-info-box` =====
+   Nový obalový <div>, který znacka.js vloží hned za H1 a přesune do něj
+   všechno ostatní (řádek "Webová stránka značky" + popisný text).
+   Vizuálně STEJNÁ karta jako `.category-perex` na stránce kategorie —
+   stejné pozadí, fialový pruh vlevo, zaoblení, stín i shodné rozměry
+   paddingu/mezery — aby stránka značky vypadala stejně jako kategorie,
+   jen s H1 samostatně nad kartou (ne uvnitř ní). */
+.manufacturer-info-box{
   background:#f8f7fd!important;
   border:1px solid #eef0f4!important;
   border-left:4px solid #5B2CDB!important;
   border-radius:12px!important;
-  padding:28px 26px!important;
-  margin:0 0 32px!important;
+  padding:18px 22px!important;
+  margin:0 0 24px!important;
   box-shadow:0 2px 10px rgba(20,20,40,.05)!important;
 }
-.manufacturerDetail h1.category-title{
-  margin-top:0!important;
-  margin-bottom:14px!important;
+
+@media(max-width:479px){
+  .manufacturer-info-box{
+    padding:14px 16px!important;
+  }
 }
 
 /* Řádek "Webová stránka značky: [Odkaz]" — popisek zešednutý a
    zmenšený (přestává soutěžit s nadpisem), samotný odkaz na web
    výrobce se mění z podtrženého textu na malé obrysové tlačítko se
    šipkou ven — jasně čitelné jako odchozí odkaz na cizí web, ne jako
-   běžný odkaz uvnitř e-shopu. */
+   běžný odkaz uvnitř e-shopu. Selektor cílí přes `.manufacturerDetail`
+   (obal zůstává stejný, jen strong/p jsou teď o úroveň hlouběji uvnitř
+   `.manufacturer-info-box`) — jako potomkový selektor funguje beze
+   změny bez ohledu na novou vloženou vrstvu. */
 .manufacturerDetail strong{
   display:block!important;
   margin-bottom:18px!important;
@@ -112,26 +140,10 @@
 
 /* Popisný text značky — beze změny barvy/velikosti (nativní je čitelná
    na novém světlém pozadí karty), jen mírně vyšší řádkování pro delší
-   odstavce a nulové okraje (karta kolem už dává dost prostoru).
-   v1.1: klient nahlásil, že text vypadal v jiném písmu než zbytek webu.
-   Počítaný styl (getComputedStyle) sice vychází z děděného
-   `font-family:Poppins` na `body`, ale bez VLASTNÍHO pravidla přímo tady
-   je to jen zděděná hodnota — snadno "přebitá" jakýmkoli specifičtějším
-   nativním pravidlem Shoptetu (`.ds-markdown-paragraph` je nativní třída
-   WYSIWYG obsahu) nebo viditelná jako chvilkové přeblikne do jiného písma
-   (FOUT), než se Google Font načte. Nastavujeme Poppins EXPLICITNĚ přímo
-   na odstavec, ať je to spolehlivé za všech okolností, ne jen "náhodou
-   zdědění". */
+   odstavce a nulové okraje (karta kolem už dává dost prostoru). */
 .manufacturerDetail p{
   margin:0!important;
   line-height:1.65!important;
-  font-family:'Poppins',sans-serif!important;
-}
-
-@media(max-width:479px){
-  .manufacturerDetail{
-    padding:20px 18px!important;
-  }
 }
 
 /* =====================================================================
