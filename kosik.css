@@ -1,5 +1,8 @@
 /* =====================================================================
-   KOSIK.CSS — stránka nákupního košíku (/kosik/, krok "Nákupní košík")
+   KOSIK.CSS — nákupní košík a celý objednávkový proces (/kosik/,
+   /objednavka/krok-1/, krok-2, krok-3 — sdílejí stejnou `.cart-row`
+   mřížku a stejné komponenty, viz `.next-step-forward`/`.next-step-back`
+   níž, které už dřív cíleně počítaly se všemi třemi kroky).
    Nový, samostatný soubor (viz dohoda s klientem: každá větší část webu
    = vlastní soubor, aby chyba v jednom nemohla rozbít fungující části
    v jiném) — kompletní redesign celé stránky košíku, sjednocený vzhled
@@ -23,9 +26,19 @@
    karta obaluje jak vyplněný košík (krokovadlo + tabulka + dárky/
    doprava), tak prázdný košík (nadpis je mimo ni, viz níže, ale obsah
    "Podívejte se na nabídku"/"Zkuste vyhledávání" uvnitř ano). */
+/* v1.1: klient nahlásil, že horní hrana téhle karty má zaoblené rohy i
+   NAHOŘE, což na stránkách bez drobečkové navigace (košík, doprava a
+   platba) vytváří viditelnou mezeru/přeryv vůči barevné liště nahoře —
+   živě přeměřeno (`getBoundingClientRect`): spodní hrana lišty (199px)
+   a horní hrana téhle karty (200px) jsou prakticky na stejné výšce
+   (1px), takže zaoblení nahoře tam vytváří zbytečný "zub". Zaoblujeme
+   proto jen DOLE (`0 0 16px 16px`), nahoře karta naváže na lištu
+   ostrou hranou — přesně jak klient popsal ("...ať to pěkně naváže na
+   lištu"). Platí jen na PC/desktop dle zadání — mobilní varianta níž
+   (@media max-width:767px) si drží svoje vlastní, beze změny. */
 .col-md-8 > .cart-content{
   background:#fff;
-  border-radius:16px;
+  border-radius:0 0 16px 16px;
   box-shadow:0 3px 14px rgba(20,20,40,.09);
   padding:28px;
 }
@@ -153,10 +166,20 @@
   -webkit-appearance:none;
   margin:0;
 }
+/* v1.1: klient nahlásil rozbitý košík na mobilu. Jedna z příčin —
+   Shoptet má vlastní nativní pravidlo pro úzké šířky, které naše
+   "+"/"−" pilulkové tlačítko přebíjí: schová `.increase__sign`/
+   .decrease__sign` (display:none) a místo nich vykreslí vlastní
+   36×36px ikonku šipky přes `::before` — živě přeměřeno na 375px
+   (computed width/height tlačítka bylo 36×36 místo naší hodnoty
+   30×34). Řešení uzamyká náš vzhled `!important` a navíc explicitně
+   VYPÍNÁ nativní `::before` ikonku a ZAPÍNÁ zpátky naše "+"/"−" znaky
+   — bez podmínky na šířku obrazovky, ať vzhled zůstane stejný na
+   všech velikostech, ne jen na těch, co jsme zrovna otestovali. */
 .cart-table .quantity button.increase,
 .cart-table .quantity button.decrease{
-  width:30px;
-  height:34px;
+  width:30px!important;
+  height:34px!important;
   border:none!important;
   background:transparent!important;
   color:#5B2CDB;
@@ -164,6 +187,17 @@
   font-weight:700;
   cursor:pointer;
   transition:background .15s ease;
+}
+.cart-table .quantity button.increase::before,
+.cart-table .quantity button.decrease::before{
+  content:none!important;
+  display:none!important;
+}
+.cart-table .quantity .increase__sign,
+.cart-table .quantity .decrease__sign{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
 }
 .cart-table .quantity button.increase:hover,
 .cart-table .quantity button.decrease:hover{
@@ -222,16 +256,33 @@
 .extras-col{
   flex:1 1 260px;
 }
+/* v1.1: klient nahlásil, že "autíčko" (nativní ikona dopravy, icon-font
+   Shoptet) je zapíchlé přímo v textu "Dopravu máte ZDARMA". Příčina:
+   `.extra.delivery::before` je nativně `position:absolute` (36×36px),
+   takže se vůbec nepočítá do flex layoutu (`gap`/`align-items` na ni
+   nemá vliv) a bez vlastního odsazení textu zůstává ikona položená
+   PŘES levý okraj textu, ne vedle něj. Řešení: box dostává vlastní
+   `position:relative` (kotva pro ikonu) a `padding-left` uvolňující
+   místo přesně pro šířku ikony, ikona se pak explicitně zarovná na
+   střed výšky boxu (`top:50%;transform:translateY(-50%)`) místo
+   nativní pevné hodnoty `top`, která platila jen pro nativní výšku
+   boxu, ne pro tu naši. */
 .extra.delivery{
+  position:relative;
   display:flex;
   align-items:center;
   gap:10px;
   background:#eafaf3;
   color:#0f7a56;
   border-radius:12px;
-  padding:12px 18px;
+  padding:12px 18px 12px 54px;
 }
 .extra.delivery::before{
+  position:absolute!important;
+  top:50%!important;
+  left:14px!important;
+  transform:translateY(-50%)!important;
+  margin:0!important;
   color:#0f7a56!important;
 }
 .extra.delivery strong{
@@ -347,15 +398,27 @@
   }
 }
 
-/* ===== Pravý sloupec — "Potřebujete pomoc?" ===== */
-.sidebar-in-cart .cart-content.checkout-box-wrapper{
+/* ===== Pravý sloupec — "Potřebujete pomoc?" =====
+   v1.1: klient nahlásil, že tenhle box vůbec nemá styl webu (nativní
+   vzhled). Příčina: box míří přes `.sidebar-in-cart .cart-content.
+   checkout-box-wrapper`, ale třídy `sidebar-in-cart`/`checkout-box-
+   wrapper` Shoptet přidává JEN když je v košíku aspoň jedna položka —
+   na stránce prázdného košíku box existuje (`.col-md-4 > .cart-
+   content`), ale obě tyhle třídy úplně chybí, takže selektor nikdy
+   nesedl a box zůstal nativní, holý. Cílíme proto obecněji přes
+   pozici ve sloupci (`.col-md-4 > .cart-content`), což sedí ve všech
+   stavech košíku. Zároveň chyběl `font-family` na nadpisu — barva/
+   velikost/verzálky se nastavily, ale písmo zůstávalo po zděděné
+   výchozí hodnotě, proto teď explicitně Poppins jako všude jinde. */
+.col-md-4 > .cart-content{
   background:#fff;
   border-radius:16px;
   box-shadow:0 3px 14px rgba(20,20,40,.09);
   padding:22px 24px;
   margin-bottom:20px;
 }
-.sidebar-in-cart .cart-content.checkout-box-wrapper > h2.h4{
+.col-md-4 > .cart-content > h2.h4{
+  font-family:'Poppins',sans-serif!important;
   font-size:14px;
   font-weight:700;
   text-transform:uppercase;
@@ -363,30 +426,34 @@
   color:#8a8f98;
   margin:0 0 14px;
 }
-.sidebar-in-cart .box.box-bg-default{
+/* Zbytek obsahu boxu (telefon/kontakt) — pro jistotu cílíme přes
+   `.col-md-4` stejně jako karta výš, ne přes `.sidebar-in-cart`, ať
+   funguje i kdyby na prázdném košíku chyběla i tahle třída (stejný
+   důvod jako u karty výš). */
+.col-md-4 .box.box-bg-default{
   background:transparent!important;
   padding:0!important;
 }
-.sidebar-in-cart .contact-box strong{
+.col-md-4 .contact-box strong{
   display:block;
   font-size:15px;
   color:#1f1f1f;
   margin-bottom:8px;
 }
-.sidebar-in-cart .contact-box ul{
+.col-md-4 .contact-box ul{
   list-style:none;
   margin:0;
   padding:0;
 }
-.sidebar-in-cart .contact-box li{
+.col-md-4 .contact-box li{
   margin-bottom:6px;
 }
-.sidebar-in-cart .contact-box a{
+.col-md-4 .contact-box a{
   color:#5B2CDB;
   font-weight:500;
   text-decoration:none;
 }
-.sidebar-in-cart .contact-box a:hover{
+.col-md-4 .contact-box a:hover{
   text-decoration:underline;
 }
 
@@ -498,7 +565,7 @@
    zapomenutý zbytek nativní šablony. */
 .cart-heading{
   background:#fff!important;
-  border-radius:16px;
+  border-radius:0 0 16px 16px;
   box-shadow:0 3px 14px rgba(20,20,40,.09);
   padding:26px 28px!important;
   margin:0 0 20px!important;
@@ -537,5 +604,60 @@
   .cart-heading{
     padding:20px!important;
     font-size:20px!important;
+    border-radius:14px!important;
+  }
+}
+
+/* =====================================================================
+   KROK 2 OBJEDNÁVKY (DOPRAVA A PLATBA) — nadpisy sekcí + fialový box
+   "Potřebujete pomoc?"
+   ===================================================================== */
+
+/* Nadpisy "ZVOLTE ZPŮSOB DOPRAVY" / "ZVOLTE ZPŮSOB PLATBY" — klient
+   chtěl "naše fonty". Živě ověřeno (getComputedStyle): oba nadpisy
+   (`h2.order-icon.order-delivery` a stejný vzorec pro platbu,
+   `h2.order-icon.order-payment` — obě třídy živě potvrzené v DOM)
+   používají nativní Shoptetovo písmo `"Exo 2"`, ne Poppins jako zbytek
+   webu. Měníme JEN písmo — velikost/tučnost/barvu/ikonu vlevo necháváme
+   nativní, ty už vizuálně sedí. */
+.order-icon.order-delivery,
+.order-icon.order-payment{
+  font-family:'Poppins',sans-serif!important;
+}
+
+/* Box "Potřebujete pomoc? +420 606 350 650" na kroku 2/3 — JINÁ nativní
+   třída než na /kosik/ (tam `.col-md-4 > .cart-content`, tady
+   `.checkout-box`, obě ale ve stejném `.col-md-4` sloupci), takže
+   dostává vlastní pravidlo. Živě ověřeno (getComputedStyle): plochý
+   obdélník bez zaoblení (`border-radius:0`), fialové pozadí
+   `rgb(91,44,219)` (=#5B2CDB, naše brand barva — Shoptet ji tu už sám
+   použil, jen bez gradientu/zaoblení/stínu) a nativní písmo `Exo 2`.
+   Dáváme mu stejný fialovo-zelený gradient, zaoblení a stín jako
+   ostatním hlavním CTA prvkům na webu (tlačítko Pokračovat, Přidat do
+   košíku) — přesně to, co klient popsal ("může být v našem kulatém
+   stylu"). Vnitřní `.contact-box` (telefon/kontakt) je ve STEJNÉM
+   `.col-md-4` sloupci jako na /kosik/, takže už dostává správný styl
+   (barva/hover fialového odkazu) z pravidel `.col-md-4 .contact-box`
+   výš v tomhle souboru — nic navíc tu není potřeba. */
+.checkout-box{
+  margin-bottom:20px;
+}
+.checkout-box .toggle-contacts{
+  display:block!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  border-radius:16px!important;
+  padding:18px 24px!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:600!important;
+  letter-spacing:.3px;
+  box-shadow:0 3px 14px rgba(20,20,40,.09);
+}
+.checkout-box .box.box-bg-default{
+  margin-top:14px;
+}
+@media(max-width:767px){
+  .checkout-box .toggle-contacts{
+    padding:16px 20px!important;
+    border-radius:14px!important;
   }
 }
