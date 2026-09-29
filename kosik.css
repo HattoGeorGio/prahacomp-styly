@@ -349,9 +349,30 @@
   .cart-table tbody tr.removeable:last-of-type{
     margin-bottom:0;
   }
+  /* Klient nahlásil (reálný telefon, screenshot): po přechodu z
+     rozbalovacího náhledu košíku na tuhle stránku ("Pokračovat do
+     košíku") se název produktu vedle obrázku zobrazoval jen na
+     přibližně poloviční šířku karty, se zbytečnou prázdnou mezerou
+     vpravo — zatímco řádky Dostupnost/Počet/Cena níž byly správně na
+     celou šířku.
+     Příčina: nativní Shoptet CSS má pro mobil vlastní (jinou, flex-wrap
+     založenou) odpověď na stejnou tabulku — `.cart-table tr>td{width:
+     50%}` — určenou pro JEHO vlastní dvousloupcové řádkování. Naše
+     vlastní CSS Grid rozvržení (výš, `grid-template-areas`) tohle
+     pravidlo nikdy nezrušilo, jen předefinovalo grid-area jednotlivých
+     buněk. `width:50%` na gridové buňce se ale počítá z ROZMĚRU JEJÍ
+     VLASTNÍ GRID STOPY, ne z celého řádku — takže `.p-name` (grid
+     sloupec 267px) i `.p-availability`/`.p-quantity` (celá šířka řádku
+     přes obě sloupce) se všechny smrskly přesně na polovinu svého
+     vlastního prostoru (živě změřeno a ověřeno: 133,5px místo 267px u
+     názvu). Řešení: vrátit `width` zpátky na `auto` (grid stopa se pak
+     přirozeně "stretchuje" na celou svou šířku, jak grid layout
+     defaultně dělá) — `.cart-p-image` má svou explicitní šířku 64px
+     deklarovanou zvlášť hned níž, tu tohle nepřepisuje. */
   .cart-table td{
     padding:0!important;
     display:block;
+    width:auto!important;
   }
   .cart-table td.cart-p-image{
     grid-area:image;
