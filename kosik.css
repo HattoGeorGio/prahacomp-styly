@@ -434,9 +434,18 @@
    stavech košíku. Zároveň chyběl `font-family` na nadpisu — barva/
    velikost/verzálky se nastavily, ale písmo zůstávalo po zděděné
    výchozí hodnotě, proto teď explicitně Poppins jako všude jinde. */
+/* v1.3: klient upřesnil — karta sedí hned pod navigační lištou (živě
+   ověřeno: horní hrana karty je na STEJNÉ výšce jako levý sloupec,
+   žádná skutečná mezera/posun tam není), ale zaoblené HORNÍ rohy
+   opticky působily, jako by "nedosedala" na lištu nahoře. Stejný
+   vzor jako jinde na webu (task "Zaoblení rohů panelů jen dole") —
+   panel, který se nahoře dotýká něčeho jiného, má nahoře rohy
+   pravoúhlé a zaoblené jen dole (viz např. `.cart-heading` níž v
+   souboru). Měníme proto `border-radius:16px` (všechny rohy) na
+   `border-radius:0 0 16px 16px` (zaoblení jen dole). */
 .col-md-4 > .cart-content{
   background:#fff;
-  border-radius:16px;
+  border-radius:0 0 16px 16px;
   box-shadow:0 3px 14px rgba(20,20,40,.09);
   padding:22px 24px;
   margin-bottom:20px;
@@ -809,4 +818,31 @@ input[type=radio]{
 .login-button.btn:hover{
   background:#5B2CDB!important;
   color:#fff!important;
+}
+
+/* v1.4: klient nahlásil, že text "* Povinná pole" na kroku 3 "levituje"
+   v prázdném prostoru — nativně jde o `<p class="form-legend">`,
+   blokový prvek na VLASTNÍM řádku (šířka celého fieldsetu, zarovnání
+   doprava), umístěný mezi tlačítkem "Přihlásit se do mého účtu" a
+   polem "Jméno a příjmení" — protože je nad ním i pod ním prázdno,
+   text visí osamocený, bez vizuální vazby na cokoliv kolem.
+   Živě ověřeno na simulované šířce ≤991px (fieldset tam má jen malý
+   padding — 19px/10px): tam je stejný prvek hned pod tlačítkem a
+   nepůsobí rozbitě, proto na mobilu/tabletu necháváme beze změny.
+   Nad 991px (fieldset padding 38px/80px, ověřeno živě) přesouváme
+   text na stejný řádek jako nadpis sekce "OSOBNÍ ÚDAJE" (vpravo
+   nahoře ve fieldsetu, přes position:absolute) — čte se to jako
+   běžná poznámka k formuláři, ne jako osamocený text v prázdnu. */
+@media(min-width:992px){
+  .co-contact-information{
+    position:relative;
+  }
+  .co-contact-information > .form-legend{
+    position:absolute;
+    top:42px;
+    right:80px;
+    width:auto;
+    white-space:nowrap;
+    margin:0;
+  }
 }
