@@ -94,3 +94,56 @@
   border-radius:3px;
   background:linear-gradient(90deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%);
 }
+
+/* =====================================================================
+   MOBILNÍ PRODUKTOVÁ MŘÍŽKA "NOVINKY" — jeden sloupec místo dvou (v2)
+   Klientovo zadání: na mobilu zobrazovat produkty v sekci "Novinky" v
+   jednom sloupci pod sebou, ne ve dvou vedle sebe.
+
+   Shoptet nativně vynucuje na mobilu dvousloupcovou mřížku karet
+   (`.products-block>div`, obaluje kartu `.p`) hned dvěma NEZÁVISLÝMI
+   pravidly v šabloně (ověřeno prohledáním celého kompilovaného CSS
+   šablony, ne jen živým vzhledem):
+     1) `.columns-mobile-2 .products-block>div{width:50%}` — platí
+        321-767px, vázané na třídu na <body>, kterou nastavuje
+        administrace (aktuální nastavení obchodu = 2 sloupce na mobilu).
+     2) `@media(min-width:480px){.products-block>div{width:50%}}` — tohle
+        druhé pravidlo NENÍ vázané na žádnou "columns-mobile-N" třídu a
+        platí od 480px nahoru bez ohledu na administrační nastavení.
+        Shoptet v šabloně vůbec nemá třídu `columns-mobile-1` s vlastním
+        CSS — jednosloupcová mřížka na mobilu tedy není nativně
+        podporovaná možnost, admin ji nikde nejde jen "zaškrtnout".
+   Proto musíme přebít OBĚ pravidla, ne jen to první — jinak by od 480px
+   výš (běžná šířka "phablet" telefonů na šířku i menších tabletů)
+   zůstávaly nativně 2 sloupce i po zásahu jen do prvního pravidla.
+
+   Cíleno přes `body.type-index` (Shoptetova vlastní stabilní třída pro
+   typ stránky "úvodní strana") navíc k `.products-block`, aby úprava
+   platila JEN na homepage. Výpis kategorie používá jinou obalovou třídu
+   (`.products-inline`, ne `.products-block` — ověřeno živě na
+   `/notebooky/`), takže by ke kolizi nedošlo ani bez týhle pojistky, ale
+   dvojitá vazba (typ stránky + třída widgetu) je robustnější do budoucna,
+   kdyby Shoptet někdy `.products-block` použil i jinde (např. související
+   produkty na detailu — ověřeno živě, že tam teď není).
+
+   Karta samotná (`.p` — bílé pozadí, stín, zaoblení 14px) je stylovaná
+   už jinde (kategorie.css/produkt.css, sdílený markup napříč celým
+   webem), takže na plnou šířku vypadá rovnou hotově, stačí jí jen dát
+   100 % místo 50 % šířky rodičovské mřížkové buňky.
+
+   Nativní `border-right`/`border-top` na `.products-block>div` (šedé 1px
+   dělicí čáry mezi sloupci/řádky dvousloupcové mřížky) vypí�áme úplně —
+   v jednosloupcovém rozložení by `border-right` visel osaměle na pravém
+   okraji karty bez sousedního sloupce vedle (živě ověřeno na 600px šířce
+   — vypadalo to jako náhodná svislá čára bez účelu) a `border-top` by byl
+   navíc zbytečný vedle toho, že karta `.p` už má vlastní stín jako
+   přirozený oddělovač — odstup mezi kartami dává čistě padding (10px na
+   `.products-block>div`, nativní, beze změny).
+   ===================================================================== */
+@media(max-width:767px){
+  body.type-index .products-block>div{
+    width:100%!important;
+    border-right-style:none!important;
+    border-top-style:none!important;
+  }
+}
