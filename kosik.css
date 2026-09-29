@@ -176,8 +176,29 @@
    VYPÍNÁ nativní `::before` ikonku a ZAPÍNÁ zpátky naše "+"/"−" znaky
    — bez podmínky na šířku obrazovky, ať vzhled zůstane stejný na
    všech velikostech, ne jen na těch, co jsme zrovna otestovali. */
+/* v1.2: živě dohledáno (kolo s punch-listem 2) — Shoptet tahle dvě
+   tlačítka nativně vykresluje jako `position:absolute` (svislá dvojice
+   šipek nahoru/dolů vpravo od inputu, kalibrovaná na jejich původní
+   MALOU výšku), takže `display:inline-flex!important` na obalu výš
+   (řádek 141) na jejich vzájemné rozložení vůbec nemělo vliv —
+   absolutně pozicované prvky flex layout rodiče ignorují. Když v1.1
+   vynutila `height:34px!important` (skoro celá výška 38px kontejneru)
+   na OBOU tlačítkách beze změny jejich absolutního pozicování, začala
+   se svislá dvojice šipek vzájemně PŘEKRÝVAT — živě ověřeno na desktopu
+   (1568px): viditelné bylo jen "1 [+]", mínusové tlačítko úplně
+   zmizelo pod plusovým. Řešení: `position:static` (+ reset
+   top/bottom/left/right), ať `display:inline-flex` z obalu konečně
+   zabere a tlačítka se řadí vedle sebe ve skutečném pořadí, jaké mají
+   v DOM (input, pak "+", pak "−"). Pořadí "−" před inputem (jak bylo
+   od začátku zamýšleno, viz komentář výš "[−][1][+]") dorovnáno přes
+   `order:-1` na `.decrease`, bez zásahu do DOM. */
 .cart-table .quantity button.increase,
 .cart-table .quantity button.decrease{
+  position:static!important;
+  top:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
   width:30px!important;
   height:34px!important;
   border:none!important;
@@ -187,6 +208,9 @@
   font-weight:700;
   cursor:pointer;
   transition:background .15s ease;
+}
+.cart-table .quantity button.decrease{
+  order:-1;
 }
 .cart-table .quantity button.increase::before,
 .cart-table .quantity button.decrease::before{

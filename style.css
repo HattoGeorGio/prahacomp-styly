@@ -664,8 +664,21 @@ body.ordering-process #header .site-name{display:block!important;}
   -webkit-appearance:none;
   margin:0;
 }
+/* Shoptet tahle tlačítka nativně vykresluje jako `position:absolute`
+   (svislá šipka nahoru/dolů vpravo od inputu) — bez resetu pozice by
+   `display:inline-flex` na obalu výš vůbec neplatil (absolutně
+   pozicované prvky flex layout rodiče ignorují) a naše vynucené
+   `height:30px` by způsobilo, že se obě tlačítka svisle překrývají
+   (živě ověřeno v mini-cart flyoutu na homepage: viditelné bylo jen
+   "1 [+]", mínus zmizelo pod plusem — stejná chyba jako v kosik.css u
+   `.cart-table .quantity`, viz tamní komentář pro plné vysvětlení). */
 .cart-widget-product-amount .quantity button.increase,
 .cart-widget-product-amount .quantity button.decrease{
+  position:static!important;
+  top:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
   width:26px!important;
   height:30px!important;
   border:none!important;
@@ -675,6 +688,9 @@ body.ordering-process #header .site-name{display:block!important;}
   font-weight:700;
   cursor:pointer;
   transition:background .15s ease;
+}
+.cart-widget-product-amount .quantity button.decrease{
+  order:-1;
 }
 .cart-widget-product-amount .quantity button.increase::before,
 .cart-widget-product-amount .quantity button.decrease::before{
