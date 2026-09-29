@@ -626,6 +626,33 @@ body.ordering-process #header .site-name{display:block!important;}
 .cart-widget-product-delete button{color:#999!important;}
 .cart-widget-product-delete button:hover{color:#e03131!important;}
 
+/* v1.2: klient nahlásil (živě, se screenshotem), že na PC tlačítka +/-
+   "zasahují do produktu" (do názvu). Příčina: `.cart-widget-product` je
+   `display:table` (Shoptet), sloupce (`.cart-widget-product-amount`,
+   `.cart-widget-product-name`, ...) jsou `display:table-cell` a celá
+   tabulka má `table-layout:fixed` — šířky sloupců se tedy jednou
+   spočítají a dál je NIKDY nepřepočítají podle obsahu. Šířka sloupce
+   `.cart-widget-product-amount` (70px) byla spočítaná ještě pro PŮVODNÍ
+   (rozbitou, `position:absolute`) verzi tlačítek, která reálně nezabírala
+   žádné místo. Jakmile jsme níž (blok "v1.1") přepnuli tlačítka na
+   `position:static`, aby se `[−][1][+]` konečně řadila vedle sebe, vešel
+   se pilulkový prvek do jen 70px širokého sloupce jen z části — zbytek
+   (~30-40px) přesahoval doprava přes hranici sloupce a vizuálně se
+   překrýval s dalším sloupcem (jednotka "ks" / název produktu). Řešení:
+   sloupci s tlačítky explicitně přidělit víc místa a o stejnou hodnotu
+   zmenšit sloupec s názvem (součet šířek zůstává stejný → tabulka jako
+   celek se nerozšíří, popup košíku zůstává 430px). Zároveň jsme objevili
+   a odstranili starý `padding-right:23px` na `.quantity` — pozůstatek
+   z doby, kdy tlačítka byla `position:absolute` a potřebovala vpravo
+   rezervu místa; teď už zbytečně nafukoval pilulku o dalších 23px. */
+.cart-widget-product-amount{
+  width:100px!important;
+  padding:0 6px!important;
+}
+.cart-widget-product-name{
+  width:166px!important;
+}
+
 /* v1.1: klient nahlásil rozbitý košík na mobilu — jedna z příčin je
    krokovadlo množství [−][1][+] v rozbalovacím náhledu košíku (ikona
    košíku v hlavičce), který zůstal úplně nativní/holý. Má stejnou
@@ -643,13 +670,14 @@ body.ordering-process #header .site-name{display:block!important;}
   border-radius:10px;
   overflow:hidden;
   background:#fafafc;
+  padding:0!important;
 }
 .cart-widget-product-amount .quantity label{
   margin:0!important;
   display:inline-flex;
 }
 .cart-widget-product-amount .quantity input.amount{
-  width:34px;
+  width:28px;
   border:none!important;
   background:transparent!important;
   text-align:center;
@@ -679,7 +707,7 @@ body.ordering-process #header .site-name{display:block!important;}
   bottom:auto!important;
   left:auto!important;
   right:auto!important;
-  width:26px!important;
+  width:24px!important;
   height:30px!important;
   border:none!important;
   background:transparent!important;
