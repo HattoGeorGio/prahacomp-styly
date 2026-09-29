@@ -1,0 +1,169 @@
+/* =====================================================================
+   PRAZDNE-STRANKY.CSS — prázdná kategorie ("Produkty teprve
+   připravujeme.") a stránka nenalezena / 404 ("Stránka nebyla nalezena.")
+
+   Zadání klienta: předělat vzhled obou stránek.
+
+   Živě ověřeno: obě stránky sdílí STEJNÝ nativní Shoptet mechanismus
+   `.empty-content` (jen s rozlišující třídou navíc):
+     <div class="empty-content empty-content-404">
+       <h1 data-testid="pageHeader">A safra! Něco se pokazilo.</h1>
+       <h2>Stránka nebyla nalezena.</h2>     <!-- ikonka je ::after na h2 -->
+       <p>Můžete se ale podívat na naše produkty.</p>
+       <p><a href="/" class="btn btn-default" data-testid="buttonBackToShop">Zpět do obchodu</a></p>
+     </div>
+
+     <div class="category-perex empty-content empty-content-category">
+       <h2>Produkty teprve připravujeme.</h2>   <!-- ikonka je ::after na h2 -->
+       <p>Můžete se ale podívat na ostatní kategorie.</p>
+       <p><a href="/" class="btn btn-default" data-testid="buttonBackToShop">Zpět do obchodu</a></p>
+     </div>
+
+   Prázdná kategorie má navíc třídu `category-perex` — tu už stylizuje
+   `kategorie-popis.css` (světle fialová karta #f8f7fd, 4px fialový pruh
+   vlevo, zaoblení 12px, jemný stín) — proto na desktopu/mobilu vypadá
+   celkem slušně už teď. Stránka 404 ale žádnou takovou kartu nemá a
+   nadpis/ikonka/tlačítko leží úplně holé na bílém pozadí stránky.
+
+   Ikonka (velký šedý piktogram — "zakázáno" na 404, "otevřená krabice"
+   na prázdné kategorii) NENÍ obrázek ani vlastní prvek — je to nativní
+   Shoptetův icon-font vykreslený jako `content` na `::after` pravidle
+   (`.empty-content-404 h2:after{content:"\e92f"}`, `.empty-content-
+   category h2:after{content:"\e935"}`), 84px, barva světle šedá
+   rgb(218,218,218). Tlačítko "Zpět do obchodu" je čistě nativní
+   `.btn.btn-default` (ověřeno přes getComputedStyle) — stejná
+   nedoladěná nativní třída, kterou jsme už dřív museli sjednotit u
+   tlačítka "Otevřít filtr" v kategorie.css (viz jeho changelog v5):
+   border-radius:0, tenký 1px obrys, padding 5px 15px, font-weight 400,
+   podtržený velkými písmeny text — fialová barva pozadí je jen náhoda
+   (obchod má fialovou jako svou "primary" barvu v administraci), tvar
+   tlačítka zůstává stejně nedoladěný jako předtím.
+
+   Řešení: sjednotit obě stránky do stejného vizuálního jazyka jako
+   zbytek webu —
+   1) 404 dostává STEJNOU kartu jako `.category-perex` (světle fialová
+      #f8f7fd, 4px fialový pruh vlevo, zaoblení 12px, jemný stín) —
+      barvy zkopírované 1:1 z kategorie-popis.css, aby obě prázdné
+      stránky vypadaly jako dvojčata, ne jako dvě různě řešené věci.
+   2) Ikonka dostává jemně sytější kulatou "podložku" (fialovo-zelený
+      pastelový přechod, stejná dvoubarevná rodina #5B2CDB→#18A073 jako
+      všude na webu) a samotný piktogram se přebarvuje z šedé na brand
+      fialovou — místo "vybledlého systémového erroru" působí jako
+      záměrně navržená ilustrace.
+   3) Tlačítko "Zpět do obchodu" sjednoceno se stylem `.cart-widget-
+      button .btn` (plná fialová pilulka, zaoblení 50px, bez podtržení)
+      — plná fialová bez zeleného přechodu záměrně, protože jde o
+      druhotnou navigační akci ("vrať mě zpět"), ne o hlavní konverzní
+      tlačítko typu "Přidat do košíku" (ty mají trojbarevný gradient,
+      viz produkt.css/kosik.css) — vizuální hierarchie zůstává čitelná:
+      gradient = hlavní akce stránky, plná barva = vedlejší akce.
+   Selektory cílené přes `.empty-content` (společný základ), ne přes
+   `.empty-content-404`/`.empty-content-category` zvlášť, kdekoli to jde
+   — ať se případná třetí varianta (např. prázdný výsledek hledání,
+   pokud Shoptet stejný mechanismus používá i tam) automaticky přidá do
+   stejného jednotného vzhledu bez potřeby dalšího zásahu.
+   ===================================================================== */
+
+/* ===== Karta kolem celého bloku =====
+   `.empty-content-category` už kartu má (`.category-perex` řeší
+   kategorie-popis.css) — dostává jen malé doladění paddingu níž.
+   `.empty-content-404` kartu nemá vůbec, kopírujeme jí STEJNÉ barvy/
+   zaoblení/stín jako `.category-perex`, aby obě stránky byly vizuálně
+   nerozeznatelné dvojčata. */
+.empty-content.empty-content-404{
+  background:#f8f7fd!important;
+  border-left:4px solid #5B2CDB!important;
+  border-radius:12px!important;
+  padding:44px 24px!important;
+  margin:38px 0!important;
+  box-shadow:0 2px 10px rgba(20,20,40,.05)!important;
+}
+.empty-content.empty-content-category{
+  padding:36px 22px!important;
+}
+
+/* ===== Nadpisy =====
+   `.empty-content-404` má navíc h1 (nativně už fialový, `var(--color-
+   primary)`) — necháváme barvu, jen sjednocujeme řez s h2 na obou
+   stránkách (tučnější, o chlup větší, ať to nepůsobí jako obyčejný
+   odstavcový text). */
+.empty-content h1,
+.empty-content h2{
+  font-family:'Poppins',sans-serif!important;
+  font-weight:700!important;
+}
+.empty-content h1{
+  font-size:26px!important;
+  margin-bottom:8px!important;
+}
+.empty-content h2{
+  font-size:20px!important;
+  color:#3a3f4b!important;
+}
+
+/* ===== Ikonka (nativní icon-font na ::after) =====
+   Základ (rozměr kulaté "podložky", zarovnání) společný pro obě
+   varianty, barva/velikost piktogramu doladěna zvlášť jen proto, že
+   jde o dvě různé glyfy stejného fontu (jiný poměr stran). Podložka
+   používá stejnou dvoubarevnou pastelovou rodinu (fialová→zelená) jako
+   zbytek webu, jen výrazně zesvětlenou, ať vypadá jako ilustrace, ne
+   jako plné logo. */
+.empty-content h2:after{
+  display:block!important;
+  width:140px!important;
+  height:140px!important;
+  line-height:140px!important;
+  margin:28px auto!important;
+  border-radius:50%!important;
+  background:linear-gradient(135deg,#efe8fc 0%,#e3f7ef 100%)!important;
+  box-shadow:0 8px 22px -4px rgba(91,44,219,.18)!important;
+  color:#5B2CDB!important;
+  font-size:58px!important;
+}
+
+/* ===== Doprovodný text =====
+   Nativně `.empty-content p{font-size:20px}` — na tomhle typu stránky
+   (krátká jedna věta, ne hlavní obsah) je to zbytečně velké a působí to
+   nevyváženě vedle nadpisu; zmenšujeme a necháváme přiměřeně tlumenou
+   barvu (nativní tertiary barva zůstává, jen velikost/mezera pod tím
+   se sjednocuje s tlačítkem níž). */
+.empty-content p{
+  font-size:15px!important;
+  margin-bottom:24px!important;
+}
+
+/* ===== Tlačítko "Zpět do obchodu" =====
+   Nahrazuje nativní `.btn.btn-default` (border-radius:0, tenký obrys,
+   padding 5px 15px, font-weight 400, podtržený uppercase text — stejná
+   nedoladěná nativní třída jako dřívější "Otevřít filtr", viz
+   kategorie.css v5) plnou fialovou "pilulkou" — stejný recept jako
+   `.cart-widget-button .btn` v style.css (plná barva, ne gradient,
+   protože jde o vedlejší/navigační akci, ne hlavní konverzní tlačítko). */
+.empty-content .btn.btn-default{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:none!important;
+  border-radius:50px!important;
+  padding:14px 32px!important;
+  background:#5B2CDB!important;
+  color:#fff!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:600!important;
+  font-size:14px!important;
+  text-transform:uppercase!important;
+  text-decoration:none!important;
+  letter-spacing:.3px;
+  box-shadow:0 8px 20px -6px rgba(20,10,60,.35)!important;
+  transition:background .18s ease,box-shadow .18s ease,transform .18s ease!important;
+}
+.empty-content .btn.btn-default:hover{
+  background:#4a23b3!important;
+  box-shadow:0 12px 26px -6px rgba(20,10,60,.45)!important;
+  transform:translateY(-1px);
+  color:#fff!important;
+}
+.empty-content .btn.btn-default:focus-visible{
+  outline:none;
+  box-shadow:0 8px 20px -6px rgba(20,10,60,.35)!important,0 0 0 3px rgba(91,44,219,.25)!important;
+}
