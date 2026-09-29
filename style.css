@@ -725,6 +725,43 @@ body.ordering-process #header .site-name{display:block!important;}
   }
 }
 
+/* v1.5: klient nahlásil (reálný telefon, screenshot), že baner "Dopravu
+   máte zdarma!" v rozbalovacím náhledu košíku "zapadá" do tlačítka
+   "Pokračovat do košíku" — vypadají slepené, bez mezery. Dřívější oprava
+   (viz `.popup-widget.cart-widget .cart-free-shipping` výš, "position:
+   static místo absolute") tohle řešila jen z POLOVINY: přepnula na
+   normální tok jen baner, ne tlačítko vedle něj.
+   Živě dohledáno přímo v nativním Shoptet CSS (main-11.less...css):
+   `.cart-widget-button{padding:68px 0 0}` je základ, ale
+   `@media(max-width:991px){.cart-widget-button{position:absolute;
+   bottom:0;left:1px;right:1px}}` — POD 992px (tablet i mobil) Shoptet
+   tlačítko vytrhává z normálního toku a lepí ho absolutně na SPODEK
+   celého (na mobilu celoobrazovkového) okna, úplně nezávisle na tom,
+   kde končí obsah nad ním (produkty + baner dopravy). Náš vlastní
+   `padding-top:16px` na `.cart-widget-button` (níž v souboru) proto
+   pod 992px nemá žádný efekt — tlačítko není v toku, padding-top ho
+   neposouvá od baneru, jen mezi absolutním tlačítkem a čímkoliv nad
+   ním vzniká náhodná (obsahem/výškou okna podmíněná) mezera, občas
+   nulová nebo záporná = přesně to "zapadání", co klient nahlásil.
+   Desktopová oprava tohle nikdy neodhalila, protože se testovala jen
+   zúžením ŠÍŘKY existujícího desktopového okna (JS override) — to
+   nezmění skutečnou šířku viewportu prohlížeče, takže platilo pořád
+   nativní `@media(min-width:992px){.cart-widget-button{position:
+   relative}}` (tenhle režim je v pořádku, proto na "zúženém" desktopu
+   vypadalo vše správně).
+   Oprava: pod 992px vracíme tlačítku `position:static` (stejný princip
+   jako u baneru) — zpátky do normálního toku hned za baner, takže náš
+   `padding-top:16px` konečně vytváří spolehlivou, obsahem nezávislou
+   mezeru, stejně jako na desktopu. */
+@media(max-width:991px){
+  .popup-widget.cart-widget .cart-widget-button{
+    position:static!important;
+    bottom:auto!important;
+    left:auto!important;
+    right:auto!important;
+  }
+}
+
 /* v1.1: klient nahlásil rozbitý košík na mobilu — jedna z příčin je
    krokovadlo množství [−][1][+] v rozbalovacím náhledu košíku (ikona
    košíku v hlavičce), který zůstal úplně nativní/holý. Má stejnou
