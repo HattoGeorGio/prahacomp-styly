@@ -132,7 +132,7 @@
    100 % místo 50 % šířky rodičovské mřížkové buňky.
 
    Nativní `border-right`/`border-top` na `.products-block>div` (šedé 1px
-   dělicí čáry mezi sloupci/řádky dvousloupcové mřížky) vypí�áme úplně —
+   dělicí čáry mezi sloupci/řádky dvousloupcové mřížky) vypínáme úplně —
    v jednosloupcovém rozložení by `border-right` visel osaměle na pravém
    okraji karty bez sousedního sloupce vedle (živě ověřeno na 600px šířce
    — vypadalo to jako náhodná svislá čára bez účelu) a `border-top` by byl
