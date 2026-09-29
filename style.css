@@ -840,11 +840,24 @@ body.ordering-process #header .site-name{display:block!important;}
    okno), baner se o stejných 20px posunul dolů a o 8px tak přesahoval do
    tlačítka "Pokračovat do košíku" (ověřeno živě přesným měřením: spodní
    hrana baneru byla 8px pod horní hranou tlačítka — bylo to vidět jako
-   baner "zasahující" do tlačítka). Řešení: baner necháváme být normální
-   součástí obsahu (position:static) místo absolutního pozicování — drží
-   se tak spolehlivě podle skutečného obsahu, ne podle domněnky o celkové
-   výšce okna, a nemůže už nic přejíždět bez ohledu na počet položek v
-   košíku. */
+   baner "zasahující" do tlačítka).
+   Oprava NÍŽE (position:static) platí jen na DESKTOPU (≥992px), kde je i
+   samotné tlačítko `.cart-widget-button` v normálním toku
+   (position:relative) — tam banner+tlačítko fungují jako běžné dva bloky
+   pod sebou a `padding-top:16px` na tlačítku (viz výš) mezi nimi vytváří
+   spolehlivou mezeru.
+   Pod 992px (tablet i mobil) je to jinak: samotné tlačítko je tam nativně
+   `position:absolute;bottom:0` (vytržené z toku, přilepené na spodek
+   panelu nezávisle na obsahu — viz vlastní poznámka níž, `@media
+   (max-width:991px)`). Zkoušeli jsme proto (verze v26/v27) přepnout na
+   static i tam — jenže tlačítko NENÍ v layoutu rodič banneru, je to jeho
+   SOUROZENEC, takže "normální tok" banneru se vůbec nedotýká toho, kde
+   tlačítko fakticky je. Výsledek: mezera mezi bannerem a tlačítkem tam
+   závisela na výšce obrazovky a počtu položek v košíku — u kratšího
+   obsahu nebo nižšího telefonu vycházela nulová/záporná (přesně to
+   "zapadání", co klient nahlásil), přepnutí TLAČÍTKA na static ho zas
+   jednou dokonce úplně schovalo (viz `v26`, vráceno v `v27`). Skutečná
+   oprava pro pod-992px je proto jinde — v samostatném bloku níž. */
 .popup-widget.cart-widget .cart-free-shipping{
   position:static!important;
   left:auto!important;
@@ -854,6 +867,42 @@ body.ordering-process #header .site-name{display:block!important;}
   display:table!important;
   width:100%!important;
   margin:0!important;
+}
+/* v1.6: skutečná oprava banneru vs. tlačítka POD 992px (tablet i mobil).
+   Namísto přepínání na "normální tok" (v25/v26, viz komentář výš — nešlo
+   to, protože tlačítko je sourozenec, ne rodič, takže tok banneru s ním
+   vůbec nekomunikuje) se tu banner vrací zpátky k position:absolute —
+   stejně jako to má nativně Shoptet (native `.cart-free-shipping{
+   position:absolute;bottom:66px;height:56px}`) — ale s `bottom` přepočtenou
+   na NAŠI vlastní výšku tlačítka (native počítal s 68px paddingem nahoře,
+   my ho ale výš v souboru zmenšili na 16px).
+   Naše tlačítko má pod 992px (position:absolute, viz níž) pevnou,
+   na obsahu/výšce okna NEZÁVISLOU výšku — 16px (padding-top) + 20px
+   (padding-bottom) + ~54px (.btn samotné, měřeno živě) = 90px. `bottom:
+   106px` na banneru (90px tlačítko + 16px mezera, stejná jako na
+   desktopu) tak umístí banner VŽDY přesně 16px nad tlačítko — nezávisle
+   na výšce telefonu i na počtu položek v košíku, protože obě pozice
+   (banner i tlačítko) se počítají od STEJNÉHO pevného bodu (spodní hrana
+   panelu, bottom:0), ne od toho, kolik místa nad nimi zabéře seznam
+   produktů.
+   Ověřeno živě (genuine-width iframe, skutečný AJAX obsah, skutečný
+   `position:fixed` + `height:100%` + `overflow:hidden` kaskáda — ne
+   vlastní vymyšlená krabice): mezera přesně 16px při výškách okna 550,
+   650, 700 i 844px A při 2 i 3 položkách v košíku (seznam produktů se u
+   krátkého okna/více položek spolehlivě zkracuje vlastním scrollem —
+   `.cart-widget-products{overflow:auto}`, nativní — banner s tlačítkem to
+   vůbec neovlivní). */
+@media(max-width:991px){
+  .popup-widget.cart-widget .cart-free-shipping{
+    position:absolute!important;
+    left:0!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:106px!important;
+    width:100%!important;
+    margin:0!important;
+    display:table!important;
+  }
 }
 /* Ikonka+text "Dopravu máte zdarma!" byly po předchozí opravě (viz výše)
    nalepené vlevo místo na střed. Příčina: Shoptet vykresluje obsah přes
