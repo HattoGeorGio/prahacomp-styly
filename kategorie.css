@@ -263,3 +263,45 @@ div.products div.product .p-tools a.btn.btn-primary:hover{
   outline:none;
   box-shadow:0 10px 22px -4px rgba(20,10,60,.45)!important,0 0 0 3px rgba(91,44,219,.25)!important;
 }
+
+/* v1.1: klient nahlásil, že po kliknutí "Otevřít filtr" a pak "Zavřít
+   filtr" panel vizuálně zůstává otevřený. Nativní mechanismus (Shoptet
+   JS) přepíná na `.filters` třídu `visible` (display:none ↔ block) —
+   živě otestováno synteticky, mechanismus sám funguje správně oběma
+   směry. Přidáváme jednoduchou pojistku navíc: dokud panel NEMÁ
+   `.visible`, je vždy schovaný `!important`, ať by ho nechtěně
+   "odemklo" cokoli jiného (např. kombinace tříd po rychlém opakovaném
+   kliknutí) — bezpečná záloha, nic nemění na vzhledu otevřeného stavu. */
+.filters:not(.visible){
+  display:none!important;
+}
+
+/* =====================================================================
+   MOBILNÍ PRODUKTOVÁ MŘÍŽKA V KATEGORII — jeden sloupec místo dvou
+   Klientovo zadání: "všechny kategorie zobrazují 1 produkt pod sebou
+   na mobilu" (dřív to bylo vyřešené jen pro homepage, viz homepage.css
+   — klient teď chce totéž i na běžných stránkách kategorie/výpisu).
+
+   Stejný pár nativních Shoptet pravidel jako na homepage (viz
+   homepage.css pro plné vysvětlení obou): `.columns-mobile-2
+   .products-block>div{width:50%}` (321-767px) a
+   `@media(min-width:480px){.products-block>div{width:50%}}`
+   (bez vazby na columns-mobile třídu). Výpis kategorie používá STEJNOU
+   třídu `.products-block` jako homepage (živě ověřeno na `/notebooky/`
+   při šířce 371px: `.products.products-page.products-block` se
+   dvousloupcovým rozložením, sameRow:true) — dřívější poznámka v
+   projektové dokumentaci, že kategorie používá `.products-inline`, byla
+   nesprávná: `.products-inline` patří jen malému widgetu "Nejprodávanější"
+   TOP-10, ne hlavní stránkované mřížce.
+
+   Cíleno přes `body.type-category` (Shoptetova stabilní třída pro typ
+   stránky "kategorie"), aby úprava platila jen tam a nekolidovala s
+   homepage.css (ta cílí přes `body.type-index`) ani s jinými budoucími
+   místy, která by `.products-block` mohla používat. */
+@media(max-width:767px){
+  body.type-category .products-block>div{
+    width:100%!important;
+    border-right-style:none!important;
+    border-top-style:none!important;
+  }
+}

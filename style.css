@@ -625,6 +625,72 @@ body.ordering-process #header .site-name{display:block!important;}
 .cart-widget-product-name{color:#222!important;font-weight:500;}
 .cart-widget-product-delete button{color:#999!important;}
 .cart-widget-product-delete button:hover{color:#e03131!important;}
+
+/* v1.1: klient nahlásil rozbitý košík na mobilu — jedna z příčin je
+   krokovadlo množství [−][1][+] v rozbalovacím náhledu košíku (ikona
+   košíku v hlavičce), který zůstal úplně nativní/holý. Má stejnou
+   strukturu (span.quantity > label > input.amount + button.increase/
+   .decrease) jako tabulka na stránce /kosik/ (viz kosik.css), ale je
+   uvnitř JINÉHO obalu (`.cart-widget-product-amount`), takže na něj
+   pravidla z kosik.css vůbec nemíří — dostává proto stejný vzhled
+   znovu, tady, ve vlastním rozsahu. Stejně jako v kosik.css i tady
+   explicitně vypínáme nativní ikonku šipky (`::before`, nahrazuje
+   naše "+"/"−" na úzkých šířkách) a zamykáme rozměry `!important`. */
+.cart-widget-product-amount .quantity{
+  display:inline-flex!important;
+  align-items:center;
+  border:1px solid #e4e4ea;
+  border-radius:10px;
+  overflow:hidden;
+  background:#fafafc;
+}
+.cart-widget-product-amount .quantity label{
+  margin:0!important;
+  display:inline-flex;
+}
+.cart-widget-product-amount .quantity input.amount{
+  width:34px;
+  border:none!important;
+  background:transparent!important;
+  text-align:center;
+  font-weight:600;
+  font-size:13px;
+  padding:6px 0!important;
+  box-shadow:none!important;
+  -moz-appearance:textfield;
+}
+.cart-widget-product-amount .quantity input.amount::-webkit-inner-spin-button,
+.cart-widget-product-amount .quantity input.amount::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+.cart-widget-product-amount .quantity button.increase,
+.cart-widget-product-amount .quantity button.decrease{
+  width:26px!important;
+  height:30px!important;
+  border:none!important;
+  background:transparent!important;
+  color:#5B2CDB;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .15s ease;
+}
+.cart-widget-product-amount .quantity button.increase::before,
+.cart-widget-product-amount .quantity button.decrease::before{
+  content:none!important;
+  display:none!important;
+}
+.cart-widget-product-amount .quantity .increase__sign,
+.cart-widget-product-amount .quantity .decrease__sign{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+}
+.cart-widget-product-amount .quantity button.increase:hover,
+.cart-widget-product-amount .quantity button.decrease:hover{
+  background:#eef0f4!important;
+}
 /* Tlačítko "Pokračovat do košíku" sedělo úplně nalepené na spodní hranu
    okna (Shoptetův vlastní default má tenhle blok vycpaný jen NAHOŘE —
    68px 0 0 — kvůli banneru "doprava zdarma" nad tlačítkem, dole nechává

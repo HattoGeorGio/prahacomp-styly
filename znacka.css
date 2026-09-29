@@ -112,10 +112,20 @@
 
 /* Popisný text značky — beze změny barvy/velikosti (nativní je čitelná
    na novém světlém pozadí karty), jen mírně vyšší řádkování pro delší
-   odstavce a nulové okraje (karta kolem už dává dost prostoru). */
+   odstavce a nulové okraje (karta kolem už dává dost prostoru).
+   v1.1: klient nahlásil, že text vypadal v jiném písmu než zbytek webu.
+   Počítaný styl (getComputedStyle) sice vychází z děděného
+   `font-family:Poppins` na `body`, ale bez VLASTNÍHO pravidla přímo tady
+   je to jen zděděná hodnota — snadno "přebitá" jakýmkoli specifičtějším
+   nativním pravidlem Shoptetu (`.ds-markdown-paragraph` je nativní třída
+   WYSIWYG obsahu) nebo viditelná jako chvilkové přeblikne do jiného písma
+   (FOUT), než se Google Font načte. Nastavujeme Poppins EXPLICITNĚ přímo
+   na odstavec, ať je to spolehlivé za všech okolností, ne jen "náhodou
+   zdědění". */
 .manufacturerDetail p{
   margin:0!important;
   line-height:1.65!important;
+  font-family:'Poppins',sans-serif!important;
 }
 
 @media(max-width:479px){

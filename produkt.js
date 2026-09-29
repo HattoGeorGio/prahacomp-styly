@@ -182,6 +182,35 @@
     }
   }
 
+  // v1.1: klient nahlásil, že na mobilu po ťuknutí na variantu ("Stav
+  // zboží") zůstává "viset" popisek stavu na obrazovce — a při ťuknutí
+  // na víc variant za sebou se jich hromadí i víc najednou (screenshot
+  // ukazoval 3-4 tmavé bublinky nad sebou). Příčina: `.advanced-
+  // parameter-inner` má nativně třídu `show-tooltip` + `data-original-
+  // title`, což je Shoptetův vlastní nativní tooltip (Bootstrap
+  // `.tooltip()`, živě potvrzeno přes `window.jQuery.fn.tooltip`) —
+  // ZCELA DUPLICITNÍ k našemu vlastnímu, natrvalo viditelnému štítku
+  // (`.variant-chip-label`) o pár řádků výš, který dělá přesně to samé,
+  // jen čitelně a bez blikání. Na desktopu je nativní tooltip
+  // neškodný (zobrazí/schová se na hover), ale na mobilu dotyk vyvolá
+  // jeho "show" bez odpovídajícího "leave" události, která by ho zase
+  // schovala — bublina zůstane trvale viset a každé další ťuknutí na
+  // jinou variantu přidá další, nezávislou bublinu vedle ní.
+  // Řešení (živě ověřeno v konzoli — po aplikaci níž se na simulované
+  // sekvenci hover+click na všechny 4 varianty už neobjevila ani jedna
+  // `.tooltip` bublina): tooltip pluginu se natvrdo zbavíme —
+  // `$(el).tooltip('destroy')` odpojí jeho event listenery a navíc
+  // odebereme i třídu `show-tooltip` a atributy `data-original-title`/
+  // `title`, které by ho mohly znovu nastartovat. Volání ale schválně
+  // NENÍ součástí `setupVariantChips()` (ta běží na `DOMContentLoaded`,
+  // stejně jako Shoptetova vlastní inicializace tooltipů — pořadí obou
+  // by nebylo jisté, takže "destroy" by mohl proběhnout DŘÍV, než
+  // Shoptet tooltip vůbec připojí, a nic by to nevyřešilo). Místo toho
+  // běží až na `window.load` (viz úplně dole) — ten vždy nastane AŽ PO
+  // `DOMContentLoaded`, takže Shoptetova inicializace už je v tu chvíli
+  // spolehlivě hotová a naše "destroy" ji už jistě zruší.
+  var variantTooltipInners = [];
+
   function setupVariantChips(){
     var container = document.getElementById('simple-variants');
     if(!container || container.dataset.chipsDone) return;
@@ -239,6 +268,24 @@
         inner.appendChild(textEl);
       }
       textEl.textContent = shortLabel;
+
+      // Hodnotu už jsme přečetli a vypsali do vlastního štítku výš —
+      // element si jen poznamenáme, ať ho po plném načtení stránky (viz
+      // killVariantTooltips níž) zbavíme nativního tooltipu.
+      variantTooltipInners.push(inner);
+    });
+  }
+
+  function killVariantTooltips(){
+    if(!variantTooltipInners.length) return;
+    var $ = window.jQuery;
+    variantTooltipInners.forEach(function(inner){
+      if($ && $.fn && typeof $.fn.tooltip === 'function'){
+        try{ $(inner).tooltip('destroy'); }catch(e){}
+      }
+      inner.classList.remove('show-tooltip');
+      inner.removeAttribute('data-original-title');
+      inner.removeAttribute('title');
     });
   }
 
@@ -254,5 +301,15 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  // killVariantTooltips musí běžet AŽ PO Shoptetově vlastní inicializaci
+  // nativních tooltipů (viz vysvětlení u killVariantTooltips výš) — proto
+  // samostatně na `window.load` (jistě později než `DOMContentLoaded`,
+  // na kterém běží `init()`), ne uvnitř `init()` samotné.
+  if(document.readyState === 'complete'){
+    killVariantTooltips();
+  } else {
+    window.addEventListener('load', killVariantTooltips);
   }
 })();
