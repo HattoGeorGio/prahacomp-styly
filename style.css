@@ -653,6 +653,78 @@ body.ordering-process #header .site-name{display:block!important;}
   width:166px!important;
 }
 
+/* v1.3: klient nahlásil (reálný Android telefon, screenshoty), že
+   náhled košíku (ikona košíku v hlavičce) je na mobilu "rozbitý" —
+   produkt oseknutý a celý panel měl vodorovný scroll. Příčina: řádek
+   `.cart-widget-product` je nativně `display:table` s `table-layout:
+   fixed` — šířky sloupců výš (100px/166px) i zbylé nativní sloupce
+   (`-image` 76px, `-unit` 40px, `-delete` 24px) byly spočítané a
+   ověřené jen pro DESKTOPOVÉ okno košíku (430px, viz komentář výš).
+   Shoptetova vlastní šablona ale při šířce pod 768px mění tenhle
+   panel na CELOOBRAZOVKOVÉ okno (`width:100%`) — na reálném telefonu
+   (~360-412px) je tak dostupná šířka užší než součet pevných sloupců
+   (76+100+40+166+24=406px), a protože `table-layout:fixed` šířky
+   nikdy nepřepočítává podle obsahu, řádek přetekl doprava a vynutil
+   vodorovné scrollování celého panelu.
+   Řešení: pod 992px (stejná hranice, na které Shoptet/naše pravidlo
+   výš přepíná mezi malým ukotveným oknem na tabletu a celoobrazovkovým
+   panelem na mobilu — obojí je užší než 430px, pro které byly pevné
+   šířky počítané) přepínáme řádek z pevné tabulky na pružný flexbox:
+   obrázek+název tvoří první řádek (název se zalomí na víc řádků podle
+   místa, ne podle pevné šířky), krokovadlo/ks/smazat druhý řádek pod
+   nimi. Díky `flex-wrap` a relativním (ne pevným) šířkám se layout
+   sám přizpůsobí JAKÉKOLI šířce telefonu/tabletu, ne jen jedné předem
+   odhadnuté hodnotě — proto žádný nový vodorovný přetok nehrozí. */
+@media(max-width:991px){
+  .cart-widget-product{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:center;
+    width:100%!important;
+    box-sizing:border-box;
+  }
+  .cart-widget-product-image{
+    display:block!important;
+    width:52px!important;
+    flex:0 0 52px!important;
+    padding:0!important;
+    order:1;
+  }
+  .cart-widget-product-name{
+    display:block!important;
+    width:auto!important;
+    flex:1 1 calc(100% - 52px)!important;
+    min-width:0;
+    padding:0 0 0 10px!important;
+    box-sizing:border-box;
+    order:2;
+  }
+  .cart-widget-product-amount{
+    display:block!important;
+    width:auto!important;
+    flex:0 0 auto!important;
+    padding:10px 8px 0 62px!important;
+    order:3;
+  }
+  .cart-widget-product-unit{
+    display:flex!important;
+    align-items:center;
+    width:auto!important;
+    flex:0 0 auto!important;
+    padding:10px 0 0!important;
+    order:4;
+  }
+  .cart-widget-product-delete{
+    display:flex!important;
+    align-items:center;
+    width:auto!important;
+    flex:0 0 auto!important;
+    padding:10px 0 0!important;
+    margin-left:auto!important;
+    order:5;
+  }
+}
+
 /* v1.1: klient nahlásil rozbitý košík na mobilu — jedna z příčin je
    krokovadlo množství [−][1][+] v rozbalovacím náhledu košíku (ikona
    košíku v hlavičce), který zůstal úplně nativní/holý. Má stejnou

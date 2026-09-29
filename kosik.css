@@ -441,14 +441,39 @@
   padding:22px 24px;
   margin-bottom:20px;
 }
+/* v1.2: klient nahlásil, že box na kroku 1 vypadá jinak než na
+   kroku 2/3 — místo gradientního banneru měl jen obyčejný šedý
+   textový nadpis. Živě ověřeno: `.cart-content` je na obou (kroku 1
+   i kroku 2/3) STEJNÁ bílá karta (viz pravidlo výš — sedí na obojí,
+   protože obě jsou `.col-md-4 > .cart-content`), na kroku 2/3 uvnitř
+   ní sedí `.checkout-box .toggle-contacts` jako menší gradientní
+   "pilulka" zanořená v bílém paddingu karty. Krok 1 nemá nativní
+   `.toggle-contacts` tlačítko (žádné sbalování/rozbalování) — jde
+   rovnou o `h2.h4`, tomu proto dáváme STEJNÝ gradient/zaoblení/
+   padding/font/stín jako `.checkout-box .toggle-contacts` níž v
+   souboru, aby uvnitř té samé bílé karty vypadal banner na všech 3
+   krocích identicky. Obsah pod ním (`.contact-box`) je beztak už
+   stejný přes `.col-md-4 .contact-box` pravidla níž. */
 .col-md-4 > .cart-content > h2.h4{
+  display:block;
+  text-align:center;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  border-radius:16px!important;
+  padding:18px 24px!important;
   font-family:'Poppins',sans-serif!important;
   font-size:14px;
-  font-weight:700;
+  font-weight:600!important;
   text-transform:uppercase;
-  letter-spacing:.4px;
-  color:#8a8f98;
+  letter-spacing:.3px;
+  color:#fff!important;
+  box-shadow:0 3px 14px rgba(20,20,40,.09);
   margin:0 0 14px;
+}
+@media(max-width:767px){
+  .col-md-4 > .cart-content > h2.h4{
+    padding:16px 20px!important;
+    border-radius:14px!important;
+  }
 }
 /* Zbytek obsahu boxu (telefon/kontakt) — pro jistotu cílíme přes
    `.col-md-4` stejně jako karta výš, ne přes `.sidebar-in-cart`, ať
@@ -516,20 +541,30 @@
    téhle konkrétní kombinaci tříd (`.btn.btn-lg.btn-conversion.next-
    step-forward`), proto explicitně přebíjíme.
    DŮLEŽITÉ: na kroku 1 košíku je to `<a>`, ale na kroku 2 (doprava a
-   platba) a pravděpodobně i na kroku 3 (dokončení objednávky) je to
-   nativně `<button>` (submit tlačítko formuláře) se stejnými třídami
-   `btn next-step-forward` — proto selektor NEVÁŽEME na konkrétní tag
-   (žádné `a.`/`button.`), aby platil na všech třech krocích stejně;
-   totéž pro tlačítko "Zpět" (next-step-back), i když to je zatím
-   ověřeně `<a>` na všech testovaných krocích — pro jistotu bez
+   platba) je to nativně `<button>` (submit tlačítko formuláře) se
+   stejnými třídami `btn next-step-forward` — proto selektor NEVÁŽEME
+   na konkrétní tag (žádné `a.`/`button.`), aby platil na obou krocích
+   stejně; totéž pro tlačítko "Zpět" (next-step-back), i když to je
+   zatím ověřeně `<a>` na všech testovaných krocích — pro jistotu bez
    vázání na tag i tady. Přidán i reset výchozího vzhledu tlačítka
-   (appearance/cursor), který `<a>` nepotřebuje, ale `<button>` ano. */
+   (appearance/cursor), který `<a>` nepotřebuje, ale `<button>` ano.
+   v1.1: finální tlačítko na kroku 3 ("OBJEDNAT s povinností platby")
+   má JINOU nativní třídu (`next-step-finish` místo `next-step-
+   forward`), klient nahlásil, že zůstalo úplně nativní (ploché,
+   fialový obdélník, bez zaoblení/gradientu) — přidáno proto do
+   stejného pravidla, ať je vizuálně stejná rodina tlačítek na všech
+   3 krocích. Obsahuje navíc dva `<span>` (`.order-button-text`
+   "OBJEDNAT" + `.order-button-suffix` "s povinností platby") —
+   necháváme je pod sebou (`flex-direction:column`) místo vedle sebe,
+   ať zůstane čitelné dvouřádkové tlačítko jako předtím, jen ve
+   fialovo-zeleném gradientu. */
 .next-step{
   display:flex;
   flex-direction:column-reverse;
   gap:10px;
 }
-.next-step-forward.btn{
+.next-step-forward.btn,
+.next-step-finish.btn{
   display:flex!important;
   align-items:center;
   justify-content:center;
@@ -551,15 +586,32 @@
   box-shadow:0 8px 20px -6px rgba(20,10,60,.45)!important;
   transition:box-shadow .18s ease,transform .18s ease,background .18s ease!important;
 }
-.next-step-forward.btn:hover{
+.next-step-forward.btn:hover,
+.next-step-finish.btn:hover{
   background:linear-gradient(135deg,#6d3ef0 0%,#8a54e8 45%,#1dbb84 100%)!important;
   box-shadow:0 12px 26px -6px rgba(20,10,60,.55)!important;
   transform:translateY(-1px);
   color:#fff!important;
 }
-.next-step-forward.btn:focus-visible{
+.next-step-forward.btn:focus-visible,
+.next-step-finish.btn:focus-visible{
   outline:none;
   box-shadow:0 8px 20px -6px rgba(20,10,60,.45)!important,0 0 0 3px rgba(91,44,219,.25)!important;
+}
+.next-step-finish.btn{
+  flex-direction:column;
+  gap:2px;
+  padding:14px 24px!important;
+}
+.next-step-finish .order-button-text{
+  font-size:15px;
+}
+.next-step-finish .order-button-suffix{
+  font-size:11px;
+  font-weight:500;
+  text-transform:none;
+  letter-spacing:0;
+  opacity:.85;
 }
 .next-step-back.btn{
   appearance:none!important;
@@ -684,4 +736,77 @@
     padding:16px 20px!important;
     border-radius:14px!important;
   }
+}
+
+/* =====================================================================
+   KROK 3 OBJEDNÁVKY (INFORMACE O VÁS) — formulář osobních údajů a
+   fakturační adresy, tlačítko "Přihlásit se do mého účtu"
+   Klient nahlásil: "třetí krok v košíku má starý formulář a staré
+   tlačítko" — živě ověřeno, celý formulář byl nativní/holý (žádné
+   vlastní CSS na něj dosud nemířilo). Tlačítko "Objednat" je vyřešené
+   výš (`.next-step-finish.btn`, sdílí pravidlo s `.next-step-forward`).
+   ===================================================================== */
+
+/* Nadpisy sekcí "OSOBNÍ ÚDAJE" / "FAKTURAČNÍ ADRESA" (a případně další
+   — firemní údaje, doručovací adresa, mají stejnou `.co-box` obálku) —
+   stejný důvod jako u "Zvolte způsob dopravy/platby" výš: nativně
+   `Exo 2`, sjednocujeme na Poppins jako všude jinde. Ikonka vlevo
+   (fialová, přes velký `padding-left` na nadpisu) i velikost/barva
+   textu už native sedí, měníme jen písmo. */
+.co-box > h2{
+  font-family:'Poppins',sans-serif!important;
+}
+
+/* Textová pole formuláře (jméno, e-mail, telefon, ulice, město, PSČ,
+   IČ/DIČ...) — nativně `.form-control`, úplně holá (tenký šedý
+   okraj, ostré rohy, žádný focus stav). Sjednocujeme se zaoblo-
+   kulatým stylem zbytku webu + přidáváme fialový focus stav, ať je
+   jasně vidět, které pole má uživatel právě rozepsané. */
+.form-control{
+  border:1px solid #dcdce2!important;
+  border-radius:10px!important;
+  padding:10px 14px!important;
+  height:auto!important;
+  font-family:'Poppins',sans-serif;
+  font-size:14px;
+  color:#1f1f1f;
+  box-shadow:none!important;
+  transition:border-color .15s ease,box-shadow .15s ease;
+}
+.form-control:focus{
+  border-color:#5B2CDB!important;
+  box-shadow:0 0 0 3px rgba(91,44,219,.15)!important;
+  outline:none;
+}
+
+/* Zaškrtávátka (Nakupuji na firmu, souhlas s obchodními podmínkami...)
+   a přepínače (výběr dopravy/platby na kroku 2 — stejná nativní
+   pole) — nativní modrý check prohlížeče měníme na brand fialovou.
+   `accent-color` je podporovaný ve všech moderních prohlížečích a
+   nepotřebuje žádný JS/markup navíc. */
+input[type=checkbox],
+input[type=radio]{
+  accent-color:#5B2CDB;
+}
+
+/* Tlačítko "Přihlásit se do mého účtu" — nativně ostrý obdélník.
+   Necháváme jako "sekundární" (obrysový) styl schválně — nemá
+   soupeřit s hlavním CTA (Objednat), jen zaoblujeme na stejnou
+   pilulku a doplňujeme fialový hover (vyplní se, text zbělá). */
+.login-button.btn{
+  display:inline-block!important;
+  border:1.5px solid #5B2CDB!important;
+  border-radius:50px!important;
+  padding:10px 22px!important;
+  color:#5B2CDB!important;
+  background:#fff!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:600!important;
+  font-size:13px!important;
+  letter-spacing:.3px;
+  transition:background .15s ease,color .15s ease;
+}
+.login-button.btn:hover{
+  background:#5B2CDB!important;
+  color:#fff!important;
 }
