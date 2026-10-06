@@ -39,13 +39,32 @@
    samotná "rozbitá" ikonka je schovaná (`content:""`) a nahrazená
    vlastní kulatou značkovou odznáčkou s čistou SVG ikonkou (stejný
    grafický jazyk jako kulaté odznáčky šipky v hlavním menu/style.css).
+
+   OPRAVA v2 — nevycentrovaný nadpis na desktopu (nahlásil klient
+   screenshotem, 1920px širokoúhlý monitor): `.order-summary-heading`
+   NENÍ (na rozdíl od zbytku obsahu) potomkem vnitřního 640px
+   `.recapitulation-wrapper[data-testid="recapTable"]` (ten se centruje
+   přes `margin:0 auto`), ale žije přímo v širším `.content-inner`
+   (šířka podle viewportu, např. 1378px na 1920px okně). Nativně má
+   `.order-summary-heading` svůj vlastní `max-width` (např. 1000px) —
+   ve v1 jsem ale přepsal `margin` zkratkou `margin:0 0 10px!important`,
+   což explicitně vynulovalo levý i pravý margin místo `auto` a nadpis
+   (fajfková odznáčka + text + číslo objednávky) tak zůstal přilepený k
+   LEVÉMU okraji `.content-inner`, zatímco karty pod ním byly správně
+   vycentrované — vizuálně to vypadalo, jako by celá horní část stránky
+   byla odsazená doleva (živě ověřeno přes `getBoundingClientRect`:
+   střed nadpisu 763.5px vs. střed karet 952.5px, tedy ~190px offset na
+   1920px okně). OPRAVA: `margin:0 0 10px` → `margin:0 auto 10px` —
+   `text-align:center` ve v1 centrovalo jen text UVNITŘ nesprávně
+   posazeného boxu, samotný box potřeboval taky `margin:auto`. Živě
+   ověřeno po opravě: střed nadpisu i střed karet teď shodně 952.5px.
    ===================================================================== */
 
 /* ===== Nadpis "Objednávka odeslána" ===== */
 body.in-dekujeme .order-summary-heading{
   font-family:'Poppins',sans-serif!important;
   text-align:center!important;
-  margin:0 0 10px!important;
+  margin:0 auto 10px!important;
   padding-top:36px!important;
   font-size:28px!important;
   font-weight:700!important;
