@@ -3,83 +3,71 @@
    (Shoptet body třída `type-index` / `in-index`, nativní prvek "wide
    carousel" vložený přes Upravit domovskou stránku → Přidat banner)
 
-   Zadání klienta: hero banner (nadpis "Repasovaná technika s ověřeným
-   původem" + diagnostický terminálový panel "kontrola-pred-prodejem.log"
-   + tiker s vlastnostmi obchodu) byl ručně přenesený/upravený ze
-   samostatného marketingového webu www.prahacomputer.cz (viz
-   web-produkcni-balicek-v1.md) a nebyl vůbec přizpůsobený téhle
-   šabloně — "Hloupé hnusné bílé pruhy vedle banneru... Chci aby to do
-   celé struktury moc pěkně zadalo."
+   Zadání klienta (1. kolo): hero banner (nadpis "Repasovaná technika s
+   ověřeným původem" + diagnostický terminálový panel
+   "kontrola-pred-prodejem.log" + tiker s vlastnostmi obchodu) byl
+   ručně přenesený/upravený ze samostatného marketingového webu
+   www.prahacomputer.cz (viz web-produkcni-balicek-v1.md) a nebyl vůbec
+   přizpůsobený téhle šabloně — "Hloupé hnusné bílé pruhy vedle
+   banneru... Chci aby to do celé struktury moc pěkně zadalo."
 
-   ROOT CAUSE (živě dohledáno přes getBoundingClientRect/getComputedStyle
-   na 813050.myshoptet.com, ne odhadem): nativní Shoptet hero carousel
-   (`.pc-hero` a celý jeho řetězec `.wide-carousel > .carousel.slide >
-   .carousel-inner > .item`) je vnořený do standardního Bootstrap-like
-   boxovaného kontejneru (`.content-wrapper.homepage-box.before-carousel
-   .container`), který má na 1920px okně pevně `margin:0 auto` se
-   zhruba 244px odsazením z každé strany — STEJNÝ kontejner, který se
-   používá pro běžný (boxovaný) obsah webu typu produktová mřížka.
-   Horní navigační lišta (gradient fialová→zelená) je ale NATIVNĚ plně
-   "full-bleed" (okraj až k okraji okna) — odtud ten vizuální
-   nesoulad/"bílé pruhy", na které si klient stěžoval. Navíc
-   `.content-wrapper.homepage-box.before-carousel` sám má plný formát
-   (0 až do kraje okna) s plochým `padding:20px 0` a pozadím `#F6F6F6`
-   — i po zarovnání `.container` na 100% šířku by tak zůstal tenký
-   šedobílý "švik" nahoře (mezi menu a bannerem) i dole (mezi tikerem a
-   sekcí Novinky).
+   v1 řešilo integraci tak, že banner roztáhlo na celou šířku okna
+   (full-bleed, stejně jako horní menu) — živě fungovalo, ale klient po
+   zhlédnutí výsledku zadání upřesnil (2. kolo, se 3 screenshoty a
+   zakroužkovanými místy): banner má být zalomený PŘESNĚ jako sekce
+   "Kategorie"/"Novinky" pod ním (tedy boxovaný, NE full-bleed), a
+   vedle něj (v marginách) má být vidět "klasické statické pozadí, co
+   máme" — tedy nativní dekorativní pozadí stránky (prosvěcující fotky
+   hardwaru), ne plná černá full-bleed plocha ani plochá bílá/šedá.
+   Navíc nahlásil cca 1cm bílý/šedý proužek mezi tikerem a sekcí
+   Novinky, který tam neměl co dělat.
 
-   ŘEŠENÍ: `.container` uvnitř tohoto konkrétního homepage-hero
-   wrapperu (a NIKDE JINDE — `.container` je sdílená Shoptet třída
-   použitá na spoustě míst webu, proto je selektor úmyslně navázaný na
-   kombinaci `.content-wrapper.homepage-box.before-carousel .container`,
-   aby zásah zůstal izolovaný jen na tenhle banner) je přetažený na
-   100% šířku (bez `max-width`/centrovacích marginů/paddingu),
-   `.row.banners-row` uvnitř má vynulovaný kompenzační bootstrap margin
-   (`-20px`), a samotný wrapper má vynulovaný padding/margin nahoře i
-   dole, takže tmavý banner plynule navazuje na gradientové menu nahoře
-   i na bílou sekci Novinky dole, bez jakékoli viditelné mezery nebo
-   barevného švu. `.pc-hero` má navíc vynulovaný `border-radius` (dřív
-   20px) — hranatý, přes celou šířku okna, stejně jako menu nad ním.
+   ŘEŠENÍ v2 (nahrazuje v1 — NE jen doplňuje):
+   1) `.container` uvnitř homepage-hero wrapperu se už NEPŘEPISUJE na
+      100% šířku — necháváme na ní čistě nativní Shoptet boxovanou
+      šířku (stejná `.container` třída, jakou používají Kategorie i
+      Novinky, takže šířka/zarovnání jsou s nimi automaticky 1:1
+      shodné, živě ověřeno: `.pc-hero` i `.content-wrapper.container`
+      sekce Novinky mají na 1920px okně identicky x:244 / width:1418).
+   2) Wrapper `.content-wrapper.homepage-box.before-carousel` (dřív
+      plochá světle šedá `#F6F6F6` přes celou šířku okna — to byl
+      zdroj PŮVODNÍCH "bílých pruhů") má teď průhledné pozadí
+      (`background:transparent`), takže v marginách po stranách
+      (i nad/pod bannerem) prosvítá nativní dekorativní pozadí stránky
+      — přesně to "klasické statické pozadí", který klient chce, a
+      přesně stejné chování, jaké už má sekce Novinky pod bannerem.
+   3) Padding/margin wrapperu nahoře i dole zůstává vynulovaný (z v1) a
+      navíc `.pc-hero` samotný má teď taky vynulovaný `margin-bottom`
+      (nativně 32px) — tím mizí i ten nahlášený cca 1cm proužek mezi
+      tikerem a Novinky úplně (živě ověřeno: mezera 1px = zaokrouhlovací
+      chyba, fakticky nulová).
+   4) `border-radius` bannerU se NEPŘEPISUJE (na rozdíl od v1) — necháno
+      na nativních 20px, protože banner je teď zpátky boxovaný/kartový
+      (ne full-bleed hranatý jako menu), takže zaoblené rohy dávají
+      smysl a odpovídají původnímu vzhledu, který klientovi nevadil.
 
-   Vnitřní obsah bannera (nadpis, text, tlačítka, terminálový panel) se
-   NEMĚNÍ — `.pc-hero__grid` má už nativně vlastní `max-width:1200px` +
-   `margin:0 auto`, takže zůstává čitelně vycentrovaný i v nově mnohem
-   širším (full-bleed) banneru; mění se jen VNĚJŠÍ rámování/kontejner.
+   Živě ověřeno na 1920px (desktop, přes dočasné vypnutí v1 <link> a
+   přeměření `getBoundingClientRect`: `.pc-hero` x:244 w:1418, shodné
+   se sekcí Novinky; mezera pod bannerem 1px) a 390px (mobil,
+   iframe-simulace) — na mobilu je `.container` už nativně na 100 %
+   šířky (Shoptetovo vlastní responzivní chování, stejné pro Kategorie
+   i Novinky), takže tam k žádnému vizuálnímu rozdílu oproti zbytku
+   webu nedochází ani bez zásahu.
 
-   Živě ověřeno na 1920px (desktop), 768px (tablet) a 390px (mobil) —
-   na všech třech žádné bílé/šedé pruhy ani švy, plynulý přechod menu →
-   banner → tiker → Novinky.
-
-   POZNÁMKA: o kousek níž, hned pod bannerem, u sekce "Novinky" je
-   vidět podobný (ale JINÝ a samostatný) jev — probarvené/prosvěcující
-   pozadí s fotkami hardwaru po stranách prosvítá skrz nativní Shoptet
-   "pozadí stránky" nastavené na `body` (Upravit vzhled stránky →
-   pozadí), protože wrapper sekce Novinky (`.content-wrapper.container`)
-   je boxovaný a NENÍ plný formát. Tohle NENÍ součást téhle opravy —
-   klient se v tomhle kole výslovně soustředil jen na banner; řeší se
-   samostatně, pokud si to klient bude příště přát.
+   POZNÁMKA (beze změny od v1): toto je VĚDOMĚ jen banner. Klient se i
+   ve 2. kole zaměřil jen na banner — sekce Novinky níž na stránce
+   (`.content-wrapper.container`) zůstává jak je, protože teď má se
+   stejným "boxovaný panel + prosvítající pozadí v marginách" vzhledem
+   jako banner naprosto konzistentní chování.
    ===================================================================== */
 
-body.type-index .content-wrapper.homepage-box.before-carousel .container{
-  width:100%!important;
-  max-width:none!important;
-  margin-left:0!important;
-  margin-right:0!important;
-  padding-left:0!important;
-  padding-right:0!important;
-}
-
-body.type-index .content-wrapper.homepage-box.before-carousel .row.banners-row{
-  margin-left:0!important;
-  margin-right:0!important;
-}
-
 body.type-index .content-wrapper.homepage-box.before-carousel{
+  background:transparent!important;
   padding-top:0!important;
   padding-bottom:0!important;
   margin-bottom:0!important;
 }
 
 body.type-index .pc-hero{
-  border-radius:0!important;
+  margin-bottom:0!important;
 }
