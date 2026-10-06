@@ -12,53 +12,67 @@
    banneru... Chci aby to do celé struktury moc pěkně zadalo."
 
    v1 řešilo integraci tak, že banner roztáhlo na celou šířku okna
-   (full-bleed, stejně jako horní menu) — živě fungovalo, ale klient po
-   zhlédnutí výsledku zadání upřesnil (2. kolo, se 3 screenshoty a
-   zakroužkovanými místy): banner má být zalomený PŘESNĚ jako sekce
-   "Kategorie"/"Novinky" pod ním (tedy boxovaný, NE full-bleed), a
-   vedle něj (v marginách) má být vidět "klasické statické pozadí, co
-   máme" — tedy nativní dekorativní pozadí stránky (prosvěcující fotky
-   hardwaru), ne plná černá full-bleed plocha ani plochá bílá/šedá.
-   Navíc nahlásil cca 1cm bílý/šedý proužek mezi tikerem a sekcí
-   Novinky, který tam neměl co dělat.
+   (full-bleed, stejně jako horní menu) — žádné bílé pruhy, ale banner
+   byl hranatý a sahal až k okrajům okna.
 
-   ŘEŠENÍ v2 (nahrazuje v1 — NE jen doplňuje):
-   1) `.container` uvnitř homepage-hero wrapperu se už NEPŘEPISUJE na
-      100% šířku — necháváme na ní čistě nativní Shoptet boxovanou
-      šířku (stejná `.container` třída, jakou používají Kategorie i
-      Novinky, takže šířka/zarovnání jsou s nimi automaticky 1:1
-      shodné, živě ověřeno: `.pc-hero` i `.content-wrapper.container`
-      sekce Novinky mají na 1920px okně identicky x:244 / width:1418).
-   2) Wrapper `.content-wrapper.homepage-box.before-carousel` (dřív
-      plochá světle šedá `#F6F6F6` přes celou šířku okna — to byl
-      zdroj PŮVODNÍCH "bílých pruhů") má teď průhledné pozadí
-      (`background:transparent`), takže v marginách po stranách
-      (i nad/pod bannerem) prosvítá nativní dekorativní pozadí stránky
-      — přesně to "klasické statické pozadí", který klient chce, a
-      přesně stejné chování, jaké už má sekce Novinky pod bannerem.
-   3) Padding/margin wrapperu nahoře i dole zůstává vynulovaný (z v1) a
-      navíc `.pc-hero` samotný má teď taky vynulovaný `margin-bottom`
-      (nativně 32px) — tím mizí i ten nahlášený cca 1cm proužek mezi
-      tikerem a Novinky úplně (živě ověřeno: mezera 1px = zaokrouhlovací
-      chyba, fakticky nulová).
-   4) `border-radius` bannerU se NEPŘEPISUJE (na rozdíl od v1) — necháno
-      na nativních 20px, protože banner je teď zpátky boxovaný/kartový
-      (ne full-bleed hranatý jako menu), takže zaoblené rohy dávají
-      smysl a odpovídají původnímu vzhledu, který klientovi nevadil.
+   2. kolo (se 3 screenshoty, zakroužkovanými místy): klient chce banner
+   zalomený PŘESNĚ jako sekce "Kategorie"/"Novinky" pod ním (tedy
+   boxovaný, NE full-bleed), a vedle něj (v marginách) vidět "klasické
+   statické pozadí, co máme" — nativní dekorativní pozadí stránky. Navíc
+   nahlásil cca 1cm proužek mezi tikerem a Novinky.
 
-   Živě ověřeno na 1920px (desktop, přes dočasné vypnutí v1 <link> a
-   přeměření `getBoundingClientRect`: `.pc-hero` x:244 w:1418, shodné
-   se sekcí Novinky; mezera pod bannerem 1px) a 390px (mobil,
-   iframe-simulace) — na mobilu je `.container` už nativně na 100 %
-   šířky (Shoptetovo vlastní responzivní chování, stejné pro Kategorie
-   i Novinky), takže tam k žádnému vizuálnímu rozdílu oproti zbytku
-   webu nedochází ani bez zásahu.
+   ŘEŠENÍ v2 (nahrazuje v1): `.container` uvnitř homepage-hero wrapperu
+   se přestává přepisovat na 100 % šířku — necháno na nativní Shoptet
+   boxované šířce, STEJNÉ jako Kategorie/Novinky (živě ověřeno: shodné
+   x:244/width:1418 na 1920px okně). Wrapper
+   `.content-wrapper.homepage-box.before-carousel` (dřív plochá světle
+   šedá `#F6F6F6`) má průhledné pozadí — v marginách prosvítá nativní
+   dekorativní pozadí stránky. Padding/margin wrapperu i `.pc-hero`
+   samotného nahoře/dole vynulovaný — mizí nahlášený proužek.
 
-   POZNÁMKA (beze změny od v1): toto je VĚDOMĚ jen banner. Klient se i
-   ve 2. kole zaměřil jen na banner — sekce Novinky níž na stránce
-   (`.content-wrapper.container`) zůstává jak je, protože teď má se
-   stejným "boxovaný panel + prosvítající pozadí v marginách" vzhledem
-   jako banner naprosto konzistentní chování.
+   3. kolo (screenshot se 4 zakroužkovanými rohy + popis "stále vidíš
+   dvě linky, jednu nahoře jednu dole"): po v2 vyšly najevo dva NOVÉ,
+   do té doby schované defekty — živě dohledáno, ne odhadem:
+
+   1) ZAOBLENÉ ROHY `.pc-hero` (nativních 20px, v2 úmyslně ponechané)
+      teď banneru nesedí — živě ověřeno zoomem na všechny 4 rohy: banner
+      je po v2 flush (bez mezery) jak proti hornímu menu (které je
+      hranaté/full-bleed), tak proti bílému panelu Novinky pod ním
+      (taky hranatý) — zaoblený roh banneru proti rovné hraně souseda
+      nad/pod ním vytváří v každém rohu malý trojúhelníkový "zub", kde
+      prosvítá pozadí stránky skrz mezeru mezi zaoblením a rovnou
+      hranou souseda. V v1 (plný black box bez boxování) si toho klient
+      nevšiml, protože banner byl full-bleed a hranatý; teď, když je
+      banner boxovaný a flush nahoře/dole, zaoblení už nedává smysl.
+      ŘEŠENÍ: `border-radius:0` na `.pc-hero` — hranatý, přesně lícuje
+      s rovnými hranami menu nahoře i Novinky dole ve všech 4 rozích
+      (živě ověřeno zoomem na všechny 4 rohy po opravě — bez mezery).
+
+   2) DVĚ VODOROVNÉ LINKY přes celou šířku okna (nahoře mezi menu a
+      bannerem, dole mezi tikerem a Novinky) — živě dohledáno přes
+      getComputedStyle: wrapper `.content-wrapper.homepage-box.
+      before-carousel` má nativně `border-top:1px solid #dadada` a
+      `border-bottom:1px solid #dadada` (zjevně nativní Shoptetův
+      oddělovač mezi bloky obsahu homepage). Tahle 1px šedá linka byla
+      v nativním stavu i v v1 vizuálně nenápadná (splývala buď s
+      plochým `#F6F6F6` pozadím wrapperu v nativním stavu, nebo s
+      banneru v1), ale v v2 — když wrapper dostal průhledné pozadí a
+      v marginách prosvítá barevné pozadí stránky — stejná 1px šedá
+      linka najednou kontrastně protíná pestré pozadí PŘES CELOU ŠÍŘKU
+      OKNA (wrapper má pořád width:1905, i když jeho pozadí je teď
+      průhledné — border se kreslí na hranici elementu bez ohledu na
+      průhlednost pozadí). ŘEŠENÍ: `border-top:none; border-bottom:
+      none` na wrapperu (ve stejném scope) — živě ověřeno zoomem, linky
+      zmizely úplně.
+
+   Živě ověřeno na 1920px desktopu po v3 opravě: všechny 4 rohy banneru
+   flush/hranaté bez mezery vůči sousedům, žádné vodorovné linky přes
+   pozadí, `.pc-hero` x:244/width:1418 (shoda s Novinky beze změny).
+
+   POZNÁMKA (beze změny od v1): toto je VĚDOMĚ jen banner. Sekce
+   Novinky níž na stránce (`.content-wrapper.container`) zůstává jak
+   je — má teď se stejným "boxovaný panel + prosvítající pozadí v
+   marginách" vzhledem jako banner konzistentní chování.
    ===================================================================== */
 
 body.type-index .content-wrapper.homepage-box.before-carousel{
@@ -66,8 +80,11 @@ body.type-index .content-wrapper.homepage-box.before-carousel{
   padding-top:0!important;
   padding-bottom:0!important;
   margin-bottom:0!important;
+  border-top:none!important;
+  border-bottom:none!important;
 }
 
 body.type-index .pc-hero{
   margin-bottom:0!important;
+  border-radius:0!important;
 }
