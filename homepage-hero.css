@@ -1,0 +1,85 @@
+/* =====================================================================
+   HOMEPAGE-HERO.CSS — úvodní hero banner/karusel na homepage
+   (Shoptet body třída `type-index` / `in-index`, nativní prvek "wide
+   carousel" vložený přes Upravit domovskou stránku → Přidat banner)
+
+   Zadání klienta: hero banner (nadpis "Repasovaná technika s ověřeným
+   původem" + diagnostický terminálový panel "kontrola-pred-prodejem.log"
+   + tiker s vlastnostmi obchodu) byl ručně přenesený/upravený ze
+   samostatného marketingového webu www.prahacomputer.cz (viz
+   web-produkcni-balicek-v1.md) a nebyl vůbec přizpůsobený téhle
+   šabloně — "Hloupé hnusné bílé pruhy vedle banneru... Chci aby to do
+   celé struktury moc pěkně zadalo."
+
+   ROOT CAUSE (živě dohledáno přes getBoundingClientRect/getComputedStyle
+   na 813050.myshoptet.com, ne odhadem): nativní Shoptet hero carousel
+   (`.pc-hero` a celý jeho řetězec `.wide-carousel > .carousel.slide >
+   .carousel-inner > .item`) je vnořený do standardního Bootstrap-like
+   boxovaného kontejneru (`.content-wrapper.homepage-box.before-carousel
+   .container`), který má na 1920px okně pevně `margin:0 auto` se
+   zhruba 244px odsazením z každé strany — STEJNÝ kontejner, který se
+   používá pro běžný (boxovaný) obsah webu typu produktová mřížka.
+   Horní navigační lišta (gradient fialová→zelená) je ale NATIVNĚ plně
+   "full-bleed" (okraj až k okraji okna) — odtud ten vizuální
+   nesoulad/"bílé pruhy", na které si klient stěžoval. Navíc
+   `.content-wrapper.homepage-box.before-carousel` sám má plný formát
+   (0 až do kraje okna) s plochým `padding:20px 0` a pozadím `#F6F6F6`
+   — i po zarovnání `.container` na 100% šířku by tak zůstal tenký
+   šedobílý "švik" nahoře (mezi menu a bannerem) i dole (mezi tikerem a
+   sekcí Novinky).
+
+   ŘEŠENÍ: `.container` uvnitř tohoto konkrétního homepage-hero
+   wrapperu (a NIKDE JINDE — `.container` je sdílená Shoptet třída
+   použitá na spoustě míst webu, proto je selektor úmyslně navázaný na
+   kombinaci `.content-wrapper.homepage-box.before-carousel .container`,
+   aby zásah zůstal izolovaný jen na tenhle banner) je přetažený na
+   100% šířku (bez `max-width`/centrovacích marginů/paddingu),
+   `.row.banners-row` uvnitř má vynulovaný kompenzační bootstrap margin
+   (`-20px`), a samotný wrapper má vynulovaný padding/margin nahoře i
+   dole, takže tmavý banner plynule navazuje na gradientové menu nahoře
+   i na bílou sekci Novinky dole, bez jakékoli viditelné mezery nebo
+   barevného švu. `.pc-hero` má navíc vynulovaný `border-radius` (dřív
+   20px) — hranatý, přes celou šířku okna, stejně jako menu nad ním.
+
+   Vnitřní obsah bannera (nadpis, text, tlačítka, terminálový panel) se
+   NEMĚNÍ — `.pc-hero__grid` má už nativně vlastní `max-width:1200px` +
+   `margin:0 auto`, takže zůstává čitelně vycentrovaný i v nově mnohem
+   širším (full-bleed) banneru; mění se jen VNĚJŠÍ rámování/kontejner.
+
+   Živě ověřeno na 1920px (desktop), 768px (tablet) a 390px (mobil) —
+   na všech třech žádné bílé/šedé pruhy ani švy, plynulý přechod menu →
+   banner → tiker → Novinky.
+
+   POZNÁMKA: o kousek níž, hned pod bannerem, u sekce "Novinky" je
+   vidět podobný (ale JINÝ a samostatný) jev — probarvené/prosvěcující
+   pozadí s fotkami hardwaru po stranách prosvítá skrz nativní Shoptet
+   "pozadí stránky" nastavené na `body` (Upravit vzhled stránky →
+   pozadí), protože wrapper sekce Novinky (`.content-wrapper.container`)
+   je boxovaný a NENÍ plný formát. Tohle NENÍ součást téhle opravy —
+   klient se v tomhle kole výslovně soustředil jen na banner; řeší se
+   samostatně, pokud si to klient bude příště přát.
+   ===================================================================== */
+
+body.type-index .content-wrapper.homepage-box.before-carousel .container{
+  width:100%!important;
+  max-width:none!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  padding-left:0!important;
+  padding-right:0!important;
+}
+
+body.type-index .content-wrapper.homepage-box.before-carousel .row.banners-row{
+  margin-left:0!important;
+  margin-right:0!important;
+}
+
+body.type-index .content-wrapper.homepage-box.before-carousel{
+  padding-top:0!important;
+  padding-bottom:0!important;
+  margin-bottom:0!important;
+}
+
+body.type-index .pc-hero{
+  border-radius:0!important;
+}
