@@ -1,0 +1,356 @@
+/* =====================================================================
+   OBJEDNAVKA-ODESLANA.CSS — stránka "Objednávka odeslána"
+   (nativní URL /objednavka/dekujeme/, Shoptet body třída `in-dekujeme`)
+
+   Zadání klienta: "Proč to není stejné jako zbytek webu?" — stránka, na
+   kterou zákazník přijde hned po dokončení objednávky, byla nativně
+   prakticky nestylovaná: nadpis v jiném fontu (Exo 2) než zbytek webu,
+   obě sekce ("Platba a doručení" / "Obsah objednávky") úplně bez
+   jakéhokoli vizuálního rámce (žádné pozadí/okraj/stín), tabulky holé,
+   tlačítko "Zpět do obchodu" hranaté bez zaoblení a bez brand gradientu.
+
+   Celá stránka je navíc součástí objednávkového procesu (`body.ordering-process`),
+   takže tmavé pozadí (#0A0E17) a viditelnost loga v hlavičce už řeší
+   sdílená pravidla v style.css — tenhle soubor se stará jen o samotný
+   bílý obsahový panel uprostřed.
+
+   ⚠️ ROZBITÁ NATIVNÍ IKONKA (živě dohledáno, na rozdíl od dřívějších
+   podobných případů — menu-helper/ikonka domů v breadcrumb.css v1 — kde
+   se zdroj nikdy nenašel): nativní CSS šablony (`main-11...css`) nastavuje
+   oběma nadpisům sekcí (`.co-box.co-payment-method h4:before` a
+   `.co-box.co-order h4:before`) `content:"\e926"` / `content:"\e925"` —
+   glyfy z vlastního ikonového webfontu Shoptetu ("shoptet" icon font).
+   Živě ověřeno (dočasné `visibility:hidden` na h4 glyf i text spolu
+   schovalo, takže je to prokazatelně součást h4, ne cizí vrstva přes
+   něj) — problém je, že aktuální verze ikonového fontu na tomhle shopu
+   pro tyhle konkrétní kódové body zjevně nemá definovaný tvar, takže
+   prohlížeč vykresluje jen prázdný "tofu" obdélník (univerzální náhrada
+   za chybějící glyf). Navíc je umístění ikonky (přes `margin-left:-80px`
+   + `padding-left:80px` na h4) u Shoptetu zapojené JEN od šířky 1200px
+   výš (`@media(min-width:1200px)`) — pod touhle hranicí nemá nadpis
+   žádné místo pro ikonku vyhrazené vůbec, takže na mobilu/tabletu by
+   tofu glyf seděl nalepený přímo na text bez mezery (živě ověřeno na
+   simulované šířce 390px).
+
+   Řešení: místo spoléhání na Shoptetův (nespolehlivý a jen částečně
+   responzivní) systém umístění ikonky přebíráme ikonku PLNĚ pod
+   vlastní kontrolu — nadpis `h4` je teď flexbox (ikonka + text vedle
+   sebe, `gap`), funguje identicky na všech šířkách bez výjimky, a
+   samotná "rozbitá" ikonka je schovaná (`content:""`) a nahrazená
+   vlastní kulatou značkovou odznáčkou s čistou SVG ikonkou (stejný
+   grafický jazyk jako kulaté odznáčky šipky v hlavním menu/style.css).
+   ===================================================================== */
+
+/* ===== Nadpis "Objednávka odeslána" ===== */
+body.in-dekujeme .order-summary-heading{
+  font-family:'Poppins',sans-serif!important;
+  text-align:center!important;
+  margin:0 0 10px!important;
+  padding-top:36px!important;
+  font-size:28px!important;
+  font-weight:700!important;
+  letter-spacing:.4px!important;
+}
+
+/* Kulatá značková odznáčka s fajfkou nad nadpisem — stejný grafický
+   jazyk (gradient fialová→zelená, bílá SVG ikonka) jako kulaté odznáčky
+   jinde na webu (šipka u kategorií v hlavním menu). */
+body.in-dekujeme .order-summary-heading::before{
+  content:"";
+  display:block;
+  width:64px;
+  height:64px;
+  margin:0 auto 20px;
+  border-radius:50%;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='5 13 10 18 19 7'/%3E%3C/svg%3E"),linear-gradient(135deg,#5B2CDB 0%,#18A073 100%);
+  background-repeat:no-repeat,no-repeat;
+  background-position:center,center;
+  background-size:28px 28px,cover;
+  box-shadow:0 8px 20px -4px rgba(91,44,219,.4);
+}
+
+/* ===== Číslo objednávky ===== */
+body.in-dekujeme p.reca-number{
+  text-align:center!important;
+  color:#8a8f98!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:14px!important;
+  margin:0 0 36px!important;
+}
+body.in-dekujeme p.reca-number strong{
+  display:inline-block;
+  margin-left:6px;
+  padding:3px 14px;
+  background:#f5f2fc;
+  color:#5B2CDB!important;
+  font-weight:700!important;
+  border-radius:50px;
+}
+
+/* Celý rekapitulační blok vycentrovaný, ne na celou šířku širokého
+   desktopu — čitelnější, stejně jak to dělá i úzký layout checkout
+   kroků vedle sebe s postranním sloupcem. */
+body.in-dekujeme .recapitulation-wrapper[data-testid="recapTable"]{
+  max-width:640px!important;
+  margin:0 auto!important;
+}
+
+/* ===== Karty sekcí "Platba a doručení" / "Obsah objednávky" =====
+   Nativně úplně bez vizuálního rámce (ověřeno živě přes getComputedStyle:
+   background transparentní, border 0, žádný stín) — teď stejná karta
+   jako `.manufacturer-info-box`/`.category-perex` jinde na webu, ať
+   stránka vypadá jako součást stejného designu. */
+body.in-dekujeme .co-box.co-payment-method,
+body.in-dekujeme .co-box.co-order{
+  background:#f8f7fd!important;
+  border:1px solid #eef0f4!important;
+  border-left:4px solid #5B2CDB!important;
+  border-radius:12px!important;
+  padding:28px 30px!important;
+  margin:0 0 20px!important;
+  box-shadow:0 2px 10px rgba(20,20,40,.05)!important;
+}
+body.in-dekujeme .co-box.co-order{
+  margin-bottom:0!important;
+}
+
+/* Nadpisy sekcí — vlastní flexbox s kulatou gradientní odznáčkou místo
+   nativní (rozbité) ikonky, viz vysvětlení nahoře. Funguje stejně na
+   všech šířkách, nezávisle na Shoptetově 1200px zlomu. */
+body.in-dekujeme .co-box h4.order-icon{
+  display:flex!important;
+  align-items:center!important;
+  gap:12px!important;
+  margin:0 0 20px!important;
+  padding:0!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  text-transform:uppercase!important;
+  letter-spacing:.4px!important;
+  color:#1f1f1f!important;
+  line-height:1.2!important;
+}
+body.in-dekujeme .co-box h4.order-icon::before{
+  content:""!important;
+  display:inline-block!important;
+  flex:0 0 36px!important;
+  width:36px!important;
+  height:36px!important;
+  border-radius:50%!important;
+  background-color:transparent!important;
+  background-image:linear-gradient(135deg,#5B2CDB 0%,#18A073 100%)!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  position:static!important;
+  margin:0!important;
+  left:auto!important;
+  top:auto!important;
+}
+/* Ikonka "Platba a doručení" — jednoduchá dodávka/doručení. */
+body.in-dekujeme .co-box.co-payment-method h4.order-icon::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='1' y='7' width='13' height='9'/%3E%3Cpath d='M14 10h3.5L21 13.5V16h-7z'/%3E%3Ccircle cx='6' cy='18.5' r='1.6'/%3E%3Ccircle cx='17' cy='18.5' r='1.6'/%3E%3C/svg%3E"),linear-gradient(135deg,#5B2CDB 0%,#18A073 100%)!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-position:center,center!important;
+  background-size:17px 17px,cover!important;
+}
+/* Ikonka "Obsah objednávky" — balíček. */
+body.in-dekujeme .co-box.co-order h4.order-icon::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 7.5L12 3 3 7.5l9 4.5 9-4.5z'/%3E%3Cpath d='M3 7.5v9l9 4.5 9-4.5v-9'/%3E%3Cpath d='M12 12v9'/%3E%3C/svg%3E"),linear-gradient(135deg,#5B2CDB 0%,#18A073 100%)!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-position:center,center!important;
+  background-size:16px 16px,cover!important;
+}
+
+/* ===== Tabulka "Platba a doručení" (recapitulation-table) ===== */
+body.in-dekujeme table.recapitulation-table{
+  width:100%!important;
+  border-collapse:collapse!important;
+}
+body.in-dekujeme table.recapitulation-table th,
+body.in-dekujeme table.recapitulation-table td{
+  border:none!important;
+  border-bottom:1px solid #eef0f4!important;
+  padding:12px 0!important;
+  font-family:'Poppins',sans-serif!important;
+}
+body.in-dekujeme table.recapitulation-table tr:last-child th,
+body.in-dekujeme table.recapitulation-table tr:last-child td{
+  border-bottom:none!important;
+  padding-bottom:0!important;
+}
+body.in-dekujeme table.recapitulation-table th{
+  text-align:left!important;
+  font-weight:400!important;
+  color:#8a8f98!important;
+  font-size:13px!important;
+}
+body.in-dekujeme table.recapitulation-table td{
+  text-align:right!important;
+}
+body.in-dekujeme table.recapitulation-table td strong{
+  color:#1f1f1f!important;
+  font-weight:600!important;
+}
+/* Poslední řádek (Částka k úhradě) — vizuálně nejsilnější, brand barva. */
+body.in-dekujeme table.recapitulation-table tr:last-child td strong{
+  font-size:19px!important;
+  color:#5B2CDB!important;
+}
+
+/* ===== Tabulka "Obsah objednávky" (cart-table) ===== */
+body.in-dekujeme .co-order table.cart-table{
+  width:100%!important;
+  border-collapse:collapse!important;
+}
+body.in-dekujeme .co-order .cart-table td{
+  border:none!important;
+  padding:12px 10px!important;
+  vertical-align:middle!important;
+  font-family:'Poppins',sans-serif!important;
+}
+body.in-dekujeme .co-order .cart-table td.cart-p-image{
+  width:76px!important;
+  padding-left:0!important;
+}
+body.in-dekujeme .co-order .cart-table td.cart-p-image img{
+  border-radius:10px!important;
+  border:1px solid #eef0f4!important;
+  display:block!important;
+}
+body.in-dekujeme .co-order .cart-table td.p-name{
+  font-weight:600!important;
+  color:#1f1f1f!important;
+  font-size:14px!important;
+  line-height:1.4!important;
+}
+body.in-dekujeme .co-order .cart-table td.p-quantity{
+  color:#8a8f98!important;
+  font-size:13px!important;
+  white-space:nowrap!important;
+}
+body.in-dekujeme .co-order .cart-table td.p-quantity strong{
+  color:#1f1f1f!important;
+  font-weight:600!important;
+}
+body.in-dekujeme .co-order .cart-table td.p-price{
+  text-align:right!important;
+  font-weight:700!important;
+  color:#1f1f1f!important;
+  font-size:15px!important;
+  white-space:nowrap!important;
+}
+
+/* ===== Závěrečný blok — "Rekapitulaci Vám zašleme...", "Děkujeme!",
+   tlačítko "Zpět do obchodu" (druhý `.recapitulation-wrapper`, bez
+   `data-testid`) ===== */
+body.in-dekujeme .recapitulation-wrapper:not([data-testid]){
+  max-width:640px!important;
+  margin:32px auto 48px!important;
+  text-align:center!important;
+}
+body.in-dekujeme .order-summary-item.total{
+  color:#8a8f98!important;
+  font-family:'Poppins',sans-serif!important;
+  font-size:14px!important;
+  margin:0 0 6px!important;
+}
+body.in-dekujeme .order-summary-item.summary-thx{
+  font-family:'Poppins',sans-serif!important;
+  font-size:24px!important;
+  font-weight:700!important;
+  color:#5B2CDB!important;
+  margin:0 0 28px!important;
+}
+body.in-dekujeme .order-complete-links p{
+  margin:0!important;
+}
+/* Tlačítko "Zpět do obchodu" — stejná gradientní pilulka jako hlavní
+   CTA tlačítka napříč webem (next-step-forward v kosik.css, Detail/
+   Přidat do košíku v produkt.css/kategorie.css). Nativně hranaté,
+   jednobarevné, bez paddingu (ověřeno živě: border-radius 0, padding
+   5px 15px). */
+body.in-dekujeme .order-complete-links .btn.btn-primary{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  border:none!important;
+  border-radius:50px!important;
+  padding:16px 42px!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  color:#fff!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:600!important;
+  font-size:15px!important;
+  text-transform:uppercase!important;
+  letter-spacing:.3px!important;
+  box-shadow:0 8px 20px -6px rgba(20,10,60,.45)!important;
+  transition:box-shadow .18s ease,transform .18s ease,background .18s ease!important;
+}
+body.in-dekujeme .order-complete-links .btn.btn-primary:hover{
+  background:linear-gradient(135deg,#6d3ef0 0%,#8a54e8 45%,#1dbb84 100%)!important;
+  box-shadow:0 12px 26px -6px rgba(20,10,60,.55)!important;
+  transform:translateY(-1px)!important;
+  color:#fff!important;
+}
+body.in-dekujeme .order-complete-links .btn.btn-primary:focus-visible{
+  outline:none!important;
+  box-shadow:0 8px 20px -6px rgba(20,10,60,.45)!important,0 0 0 3px rgba(91,44,219,.25)!important;
+}
+
+/* =====================================================================
+   MOBIL (≤767px) — Shoptetovo rezervované místo pro ikonku (margin-left:
+   -80px/padding-left:80px na h4) platí nativně jen od 1200px výš, takže
+   tady to beztak neřešíme — vlastní flexbox nadpisu výše funguje stejně
+   na všech šířkách. Jen dolaďujeme padding karet a layout tabulky
+   položek, ať se na úzké obrazovce nic nezalamuje ošklivě.
+   ===================================================================== */
+@media(max-width:767px){
+  body.in-dekujeme .co-box.co-payment-method,
+  body.in-dekujeme .co-box.co-order{
+    padding:20px 18px!important;
+  }
+}
+
+/* Položka v "Obsah objednávky" na mobilu — jednoduché skládání bloků
+   pod sebe místo nativního chování tabulkových buněk (žádné procentuální
+   `width` vázané na sloupec gridu/tabulky — poučení z kosik.css bodu 7,
+   kde tenhle typ triku na mobilu rozbil šířku sloupce). */
+@media(max-width:479px){
+  body.in-dekujeme .order-summary-heading{
+    font-size:22px!important;
+    padding-top:22px!important;
+  }
+  body.in-dekujeme .order-summary-heading::before{
+    width:52px!important;
+    height:52px!important;
+  }
+  body.in-dekujeme .co-order .cart-table,
+  body.in-dekujeme .co-order .cart-table tbody,
+  body.in-dekujeme .co-order .cart-table tr{
+    display:block!important;
+    width:100%!important;
+  }
+  body.in-dekujeme .co-order .cart-table td{
+    display:block!important;
+    width:auto!important;
+    padding:4px 0!important;
+  }
+  body.in-dekujeme .co-order .cart-table td.cart-p-image{
+    margin-bottom:10px!important;
+  }
+  body.in-dekujeme .co-order .cart-table td.p-name{
+    margin-bottom:6px!important;
+  }
+  body.in-dekujeme .co-order .cart-table td.p-price{
+    text-align:left!important;
+    margin-top:2px!important;
+  }
+  body.in-dekujeme .order-complete-links .btn.btn-primary{
+    width:100%!important;
+    padding:15px 24px!important;
+  }
+}
