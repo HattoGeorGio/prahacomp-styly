@@ -467,7 +467,27 @@ body.ordering-process #header .site-name{display:block!important;}
   }
 }
 
-/* ===== Tlačítko "Více" — přetečené položky hlavního menu =====
+/* ===== Header-top na širokém desktopu (>=1200px): logo i košík vycentrované =====
+Nativní header-top rozděluje logo / vyhledávání / košík na tři stejné sloupce. Logo bylo přilepené
+k levému a košík k pravému okraji svého sloupce (velké prázdné mezery uvnitř hlavičky). Teď je
+logo i košík vycentrované ve své třetině (hledání se nehýbe), rozestupy jsou vyrovnané. Výška
+hlavičky se nemění. Pod 1200px (tablet/mobil) beze změny.
+POZOR: rozbalovací okno košíku (.popup-widget.cart-widget) je v šabloně ukotvené absolutně vůči
+body (left:50% + pevný margin-left: 159px pod 1440px, 279px od 1440px), ne vůči tlačítku košíku.
+Spolu s košíkem se proto musí o stejnou vzdálenost posunout doleva i okno, jinak by jeho šipka
+mířila mimo tlačítko. Posun = (třetina hlavičky - šířka tlačítka) / 2 = 98px pod 1440px a 138px
+od 1440px, tedy 159-98=61px a 279-138=141px. Změřeno živě na šířkách 1200-1900px: šipka okna je
+vždy uvnitř tlačítka, ~23px od jeho pravého okraje (stejně jako nativně). */
+@media(min-width:1200px){
+#header .site-name{text-align:center;}
+#header .navigation-buttons{justify-content:center;}
+.popup-widget.cart-widget{margin-left:61px!important;}
+}
+@media(min-width:1440px){
+.popup-widget.cart-widget{margin-left:141px!important;}
+}
+
+/* ===== Tlačítko "Více" — přetečen položky hlavního menu =====
    (.menu-helper, data-testid="hamburgerMenu")
    Když se na dané šířce nevejdou všechny položky hlavního menu do
    jednoho řádku (typicky "VÝKUP ZBOŽÍ" na tabletu, viz klientův
