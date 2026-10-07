@@ -19,17 +19,12 @@
    (nic nemažeme) IČO/DIČ vedle stávajícího copyright textu — podpis
    Shoptetu i odkaz na cookies zůstávají zcela beze změny.
 
-   Poznámka k odkazu "Reklamace": e-shop zatím nemá samostatnou stránku
-   reklamačního řádu (ověřeno v administraci → Stránky — existují jen
-   "Jak nakupovat", "Kontakty", "Obchodní podmínky" a "Podmínky ochrany
-   osobních údajů"). Reklamační řád bývá obvykle součástí obchodních
-   podmínek, proto odkaz "Reklamace" prozatím míří na /obchodni-podminky/
-   — až bude mít samostatnou stránku, stačí tu jen upravit "href" u
-   jedné položky níž (viz USEFUL_LINKS).
+   Poznámka: odkaz "Reklamace" byl na žádost klienta odebrán (4. kolo, 7. 10. 2026) —
+   v patičce zůstávají jen Obchodní podmínky a Zásady zpracování osobních údajů.
 
    REVIZE (2. kolo): na žádost klienta sloupec "Hlavní kategorie" nahrazen
    sloupcem "Užitečné odkazy" (Obchodní podmínky/Zásady zpracování osobních
-   údajů/Reklamace/Jak nakupovat/Kontakt) — tyto odkazy se tím pádem ze
+   údajů/Jak nakupovat/Kontakt; Reklamace odebrána ve 4. kole) — tyto odkazy se tím pádem ze
    spodní lišty odstranily (byly by duplicitní). Adresa v Kontaktu je teď
    klikací odkaz na Google Mapy. */
 (function(){
@@ -52,12 +47,10 @@
   // "Užitečné odkazy" — právní a informační odkazy, dřív žily jen ve
   // spodní liště, teď mají vlastní sloupec (nahrazuje "Hlavní kategorie").
   // "Jak nakupovat" href ověřen živě v DOM (nativní stránka Shoptetu,
-  // stejná jako v horní liště). "Reklamace" — viz poznámka výš, zatím
-  // beze změny míří na /obchodni-podminky/.
+  // stejná jako v horní liště). Odkaz "Reklamace" byl odebrán (4. kolo, 7. 10. 2026).
   var USEFUL_LINKS = [
     {href:'/obchodni-podminky/', label:'Obchodní podmínky'},
     {href:'/podminky-ochrany-osobnich-udaju/', label:'Zásady zpracování osobních údajů'},
-    {href:'/obchodni-podminky/', label:'Reklamace'},
     {href:'/jak-nakupovat/', label:'Jak nakupovat'},
     {href:'/kontakty/', label:'Kontakt'}
   ];
@@ -169,7 +162,7 @@
     footer.insertBefore(main, bar);
 
     // Do nativního copyright bloku doplníme jen IČO/DIČ — právní odkazy
-    // (Obchodní podmínky/Reklamace/GDPR/Kontakt) teď žijí ve sloupci
+    // (Obchodní podmínky/GDPR/Kontakt) teď žijí ve sloupci
     // "Užitečné odkazy" výš, takže by tu dole byly zbytečně duplicitní.
     // Vkládáme těsně PŘED odkaz na cookies, ať zůstane (jak bývá zvykem)
     // úplně poslední v pořadí.
