@@ -198,7 +198,8 @@
 /* =====================================================================
    Okno „Nastavení cookies“ (colorbox s třídou .cookiesDialog)
    ===================================================================== */
-#cboxOverlay{background:#0A0E17!important;opacity:.72!important;}
+/* Ztmavení pozadí jen když je otevřené okno cookies (:has) — ostatní colorboxy na webu zůstávají nativní. */
+body:has(#cboxContent.cookiesDialog) #cboxOverlay{background:#0A0E17!important;opacity:.72!important;}
 #cboxContent.cookiesDialog{
   position:relative;
   overflow:hidden;
