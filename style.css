@@ -487,7 +487,7 @@ vždy uvnitř tlačítka, ~23px od jeho pravého okraje (stejně jako nativně).
 .popup-widget.cart-widget{margin-left:141px!important;}
 }
 
-/* ===== Tlačítko "Více" — přetečen položky hlavního menu =====
+/* ===== Tlačítko "Více" — přetečené položky hlavního menu =====
    (.menu-helper, data-testid="hamburgerMenu")
    Když se na dané šířce nevejdou všechny položky hlavního menu do
    jednoho řádku (typicky "VÝKUP ZBOŽÍ" na tabletu, viz klientův
