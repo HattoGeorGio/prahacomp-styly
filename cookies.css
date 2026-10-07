@@ -1,0 +1,297 @@
+/* =====================================================================
+   COOKIES.CSS — cookie lišta (dole uprostřed) + okno „Nastavení cookies“
+
+   Jen vzhled. Texty, tlačítka a chování zůstávají nativní z Shoptetu
+   (Vzhled a obsah → Cookies). Nic se tu neskrývá ani nepřejmenovává,
+   takže souhlas (Odmítnout / Souhlasím / Nastavení) funguje beze změny.
+
+   Barvy značky: tmavá #0A0E17, fialová #5B2CDB, zelená #18A073,
+   gradient fialová→zelená jako u hlavních CTA tlačítek na webu.
+   Font Poppins (na webu už načtený).
+
+   Lišta: stylováno jen pro umístění „Na spodní okraj prohlížeče“
+   (.siteCookies--bottom). Jiné umístění v administraci (vlevo, vpravo,
+   střed, nahoře) zůstane nativní, dokud se sem nepřidá.
+   Nativní třída --scrolled (po rolování se lišta v šabloně roztáhne na
+   celou šířku) je přepsaná, takže karta zůstane stejná a „neskáče“.
+
+   Nadpis „Vaše soukromí je pro nás důležité“ a ikonka cookie jsou
+   přidané přes ::before (text lišty se v administraci nemění).
+
+   Tlačítka Odmítnout a Souhlasím jsou stejně velká a obě výrazně
+   vidět (Odmítnout je obrysové, ne schované) — odmítnutí nesmí být
+   horší než souhlas.
+   ===================================================================== */
+
+@keyframes pcCookieIn{
+  from{opacity:0;transform:translate(-50%,18px);}
+  to{opacity:1;transform:translate(-50%,0);}
+}
+
+/* ---------- Lišta: karta uprostřed dole ---------- */
+.siteCookies--bottom,
+.siteCookies--bottom.siteCookies--scrolled{
+  left:50%!important;
+  right:auto!important;
+  bottom:20px!important;
+  margin-left:0!important;
+  width:min(720px,calc(100% - 32px))!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transform:translateX(-50%);
+  font-family:'Poppins',sans-serif;
+  animation:pcCookieIn .45s cubic-bezier(.2,.8,.2,1) both;
+}
+.siteCookies--bottom .siteCookies__form{
+  position:relative;
+  overflow:hidden;
+  display:grid!important;
+  grid-template-columns:1fr auto;
+  grid-template-areas:"text text" "links buttons";
+  gap:18px 16px;
+  align-items:center;
+  margin:0!important;
+  max-width:none!important;
+  padding:26px 26px 22px!important;
+  background:#0A0E17!important;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px!important;
+  box-shadow:0 28px 70px -14px rgba(0,0,0,.6),0 0 0 1px rgba(91,44,219,.3)!important;
+}
+.siteCookies--bottom .siteCookies__form::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;
+  height:4px;
+  background:linear-gradient(90deg,#5B2CDB,#18A073);
+}
+.siteCookies--bottom .siteCookies__content{display:contents!important;}
+
+/* Text + nadpis s ikonkou */
+.siteCookies--bottom .siteCookies__text{
+  grid-area:text;
+  margin:0!important;
+  font-size:14px;
+  line-height:1.65;
+  color:#C4CAD8!important;
+}
+.siteCookies--bottom .siteCookies__text::before{
+  content:"Vaše soukromí je pro nás důležité";
+  display:block;
+  margin-bottom:8px;
+  padding-left:42px;
+  min-height:32px;
+  line-height:32px;
+  font-size:17px;
+  font-weight:700;
+  color:#fff;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%235B2CDB'/%3E%3Cstop offset='1' stop-color='%2318A073'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' d='M16 2a14 14 0 1 0 14 14 4.5 4.5 0 0 1-4.6-4.4A4.5 4.5 0 0 1 21 7.2 4.5 4.5 0 0 1 16 2z'/%3E%3Ccircle cx='11' cy='13' r='1.9' fill='%230A0E17'/%3E%3Ccircle cx='17.5' cy='20.5' r='1.9' fill='%230A0E17'/%3E%3Ccircle cx='10' cy='22' r='1.4' fill='%230A0E17'/%3E%3Ccircle cx='22' cy='18' r='1.4' fill='%230A0E17'/%3E%3C/svg%3E") no-repeat left center/32px 32px;
+}
+.siteCookies--bottom .siteCookies__text a{
+  color:#A78BFA!important;
+  font-weight:600;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.siteCookies--bottom .siteCookies__text a:hover{color:#fff!important;text-decoration:none;}
+
+/* Odkaz „Nastavení“ */
+.siteCookies--bottom .siteCookies__links{
+  grid-area:links;
+  margin:0!important;
+  text-align:left!important;
+  width:auto!important;
+}
+.siteCookies--bottom .siteCookies__link{
+  display:inline-flex!important;
+  align-items:center;
+  width:auto!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+  color:#C4CAD8!important;
+  font:600 14px/46px 'Poppins',sans-serif!important;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:pointer;
+}
+.siteCookies--bottom .siteCookies__link:hover{color:#fff!important;background:none!important;text-decoration:none;}
+
+/* Tlačítka Odmítnout + Souhlasím */
+.siteCookies--bottom .siteCookies__buttonWrap{
+  grid-area:buttons;
+  display:flex!important;
+  align-items:center;
+  gap:10px!important;
+}
+.siteCookies--bottom .siteCookies__button{
+  display:inline-block;
+  width:auto!important;
+  min-width:130px;
+  margin:0!important;
+  padding:0 22px!important;
+  height:46px;
+  border-radius:12px!important;
+  font:600 14px/44px 'Poppins',sans-serif!important;
+  text-align:center;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:transform .15s,box-shadow .2s,background .2s,border-color .2s;
+}
+.siteCookies--bottom [data-testid="buttonCookiesReject"]{
+  background:transparent!important;
+  border:1.5px solid rgba(255,255,255,.45)!important;
+  color:#fff!important;
+}
+.siteCookies--bottom [data-testid="buttonCookiesReject"]:hover{
+  background:rgba(255,255,255,.1)!important;
+  border-color:#fff!important;
+  opacity:1!important;
+}
+.siteCookies--bottom [data-testid="buttonCookiesAccept"]{
+  background:linear-gradient(135deg,#5B2CDB 0%,#18A073 100%)!important;
+  border:1.5px solid transparent!important;
+  color:#fff!important;
+  box-shadow:0 10px 24px -8px rgba(91,44,219,.7);
+}
+.siteCookies--bottom [data-testid="buttonCookiesAccept"]:hover{
+  background:linear-gradient(135deg,#6A3BEA 0%,#1FB584 100%)!important;
+  color:#fff!important;
+  opacity:1!important;
+  transform:translateY(-1px);
+  box-shadow:0 14px 28px -8px rgba(91,44,219,.8);
+}
+.siteCookies--bottom .siteCookies__button:focus-visible,
+.siteCookies--bottom .siteCookies__link:focus-visible{
+  outline:2px solid #A78BFA;
+  outline-offset:3px;
+}
+
+/* Mobil */
+@media(max-width:600px){
+  .siteCookies--bottom,
+  .siteCookies--bottom.siteCookies--scrolled{
+    bottom:12px!important;
+    width:calc(100% - 24px)!important;
+  }
+  .siteCookies--bottom .siteCookies__form{
+    grid-template-columns:1fr;
+    grid-template-areas:"text" "buttons" "links";
+    gap:14px;
+    padding:22px 18px 12px!important;
+  }
+  .siteCookies--bottom .siteCookies__text{font-size:13px;line-height:1.6;}
+  .siteCookies--bottom .siteCookies__text::before{font-size:16px;}
+  .siteCookies--bottom .siteCookies__buttonWrap{
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+  }
+  .siteCookies--bottom .siteCookies__button{min-width:0;width:100%!important;padding:0 8px!important;}
+  .siteCookies--bottom .siteCookies__links{text-align:center!important;}
+}
+@media(prefers-reduced-motion:reduce){
+  .siteCookies--bottom,
+  .siteCookies--bottom.siteCookies--scrolled{animation:none;}
+  .siteCookies--bottom .siteCookies__button{transition:none;}
+}
+
+/* =====================================================================
+   Okno „Nastavení cookies“ (colorbox s třídou .cookiesDialog)
+   ===================================================================== */
+#cboxOverlay{background:#0A0E17!important;opacity:.72!important;}
+#cboxContent.cookiesDialog{
+  position:relative;
+  overflow:hidden;
+  background:#fff!important;
+  border-radius:20px!important;
+  box-shadow:0 30px 80px -16px rgba(10,14,23,.65);
+  font-family:'Poppins',sans-serif;
+}
+#cboxContent.cookiesDialog::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;
+  height:4px;
+  z-index:2;
+  background:linear-gradient(90deg,#5B2CDB,#18A073);
+}
+#cboxContent.cookiesDialog .colorbox-html-content{border:0!important;}
+.cookiesSetting__form{padding:28px 28px 24px!important;}
+.cookiesSetting__title{
+  margin:0 0 6px;
+  padding-left:42px;
+  min-height:32px;
+  font-size:22px;
+  font-weight:700;
+  line-height:32px;
+  color:#0A0E17;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%235B2CDB'/%3E%3Cstop offset='1' stop-color='%2318A073'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' d='M16 2a14 14 0 1 0 14 14 4.5 4.5 0 0 1-4.6-4.4A4.5 4.5 0 0 1 21 7.2 4.5 4.5 0 0 1 16 2z'/%3E%3Ccircle cx='11' cy='13' r='1.9' fill='%23fff'/%3E%3Ccircle cx='17.5' cy='20.5' r='1.9' fill='%23fff'/%3E%3Ccircle cx='10' cy='22' r='1.4' fill='%23fff'/%3E%3Ccircle cx='22' cy='18' r='1.4' fill='%23fff'/%3E%3C/svg%3E") no-repeat left center/32px 32px;
+}
+.cookiesSetting__perex{margin-bottom:16px;font-size:14px;line-height:1.65;color:#4B5563;}
+.cookiesSetting__data{
+  background:#F8F7FD!important;
+  border:1px solid #E6E1F8!important;
+  border-radius:14px!important;
+  padding:0 20px!important;
+}
+.cookiesSetting__item{border-bottom:1px solid #E6E1F8!important;padding:14px 0!important;}
+.cookiesSetting__item:last-child{border-bottom:0!important;}
+.cookiesSetting__item__name{font-size:15px;line-height:1.5;color:#0A0E17;}
+.cookiesSetting__item__text{font-size:13px;line-height:1.6;color:#5B6475;}
+.cookiesSetting__item__status{
+  background:#fff;
+  border:1.5px solid #D9D2F5!important;
+  border-radius:10px!important;
+}
+.cookiesSetting__item__status:hover{background:#fff!important;border-color:#5B2CDB!important;}
+.cookiesSetting__item .cookiesSetting__item__status .cookiesSetting__item__state{
+  font-size:14px;
+  font-weight:600;
+  color:#0A0E17;
+}
+.cookiesSetting__bottom{align-items:center!important;gap:10px;margin-top:22px!important;}
+.cookiesSetting__uncheck{flex:0 0 auto!important;}
+.cookiesSetting__uncheckLink,
+.cookiesSetting__button{
+  height:46px;
+  padding:0 20px!important;
+  border-radius:12px!important;
+  font:600 14px/44px 'Poppins',sans-serif!important;
+  text-align:center!important;
+  cursor:pointer;
+  transition:transform .15s,box-shadow .2s,background .2s,border-color .2s;
+}
+.cookiesSetting__uncheckLink{
+  background:transparent!important;
+  border:1.5px solid #0A0E17!important;
+  color:#0A0E17!important;
+}
+.cookiesSetting__uncheckLink:hover{background:#F0EEF8!important;color:#0A0E17!important;}
+.cookiesSetting__button{
+  flex:1 1 0;
+  background:#0A0E17!important;
+  border:1.5px solid #0A0E17!important;
+  color:#fff!important;
+}
+.cookiesSetting__button:hover{background:#1B2234!important;color:#fff!important;opacity:1!important;}
+.cookiesSetting__button--green{
+  background:linear-gradient(135deg,#5B2CDB 0%,#18A073 100%)!important;
+  border-color:transparent!important;
+  box-shadow:0 10px 24px -8px rgba(91,44,219,.65);
+}
+.cookiesSetting__button--green:hover{
+  background:linear-gradient(135deg,#6A3BEA 0%,#1FB584 100%)!important;
+  transform:translateY(-1px);
+}
+.cookiesDialog #cboxClose{
+  background-color:#F0EEF8!important;
+  border-radius:50%!important;
+}
+@media(max-width:600px){
+  .cookiesSetting__form{padding:24px 16px 18px!important;}
+  .cookiesSetting__title{font-size:19px;}
+  .cookiesSetting__bottom{flex-direction:column;align-items:stretch!important;}
+  .cookiesSetting__uncheck{width:100%;}
+  .cookiesSetting__uncheckLink,
+  .cookiesSetting__button{width:100%!important;display:block;}
+}
