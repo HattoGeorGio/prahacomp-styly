@@ -432,59 +432,15 @@ body.ordering-process #header .site-name{display:block!important;}
 }
 .search-form .search-whisperer{z-index:9999;}
 
-/* ===== Header-top na tabletu (768–1199px): rovnoměrné třetiny =====
-   Nativní header-top rozděluje logo/vyhledávání/košík na TŘI STEJNÉ
-   sloupce (flex-basis:33.3333% na všech třech, ověřeno živě přes
-   getComputedStyle — je to ze šablony, do jejího zdroje kvůli CORS
-   není vidět, ale chování je jasné a opakovatelné na 768px i 1199px).
-   Na širokém desktopu to nevadí — třetina je vždycky širší, než kolik
-   vyhledávací pole samo potřebuje (má vlastní strop max-width:480px
-   výš), takže se prostě vycentruje s prázdným místem kolem. Ale v
-   rozmezí 768–1199px (stejné pásmo jako tabletová oprava mega-menu o
-   pár řádků výš) klesne třetina na pouhých ~228–303px — do toho se
-   vejde sotva polovina vyhledávacího pole, placeholder "Napište, co
-   hledáte" se ořízl doprostřed slova (klient nahlásil, poslal snímek
-   z mobilu v tabletové šířce). Logo (má vlastní přirozený strop
-   ~242px, ověřeno živě) ani ikona košíku (potřebuje jen desítky
-   pixelů) svou třetinu vůbec nevyužijí — zbytečně jen "drží" prostor,
-   který by se hodil vyhledávání.
-   Řešení: logo a košík dostávají jen tolik místa, kolik potřebuje
-   jejich obsah (flex:0 1 auto), uvolněný prostor jde vyhledávání
-   (flex:1 1 auto — samo se zastaví na svém stropu 480px, viz výš).
-   Header-top ZŮSTÁVÁ nowrap (viz poznámka u hlavičky úplně nahoře) —
-   měníme jen POMĚR šířek uvnitř řádku, ne jeho zalamování, ať
-   nedojde k rozbití pozice vysunovacích panelů košíku/vyhledávání,
-   která na jednořádkové hlavičce závisí. */
-@media(min-width:768px) and (max-width:1199px){
-  #header .header-top .site-name-wrapper,
-  #header .header-top .navigation-buttons{
-    flex:0 1 auto!important;
-    width:auto!important;
-  }
-  #header .header-top .search{
-    flex:1 1 auto!important;
-    width:auto!important;
-  }
-}
-
-/* ===== Header-top na širokém desktopu (>=1200px): logo i košík vycentrované =====
-Nativní header-top rozděluje logo / vyhledávání / košík na tři stejné sloupce. Logo bylo přilepené
-k levému a košík k pravému okraji svého sloupce (velké prázdné mezery uvnitř hlavičky). Teď je
-logo i košík vycentrované ve své třetině (hledání se nehýbe), rozestupy jsou vyrovnané. Výška
-hlavičky se nemění. Pod 1200px (tablet/mobil) beze změny.
-POZOR: rozbalovací okno košíku (.popup-widget.cart-widget) je v šabloně ukotvené absolutně vůči
-body (left:50% + pevný margin-left: 159px pod 1440px, 279px od 1440px), ne vůči tlačítku košíku.
-Spolu s košíkem se proto musí o stejnou vzdálenost posunout doleva i okno, jinak by jeho šipka
-mířila mimo tlačítko. Posun = (třetina hlavičky - šířka tlačítka) / 2 = 98px pod 1440px a 138px
-od 1440px, tedy 159-98=61px a 279-138=141px. Změřeno živě na šířkách 1200-1900px: šipka okna je
-vždy uvnitř tlačítka, ~23px od jeho pravého okraje (stejně jako nativně). */
-@media(min-width:1200px){
-#header .site-name{text-align:center;}
-#header .navigation-buttons{justify-content:center;}
-.popup-widget.cart-widget{margin-left:61px!important;}
-}
-@media(min-width:1440px){
-.popup-widget.cart-widget{margin-left:141px!important;}
+/* ===== Header-top (>=768px): logo a košík zarovnané s krajem lišty kategorií a karuselu =====
+Šablona dává kontejneru hlavičky (#header .container) vodorovný padding 20px — lišta kategorií
+(#navigation) a karusel jdou až k okraji kontejneru, ale logo a košík (header-top) byly o těch 20px
+dovnitř. Záporný okraj -20px na header-top je vyrovná: levý okraj loga = levý okraj lišty kategorií
+a karuselu, pravý okraj košíku = pravý okraj lišty. Výška hlavičky se nemění, hledání zůstává uprostřed.
+Rozbalovací okno košíku (.popup-widget.cart-widget) je v šabloně ukotvené k pravému okraji kontejneru,
+takže s košíkem sedí beze změny (šipka okna uvnitř tlačítka, změřeno na šířkách 768-1900px). */
+@media(min-width:768px){
+#header .header-top{margin-left:-20px;margin-right:-20px;}
 }
 
 /* ===== Tlačítko "Více" — přetečené položky hlavního menu =====
