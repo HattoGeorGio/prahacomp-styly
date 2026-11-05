@@ -248,17 +248,6 @@ body.ordering-process #header .site-name{display:block!important;}
   }
 }
 
-/* ===== Oprava tabletu (768–999 px): stránka se posouvala do stran =====
-   V tomto rozsahu dává Shoptet vnitřní obálce menu (.navigation-in) šířku
-   ~140 000 px. Bez tohoto souboru se stránka kvůli tomu nerozšiřuje; s ním
-   ano (lišta má výše overflow:visible a obálka je position:static), takže
-   šla stránka na tabletu posouvat doprava o ~140 000 px. width:auto vrátí
-   obálku na šířku lišty. Vzhled menu se nemění (měřeno 5. 11. 2026: stejné
-   položky i tlačítko ☰ na stejném místě). Od 1000 px výš se nic nemění. */
-@media(min-width:768px) and (max-width:999px){
-  #navigation .navigation-in{width:auto!important;}
-}
-
 /* Rozbalené podmenu (2. úroveň) — vlastní čitelná barva nezávislá na
    hlavní liště + jasný hover stav namísto Shoptet defaultu. Platí pro
    OBĚ varianty (mobilní i desktopová/tabletová), beze změny od v14. */
