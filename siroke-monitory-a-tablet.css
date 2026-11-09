@@ -1,0 +1,44 @@
+/* =====================================================================
+   SIROKE-MONITORY-A-TABLET.CSS — dvě drobné opravy rozložení celého webu
+
+   Zadání (Jirka, 9. 11. 2026):
+   1) Na extra širokém monitoru (např. 3440 px) jsou po stranách úvodní
+      stránky (a ostatních stránek) bílé pruhy — dekorativní pozadí
+      (fotka PC) mělo dřív pokrývat celou šířku okna.
+   2) Na tabletech / skládacích telefonech (šířka cca 768–1000 px) bylo
+      možné stránku posouvat do stran „do nekonečna“ — bílá plocha.
+
+   Příčiny (změřeno na živém webu):
+   1) Pozadí nastavuje Shoptet (Vzhled a obsah → Editor → Pozadí) jako
+      obrázek 2752×1536 px, vycentrovaný, bez roztažení. Jakmile je okno
+      širší než 2752 px (nebo vyšší než ~1536 px), kolem obrázku zůstane
+      bílá. Oprava: velikost obrázku se roztáhne jen tehdy, kdyby jinak
+      nepokryl okno — max(2752px; 100vw; 179,3vh). V oknech do 2752 px
+      šířky se nic nemění (obrázek zůstává v původní velikosti 2752 px).
+   2) Menu (.navigation-in) je nativně široké 9999em (≈ 139 986 px) —
+      šablona si v něm měří, kolik položek se vejde, a jinak ho schovává.
+      Na úrovni #header ale máme od dřívějška overflow:visible (kvůli
+      rozbalovacím podmenu), takže tahle neviditelná lišta natáhla celou
+      stránku do šířky. Oprava: #header ořezává jen vodorovné přetékání
+      (overflow-x:clip). Rozložení se tím nemění (clip nevytváří nový
+      kontejner pro posuv) a rozbalovací menu se svisle zobrazují dál.
+
+   Rozsah:
+   - pozadí: jen od 992 px (stejně jako nativní pravidlo Shoptetu);
+   - ořez menu: jen 768–1199 px (tam, kde se menu měří a zalamuje).
+   Rollback: smazat odkaz na tento soubor ze Záhlaví.
+   ===================================================================== */
+
+/* ---------- 1) Pozadí vždy přes celé okno (široké / vysoké monitory) ---------- */
+@media(min-width:992px){
+  body{
+    background-size:max(2752px,100vw,179.3vh) auto!important;
+  }
+}
+
+/* ---------- 2) Tablet: žádný nekonečný vodorovný posuv ---------- */
+@media(min-width:768px) and (max-width:1199px){
+  #header{
+    overflow-x:clip;
+  }
+}
