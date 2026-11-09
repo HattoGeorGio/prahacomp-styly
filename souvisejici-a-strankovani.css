@@ -1,0 +1,229 @@
+/* =====================================================================
+   SOUVISEJICI-A-STRANKOVANI.CSS — „Související / Podobné produkty“ na
+   detailu produktu + ovládací lišta pod výpisem (Nahoru / Načíst další /
+   stránkování)
+
+   Zadání (Jirka, 9. 11. 2026):
+   1) Související produkty uvnitř produktu ve stylu celého webu.
+   2) Na mobilu zobrazovat související i podobné produkty po jednom
+      kuse pod sebou (jeden sloupec).
+   3) Tlačítka „Zobrazit všechny související / podobné produkty“ do
+      stylu webu.
+   4) Dole ve výpisu (kategorie) tlačítka „Nahoru“, „Načíst dalších …“
+      a stránkování „1 > 6“ do stylu webu.
+
+   Karty produktů samotné už styl webu mají (kategorie.css) — tady se
+   řeší jen to, co zůstalo nativní: nadpis sekce, tlačítka, jeden
+   sloupec na mobilu a lišta pod výpisem.
+
+   Rozsah (žádné pravidlo nesahá mimo):
+   - část A (nadpis, tlačítka, mobilní sloupec): `body.type-detail`
+     (Shoptetova třída typu stránky „detail produktu“);
+   - část B (lišta pod výpisem): `.listingControls` (blok, který Shoptet
+     vypisuje jen pod stránkovaným výpisem produktů).
+   Nikde se nemění `display`, takže nativní schovávání/ukazování
+   tlačítek (na desktopu se „Zobrazit všechny…“ schová samo) zůstává.
+
+   Barvy a tvary jako jinde na webu: fialová #5B2CDB, mátová #18A073,
+   tmavá #0A0E17, přechod 135deg #5B2CDB → #7A3FE0 → #18A073, tlačítka
+   zaoblená 12px (stejně jako „Otevřít filtr“ v kategorii).
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
+
+/* =====================  A) DETAIL PRODUKTU  ===================== */
+
+/* ---------- Nadpis „Související produkty“ ---------- */
+body.type-detail h2.products-related-header{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  margin:36px 0 22px!important;
+  font-family:'Montserrat',sans-serif!important;
+  font-weight:700!important;
+  font-size:clamp(20px,4.6vw,26px)!important;
+  line-height:1.2!important;
+  letter-spacing:-0.02em;
+  color:#0A0E17!important;
+}
+body.type-detail h2.products-related-header::after{
+  content:"";
+  display:block;
+  width:48px;
+  height:3px;
+  margin-top:10px;
+  border-radius:3px;
+  background:linear-gradient(90deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%);
+}
+
+/* ---------- Tlačítka „Zobrazit všechny související / podobné produkty“ ---------- */
+body.type-detail .browse-p{
+  padding:6px 0 10px;
+}
+body.type-detail .browse-p a.btn.p-all{
+  box-sizing:border-box;
+  max-width:100%;
+  border:0!important;
+  border-radius:12px!important;
+  padding:14px 28px!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  color:#fff!important;
+  font-weight:600!important;
+  font-size:14px!important;
+  line-height:1.3!important;
+  letter-spacing:.3px;
+  text-align:center;
+  text-decoration:none!important;
+  box-shadow:0 6px 16px -4px rgba(20,10,60,.35)!important;
+  transition:box-shadow .18s ease,transform .18s ease,background .18s ease;
+}
+body.type-detail .browse-p a.btn.p-all:hover,
+body.type-detail .browse-p a.btn.p-all:focus-visible{
+  background:linear-gradient(135deg,#6d3ef0 0%,#8a54e8 45%,#1dbb84 100%)!important;
+  box-shadow:0 10px 22px -4px rgba(20,10,60,.45)!important;
+  transform:translateY(-1px);
+  color:#fff!important;
+}
+body.type-detail .browse-p a.btn.p-all:focus-visible{
+  outline:3px solid rgba(91,44,219,.35);
+  outline-offset:2px;
+}
+
+/* ---------- Mobil: související i podobné produkty po jednom pod sebou ----------
+   Stejný princip jako pro výpis kategorie (kategorie.css) a homepage:
+   Shoptet dává kartám 50 % šířky, tady na šířku 100 % a bez svislé
+   dělicí čárky mezi kartami. Platí pro oba bloky (.products-related i
+   .products-alternative — oba mají třídu .products-additional). */
+@media(max-width:767px){
+  body.type-detail .products-additional.products-block>div{
+    width:100%!important;
+    border-right-style:none!important;
+    border-top-style:none!important;
+  }
+  body.type-detail .browse-p a.btn.p-all{
+    width:100%;
+    max-width:420px;
+    padding:15px 18px!important;
+  }
+}
+
+/* =====================  B) LIŠTA POD VÝPISEM  ===================== */
+/* Nativní tlačítka (.btn-secondary) mají nulové zaoblení a tenký obrys —
+   stejně „nedodělaný“ prvek, jako byl „Otevřít filtr“. Uspořádání
+   (flex, pořadí, šířky) se nemění, jen vzhled. */
+
+/* „Načíst další …“ — hlavní akce, plná barva s přechodem */
+.listingControls .loadMore__button.btn{
+  min-height:44px;
+  border:0!important;
+  border-radius:12px!important;
+  padding:11px 26px!important;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%)!important;
+  color:#fff!important;
+  font-weight:600!important;
+  font-size:14px!important;
+  letter-spacing:.3px;
+  box-shadow:0 6px 16px -4px rgba(20,10,60,.35)!important;
+  transition:box-shadow .18s ease,transform .18s ease,background .18s ease;
+}
+.listingControls .loadMore__button.btn:hover,
+.listingControls .loadMore__button.btn:focus-visible{
+  background:linear-gradient(135deg,#6d3ef0 0%,#8a54e8 45%,#1dbb84 100%)!important;
+  box-shadow:0 10px 22px -4px rgba(20,10,60,.45)!important;
+  transform:translateY(-1px);
+  color:#fff!important;
+}
+
+/* „Nahoru“ — vedlejší akce, bílé s fialovým obrysem */
+.listingControls .goToTop__button.btn{
+  min-height:44px;
+  border:1.5px solid #5B2CDB!important;
+  border-radius:12px!important;
+  padding:10px 20px!important;
+  background:#fff!important;
+  color:#5B2CDB!important;
+  font-weight:600!important;
+  font-size:14px!important;
+  letter-spacing:.3px;
+  transition:background .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+.listingControls .goToTop__button.btn:hover,
+.listingControls .goToTop__button.btn:focus-visible{
+  background:#f5f2fc!important;
+  box-shadow:0 6px 16px -6px rgba(91,44,219,.35)!important;
+  transform:translateY(-1px);
+  color:#5B2CDB!important;
+}
+
+/* Stránkování „1 > 6“ */
+.listingControls .pagination__list{
+  align-items:center;
+  gap:6px;
+}
+.listingControls .pagination__currentPage,
+.listingControls .pagination__link{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  min-width:40px;
+  width:auto!important;
+  height:40px!important;
+  padding:0 10px!important;
+  border-radius:10px!important;
+  font-size:14px;
+  line-height:1;
+  text-decoration:none!important;
+  transition:background .18s ease,color .18s ease,box-shadow .18s ease;
+}
+/* aktuální strana — plná barva s přechodem */
+.listingControls .pagination__currentPage{
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%);
+  color:#fff!important;
+  font-weight:700;
+  box-shadow:0 4px 12px -3px rgba(91,44,219,.45);
+}
+/* ostatní strany — fialový text, jemné pozadí při najetí */
+.listingControls .pagination__link{
+  border:1.5px solid transparent!important;
+  background:transparent!important;
+  color:#5B2CDB!important;
+  font-weight:600;
+}
+.listingControls .pagination__link:hover,
+.listingControls .pagination__link:focus-visible{
+  background:#f5f2fc!important;
+  color:#5B2CDB!important;
+}
+/* šipky (další / předchozí / první …) — s obrysem jako „Nahoru“ */
+.listingControls .pagination__link.btn{
+  border:1.5px solid #5B2CDB!important;
+  background:#fff!important;
+}
+.listingControls .pagination__link.btn:hover,
+.listingControls .pagination__link.btn:focus-visible{
+  background:#f5f2fc!important;
+  box-shadow:0 6px 16px -6px rgba(91,44,219,.35)!important;
+}
+.listingControls .pagination__link:focus-visible,
+.listingControls .loadMore__button:focus-visible,
+.listingControls .goToTop__button:focus-visible{
+  outline:3px solid rgba(91,44,219,.35);
+  outline-offset:2px;
+}
+
+/* Mobil: tlačítka přes celou šířku výpisu, dost velké na prst */
+@media(max-width:767px){
+  .listingControls .loadMore__button.btn{
+    width:100%;
+    min-height:48px;
+  }
+  .listingControls .pagination__list{
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .listingControls .pagination__currentPage,
+  .listingControls .pagination__link{
+    min-width:44px;
+    height:44px!important;
+  }
+}
