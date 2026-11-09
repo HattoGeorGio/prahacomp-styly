@@ -30,7 +30,12 @@
   var RT_PEN = { turing: 1.15, ampere: 1.0, ada: 0.85, blackwell: 0.8, rdna2: 1.35, rdna3: 1.15, rdna4: 0.9, arc: 1.0 };
   var RT_ARCH = { turing: 1, ampere: 1, ada: 1, blackwell: 1, rdna2: 1, rdna3: 1, rdna4: 1, arc: 1 };
   var SMOOTH_P = 5;
-  var NORM = 0.982; /* kalibrace: geometrický průměr 11 her Tom's Hardware = 71,5 FPS u RTX 4060 */
+  /* kalibrace: geometrický průměr „a“ u 11 her z testu Tom's Hardware musí dát 71,5 FPS (RTX 4060) */
+  var NORM = (function () {
+    var sum = 0, n = 0;
+    D.games.forEach(function (g) { if (g.tom) { sum += Math.log(g.a); n++; } });
+    return n ? D.ref.g1080 / Math.exp(sum / n) : 1;
+  })();
 
   function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
 

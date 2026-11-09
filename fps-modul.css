@@ -102,7 +102,7 @@
 .pcfps__gmeta{color:var(--pf-muted);font-size:12.5px}
 
 /* ---------- Ovládání ---------- */
-.pcfps__controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px 20px}
+.pcfps__controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px 20px}
 .pcfps__ctl{min-width:0}
 .pcfps__lbl{display:block;margin-bottom:7px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--pf-muted)}
 .pcfps__lbl em{font-style:normal;text-transform:none;letter-spacing:0;color:var(--pf-purple);font-weight:600}

@@ -98,7 +98,7 @@
   var ICON_ARROW = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="m9 5 7 7-7 7-1.5-1.5L13 12 7.5 6.5 9 5Z"/></svg>';
 
   function chip(cls, icon, label, val, est) {
-    return '<li class="pcfps__chip ' + cls + '"><span class="pcfps__chipico">' + icon + '</span><span class="pcfps__chiptxt"><small>' + label + '</small><b>' + esc(val) + (est ? ' <i title="Parametry tohoto modelu jsou odhad podle generace a řady.">~</i>' : '') + '</b></span></li>';
+    return '<li class="pcfps__chip ' + cls + '"><span class="pcfps__chipico">' + icon + '</span><span class="pcfps__chiptxt"><small>' + label + '</small><b>' + esc(val) + '</b></span></li>';
   }
 
   var chips = '';
@@ -244,6 +244,7 @@
       if (p < 1) raf = requestAnimationFrame(step); else shownNum = n;
     }
     raf = requestAnimationFrame(step);
+    setTimeout(function () { node.textContent = n; shownNum = n; }, dur + 120);
   }
 
   function fmtSetting(o) {
@@ -307,7 +308,7 @@
 
     /* doporučení */
     var rec = E.recommend(cfg, g, 60, true);
-    if (fps < 60 || true) {
+    {
       if (rec) {
         var rs = fmtSetting({ res: rec.res, preset: rec.preset, up: rec.up });
         ins += insight('rec', ICON_BOLT, 'Doporučené nastavení pro <b>60+ FPS</b>: <b>' + esc(rs) + '</b> (zhruba ' + Math.round(rec.fps) + ' FPS).');
