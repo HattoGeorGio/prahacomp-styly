@@ -8,7 +8,7 @@
    ===================================================================== */
 (function () {
   'use strict';
-  var V = '2';
+  var V = '3';
   var body = document.body;
   if (!body || !/\btype-detail\b/.test(body.className)) return;
 

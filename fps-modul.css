@@ -88,6 +88,12 @@
 .pcfps__art--photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,14,23,.62) 0,rgba(10,14,23,0) 48%);pointer-events:none}
 .pcfps__art--photo .pcfps__year{z-index:2;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .pcfps__art--photo::before{display:none}
+.pcfps__art--logo{background:linear-gradient(150deg,hsl(var(--h) 50% 21%),hsl(calc(var(--h) + 30) 55% 8%))}
+.pcfps__art--logo::before{display:block}
+.pcfps__art--logo::after{display:none}
+.pcfps__logo{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);max-width:66%;max-height:48%;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+.pcfps__logo--inv{filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+.pcfps__mono--name{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;text-align:center;line-height:1.3;padding:0 14px;max-width:100%}
 .pcfps__tile:hover .pcfps__art{transform:translateY(-2px);box-shadow:0 12px 22px -12px rgba(30,10,90,.55),inset 0 0 0 1px rgba(255,255,255,.12)}
 .pcfps__tile[aria-pressed="true"] .pcfps__art{box-shadow:0 0 0 3px #fff,0 0 0 6px var(--pf-purple),0 14px 24px -12px rgba(91,44,219,.6)}
 .pcfps__tile:focus-visible{outline:none}
@@ -198,6 +204,7 @@
   .pcfps__arrows{display:none}
   .pcfps__tile{width:138px}
   .pcfps__mono{font-size:19px}
+  .pcfps__mono--name{font-size:10px}
   .pcfps__controls{grid-template-columns:1fr;gap:14px}
   .pcfps__segb{padding:0 6px;font-size:12.5px}
   .pcfps__insights{grid-template-columns:1fr}

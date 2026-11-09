@@ -221,19 +221,31 @@
     return id ? 'https://cdn.akamai.steamstatic.com/steam/apps/' + id + '/' + (STEAM_FILE[g.id] || 'header.jpg') : '';
   }
 
+  /* Hry bez Steam banneru: veřejná (public domain) loga z Wikimedia Commons na tmavém podkladu.
+     [soubor, 1 = černé logo → přebarvit na bílé] */
+  var LOGO = { fortnite: ['Fortnite_logo_2.svg', 1], valorant: ['Valorant_logo_-_pink_color_version.svg', 0],
+    lol: ['League_of_Legends_2019_vector.svg', 0], aw2: ['Alan_Wake_II_logo.svg', 0] };
+  var NAMEONLY = { wow: 1, tarkov: 1 }; // bez dostupného loga → pěkný nápis s celým názvem
+
   function buildTiles() {
     el.games.innerHTML = games.map(function (g) {
-      var u = artUrl(g);
-      var img = u ? '<img class="pcfps__img" src="' + u + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="460" height="215">' : '';
+      var u = artUrl(g), lg = LOGO[g.id], cls = '', img = '', mono = esc(g.short), monoCls = 'pcfps__mono';
+      if (u) {
+        cls = ' pcfps__art--photo';
+        img = '<img class="pcfps__img" src="' + u + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="460" height="215">';
+      } else if (lg) {
+        cls = ' pcfps__art--photo pcfps__art--logo';
+        img = '<img class="pcfps__logo' + (lg[1] ? ' pcfps__logo--inv' : '') + '" src="https://commons.wikimedia.org/wiki/Special:FilePath/' + lg[0] + '?width=300" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">';
+      } else if (NAMEONLY[g.id]) { mono = esc(g.name); monoCls += ' pcfps__mono--name'; }
       return '<button type="button" class="pcfps__tile" data-game="' + g.id + '" aria-pressed="false" style="--h:' + g.hue + '">' +
-        '<span class="pcfps__art' + (u ? ' pcfps__art--photo' : '') + '"><span class="pcfps__mono">' + esc(g.short) + '</span>' + img + '<span class="pcfps__year">' + g.year + '</span></span>' +
+        '<span class="pcfps__art' + cls + '"><span class="' + monoCls + '">' + mono + '</span>' + img + '<span class="pcfps__year">' + g.year + '</span></span>' +
         '<span class="pcfps__tname">' + esc(g.name) + '</span>' +
         '<span class="pcfps__tfps" data-tfps></span></button>';
     }).join('');
     // když se banner nenačte (síť, blokace), vrátí se barevný štítek s názvem
     el.games.addEventListener('error', function (ev) {
       var t = ev.target;
-      if (t && t.tagName === 'IMG') { var a = t.parentNode; a.className = a.className.replace(' pcfps__art--photo', ''); a.removeChild(t); }
+      if (t && t.tagName === 'IMG') { var a = t.parentNode; a.className = a.className.replace(' pcfps__art--photo', '').replace(' pcfps__art--logo', ''); a.removeChild(t); }
     }, true);
   }
   function updateTiles() {
