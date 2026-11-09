@@ -1,0 +1,76 @@
+/* =====================================================================
+   PLATBY-SIDEBAR.CSS — blok „Přijímáme platby“ (Apple Pay, Google Pay)
+   v bočním panelu, hned pod boxem Kategorie
+
+   Zadání (Jirka, 9. 11. 2026): pod boční Kategorie přidat „Přijímáme
+   platby Google Pay a Apple Pay“ s pěknými ikonkami, jen na počítači,
+   napříč celým e-shopem (všude, kde se boční panel zobrazuje).
+
+   HTML bloku vkládá malý skript platby-sidebar.js (jednou, hned za box
+   Kategorie). Tento soubor řeší jen vzhled:
+   - blok je ve výchozím stavu SKRYTÝ a zobrazuje se až od 992 px
+     (tablet a mobil ho nevidí; boční panel je navíc pod 768 px skrytý
+     samotným Shoptetem);
+   - karta (bílé pozadí, zaoblení, stín, nadpis s barevným proužkem)
+     vzniká sama ze sidebar.css, protože blok má třídy `.box` uvnitř
+     `.sidebar-inner` — tady se řeší jen obsah (dva „čipy“ s logem).
+   Rozsah: všechna pravidla začínají `.sidebar-inner .box-platby`.
+   Rollback: smazat <link> a <script> řádek ze Záhlaví.
+   ===================================================================== */
+.sidebar-inner .box-platby{
+  display:none;
+}
+@media(min-width:992px){
+  .sidebar-inner .box-platby{
+    display:block;
+  }
+}
+
+.sidebar-inner .box-platby .platby-list{
+  display:flex;
+  gap:10px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.sidebar-inner .box-platby .platby-chip{
+  flex:1 1 0;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:46px;
+  margin:0;
+  padding:0 8px;
+  border:1.5px solid #e4e6ee;
+  border-radius:12px;
+  background:#fff;
+  color:#171923;
+  font-family:'Poppins',sans-serif;
+  font-size:16px;
+  font-weight:600;
+  letter-spacing:-.2px;
+  line-height:1;
+  white-space:nowrap;
+  box-shadow:0 2px 6px -2px rgba(20,20,40,.12);
+}
+.sidebar-inner .box-platby .platby-chip svg{
+  display:block;
+  width:20px;
+  height:20px;
+  flex:none;
+}
+/* Apple Pay – tmavý čip (Apple používá černé provedení značky) */
+.sidebar-inner .box-platby .platby-chip--apple{
+  border-color:#0A0E17;
+  background:#0A0E17;
+  color:#fff;
+}
+.sidebar-inner .box-platby .platby-note{
+  margin:12px 0 0;
+  font-family:'Poppins',sans-serif;
+  font-size:12px;
+  line-height:1.5;
+  color:#6B7280;
+}
