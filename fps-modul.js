@@ -65,7 +65,7 @@
   /* ---------------- 2) stav ---------------- */
   var games = E.games;
   var state = {
-    game: 'fortnite', preset: 'high', res: cfg.res || 1080, up: 'off', rt: false, fg: 0,
+    game: 'cs2', preset: 'high', res: cfg.res || 1080, up: 'off', rt: false, fg: 0,
     search: '', sort: 'perf'
   };
   var gameById = {};
@@ -208,13 +208,33 @@
     return e;
   }
 
+  /* Oficiální bannery ze Steamu (hotlink, nic nekopírujeme na vlastní server).
+     Hry bez Steam stránky (Fortnite, Valorant, LoL, WoW, Tarkov, Alan Wake II) mají barevný štítek. */
+  var STEAM = { cs2: 730, dota2: 570, r6: 359550, ow2: 2357570, rocketleague: 252950, apex: 1172470, warzone: 1938090,
+    pubg: 578080, marvelrivals: 2767030, bf6: 2807960, arcraiders: 1808500, doomtda: 3017860, cyberpunk: 1091500,
+    witcher3: 292030, bg3: 1086940, eldenring: 1245620, clairobscur: 1903340, hogwarts: 990080, stalker2: 1643320,
+    rdr2: 1174180, gta5: 271590, spiderman2: 2651280, wukong: 2358720, mhwilds: 2246340, acshadows: 3159330,
+    helldivers2: 553850, fh5: 1551360, poe2: 2694490 };
+  var STEAM_FILE = { bf6: 'library_hero.jpg' }; // header.jpg je u BF6 prázdný
+  function artUrl(g) {
+    var id = STEAM[g.id];
+    return id ? 'https://cdn.akamai.steamstatic.com/steam/apps/' + id + '/' + (STEAM_FILE[g.id] || 'header.jpg') : '';
+  }
+
   function buildTiles() {
     el.games.innerHTML = games.map(function (g) {
+      var u = artUrl(g);
+      var img = u ? '<img class="pcfps__img" src="' + u + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="460" height="215">' : '';
       return '<button type="button" class="pcfps__tile" data-game="' + g.id + '" aria-pressed="false" style="--h:' + g.hue + '">' +
-        '<span class="pcfps__art"><span class="pcfps__mono">' + esc(g.short) + '</span><span class="pcfps__year">' + g.year + '</span></span>' +
+        '<span class="pcfps__art' + (u ? ' pcfps__art--photo' : '') + '"><span class="pcfps__mono">' + esc(g.short) + '</span>' + img + '<span class="pcfps__year">' + g.year + '</span></span>' +
         '<span class="pcfps__tname">' + esc(g.name) + '</span>' +
         '<span class="pcfps__tfps" data-tfps></span></button>';
     }).join('');
+    // když se banner nenačte (síť, blokace), vrátí se barevný štítek s názvem
+    el.games.addEventListener('error', function (ev) {
+      var t = ev.target;
+      if (t && t.tagName === 'IMG') { var a = t.parentNode; a.className = a.className.replace(' pcfps__art--photo', ''); a.removeChild(t); }
+    }, true);
   }
   function updateTiles() {
     var q = state.search.toLowerCase(), shown = 0;
