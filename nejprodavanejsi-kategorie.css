@@ -1,0 +1,110 @@
+/* =====================================================================
+   NEJPRODAVANEJSI-KATEGORIE.CSS — blok „Nejprodávanější“ nad výpisem
+   produktů v kategorii + tlačítko „Zobrazit více / méně produktů“
+
+   Zadání (Jirka, 9. 11. 2026): převést blok „Nejprodávanější“ a
+   tlačítko „Zobrazit více produktů“ (po rozbalení „Zobrazit méně
+   produktů“) do stylu celého webu. Samostatný soubor, aby se nic jiného
+   nemohlo rozbít.
+
+   Co bylo předtím: holý nadpis v nativním fontu Exo 2 (400) a tlačítko
+   vypadající jako obyčejný fialový odkaz se šipkou.
+
+   Co se mění (jen vzhled; HTML, skripty, rozbalování zůstávají nativní):
+   - nadpis (h2.products-top-header): Montserrat 700 + krátký gradientní
+     proužek pod ním — stejný systém jako „Novinky“ (homepage.css) a
+     „Související produkty“ (souvisejici-a-strankovani.css);
+   - karty produktů už styl webu mají (bílá zaoblená karta se stínem);
+     doplňuje se jen jemné zvednutí při najetí myší (jen zařízení s myší);
+   - tlačítko (button.toggle-top-products): vedlejší akce — bílé s fialovým
+     obrysem, zaoblení 12 px, Poppins 600 — stejné jako „Nahoru“ pod
+     výpisem; šipka zůstává nativní ikona (barva podle textu), po
+     rozbalení se otočí nativně;
+   - mobil: tlačítko přes celou šířku (max 420 px), dost velké na prst.
+
+   Rozsah: všechna pravidla začínají `.products-top-wrapper` (blok, který
+   Shoptet vypisuje jen nad výpisem v kategorii). Nikde se nemění
+   `display`, takže nativní schovávání/ukazování produktů zůstává.
+   Rollback: smazat odkaz na tento soubor ze Záhlaví.
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
+
+/* ---------- Nadpis „Nejprodávanější“ ---------- */
+.products-top-wrapper .products-top-header{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  margin:8px 0 20px!important;
+  font-family:'Montserrat',sans-serif!important;
+  font-weight:700!important;
+  font-size:clamp(20px,4.6vw,26px)!important;
+  line-height:1.2!important;
+  letter-spacing:-0.02em;
+  color:#0A0E17!important;
+}
+.products-top-wrapper .products-top-header::after{
+  content:"";
+  display:block;
+  width:48px;
+  height:3px;
+  margin-top:10px;
+  border-radius:3px;
+  background:linear-gradient(90deg,#5B2CDB 0%,#7A3FE0 45%,#18A073 100%);
+}
+
+/* ---------- Karty: jemné zvednutí při najetí myší ---------- */
+.products-top-wrapper .products-top .product .p{
+  transition:box-shadow .2s ease,transform .2s ease;
+}
+@media(hover:hover){
+  .products-top-wrapper .products-top .product .p:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px -6px rgba(20,20,40,.18);
+  }
+}
+
+/* ---------- Tlačítko „Zobrazit více / méně produktů“ ---------- */
+.products-top-wrapper .button-wrapper{
+  padding:6px 0 12px;
+}
+.products-top-wrapper .button-wrapper .toggle-top-products.btn{
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  box-sizing:border-box;
+  min-height:44px;
+  padding:10px 24px!important;
+  border:1.5px solid #5B2CDB!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  color:#5B2CDB!important;
+  font-family:'Poppins',sans-serif!important;
+  font-weight:600!important;
+  font-size:14px!important;
+  line-height:1.3!important;
+  letter-spacing:.3px;
+  text-decoration:none!important;
+  box-shadow:none!important;
+  cursor:pointer;
+  transition:background .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+.products-top-wrapper .button-wrapper .toggle-top-products.btn:hover,
+.products-top-wrapper .button-wrapper .toggle-top-products.btn:focus-visible{
+  background:#f5f2fc!important;
+  color:#5B2CDB!important;
+  box-shadow:0 6px 16px -6px rgba(91,44,219,.35)!important;
+  transform:translateY(-1px);
+}
+.products-top-wrapper .button-wrapper .toggle-top-products.btn:focus-visible{
+  outline:3px solid rgba(91,44,219,.35);
+  outline-offset:2px;
+}
+
+/* ---------- Mobil: tlačítko přes celou šířku ---------- */
+@media(max-width:767px){
+  .products-top-wrapper .button-wrapper .toggle-top-products.btn{
+    width:100%;
+    max-width:420px;
+    min-height:48px;
+  }
+}
