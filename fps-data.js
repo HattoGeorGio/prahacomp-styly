@@ -143,6 +143,8 @@
   addOld('rx590', 'RX 590', 'amd', 'polaris', ['rx 590'], 39.3, 29.0, 8);
   add('rx580', 'RX 580', 'amd', 'polaris', ['rx 580'], [fromOld(35.3, 26.0, 8), (function () { var a = fromOld(35.3, 26.0, 4); a[1] = r1(a[1] * 0.96); a[2] = r1(a[2] * 0.94); return a; })()]);
   add('rx570', 'RX 570', 'amd', 'polaris', ['rx 570'], [(function () { var a = fromOld(28.1, 19.9, 8); a[1] = r1(a[1] * 1.04); a[2] = r1(a[2] * 1.04); return a; })(), fromOld(28.1, 19.9, 4)]);
+  /* RX 470 = mírně slabší sourozenec RX 570 (~7 % pomalejší, odhad); 8GB i 4GB varianta */
+  add('rx470', 'RX 470', 'amd', 'polaris', ['rx 470'], [(function () { var a = fromOld(28.1, 19.9, 8); a[1] = r1(a[1] * 1.04 * 0.93); a[2] = r1(a[2] * 1.04 * 0.93); a[3] = r1(a[3] * 0.93); return a; })(), (function () { var a = fromOld(28.1, 19.9, 4); a[1] = r1(a[1] * 0.93); a[2] = r1(a[2] * 0.93); a[3] = r1(a[3] * 0.93); return a; })()], { est: 1 });
   addOld('rx560', 'RX 560', 'amd', 'polaris', ['rx 560'], 14.7, 10.0, 4);
 
   /* ---- Intel Arc ---- */
