@@ -1,0 +1,67 @@
+/* =====================================================================
+   NOVINKY.CSS — rámeček „Novinky ze světa IT“ v bočním panelu (nad
+   TOP 10 produktů) + odkaz na Novinky v patičce, v1
+
+   Zadání (Jirka, 25. 11. 2026): nad „Top 10 produktů“ udělat stejný
+   rámeček jako „Přijímáme platby“, který upozorní na články a novinky
+   ze světa IT; odkaz na Novinky navíc do patičky.
+
+   HTML vkládá novinky.js. Tento soubor řeší jen vzhled:
+   - rámeček je ve výchozím stavu SKRYTÝ a zobrazuje se od 992 px, stejně
+     jako „Přijímáme platby“ (tablet a mobil boční panel nemají);
+   - karta (bílé pozadí, zaoblení, stín, nadpis s barevným proužkem) vzniká
+     sama ze sidebar.css, protože rámeček má třídy `.box` uvnitř
+     `.sidebar-inner`; tady se řeší jen obsah.
+   Rozsah: všechna pravidla začínají `.sidebar-inner .box-novinky`.
+   Rollback: smazat <link> a <script> řádek ze Záhlaví.
+   ===================================================================== */
+.sidebar-inner .box-novinky{
+  display:none;
+}
+@media(min-width:992px){
+  .sidebar-inner .box-novinky{
+    display:block;
+  }
+}
+
+.sidebar-inner .box-novinky .novinky-text{
+  margin:0 0 14px;
+  font-family:'Poppins',sans-serif;
+  font-size:13px;
+  line-height:1.55;
+  color:#4B5563;
+}
+.sidebar-inner .box-novinky .novinky-text strong{
+  color:#0A0E17;
+  font-weight:600;
+}
+.sidebar-inner .box-novinky a.novinky-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  height:46px;
+  padding:0 14px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 50%,#18A073 100%);
+  color:#fff;
+  font-family:'Exo 2',sans-serif;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.02em;
+  text-decoration:none;
+  white-space:nowrap;
+  box-shadow:0 2px 6px -2px rgba(20,20,40,.18);
+  transition:box-shadow .2s ease,transform .2s ease;
+}
+.sidebar-inner .box-novinky a.novinky-btn:hover{
+  color:#fff;
+  box-shadow:0 8px 20px rgba(91,44,219,.28);
+  transform:translateY(-2px);
+}
+.sidebar-inner .box-novinky a.novinky-btn svg{
+  display:block;
+  width:18px;
+  height:18px;
+  flex:none;
+}
