@@ -1,0 +1,349 @@
+/* =====================================================================
+   CLANKY.CSS — vzhled článků (blog „Novinky“) v duchu celého e-shopu, v1
+   Zadání (Jirka, 25. 11. 2026): „pěkná grafika jako je celý e-shop“.
+
+   ROZSAH (žádné pravidlo nesahá mimo):
+   - `body.type-post` = Shoptetova třída detailu článku (obsah je v
+     `.news-item-detail`), nic jiného na webu.
+   - Pomocné třídy `pp-…` se používají jen uvnitř textu článku
+     (rámeček „Stručně“, karty produktů, tlačítko, zdroje).
+   Výpis rubriky (`body.type-posts-listing`) se zatím nestyluje:
+   dokud není zveřejněn první článek, nejde ověřit jeho skutečné HTML.
+
+   Barvy a tvary jako jinde na webu: fialová #5B2CDB, mátová #18A073,
+   tmavá #0A0E17, přechod 135deg #5B2CDB → #7A3FE0 → #18A073,
+   nadpisy Exo 2, text Poppins, karty zaoblené 16 px s jemným stínem.
+   ===================================================================== */
+
+/* ---------- Sloupec článku: užší a vystředěný (čitelná délka řádku) ---------- */
+body.type-post .news-item-detail{
+  max-width:860px;
+  margin:0 auto;
+  padding:8px 4px 24px;
+}
+
+/* ---------- Nadpis článku + datum ---------- */
+body.type-post .news-item-detail > h1{
+  font-family:"Exo 2",sans-serif;
+  font-weight:700;
+  font-size:clamp(25px,3.2vw,36px);
+  line-height:1.2;
+  color:#0A0E17;
+  margin:6px 0 14px;
+}
+body.type-post .news-item-detail > h1::after{
+  content:"";
+  display:block;
+  width:72px;
+  height:5px;
+  margin-top:16px;
+  border-radius:3px;
+  background:linear-gradient(90deg,#5B2CDB,#7A3FE0 55%,#18A073);
+}
+body.type-post .news-item-detail > time{
+  display:inline-block;
+  margin:2px 0 22px;
+  padding:5px 14px;
+  border-radius:999px;
+  background:#F4F0FF;
+  color:#5B2CDB;
+  font-family:Poppins,sans-serif;
+  font-size:12.5px;
+  font-weight:600;
+  letter-spacing:.02em;
+}
+body.type-post .news-item-detail > time::before{content:"Publikováno ";font-weight:500;color:#7a6aa8;}
+
+/* ---------- Text článku ---------- */
+body.type-post .news-item-detail .text{
+  font-family:Poppins,sans-serif;
+  font-size:16px;
+  line-height:1.75;
+  color:#3a4150;
+}
+body.type-post .news-item-detail .text p{margin:0 0 1.15em;}
+body.type-post .news-item-detail .text strong{color:#0A0E17;font-weight:600;}
+
+/* nadpisy sekcí s přechodovým proužkem (jako „| KATEGORIE“ v bočním panelu) */
+body.type-post .news-item-detail .text h2{
+  position:relative;
+  margin:2em 0 .7em;
+  padding-left:18px;
+  font-family:"Exo 2",sans-serif;
+  font-weight:700;
+  font-size:clamp(21px,2.4vw,26px);
+  line-height:1.25;
+  color:#0A0E17;
+}
+body.type-post .news-item-detail .text h2::before{
+  content:"";
+  position:absolute;
+  left:0;top:.14em;bottom:.14em;
+  width:5px;border-radius:3px;
+  background:linear-gradient(180deg,#5B2CDB,#18A073);
+}
+body.type-post .news-item-detail .text h3{
+  margin:1.6em 0 .5em;
+  font-family:"Exo 2",sans-serif;
+  font-weight:700;
+  font-size:clamp(17px,2vw,19px);
+  line-height:1.3;
+  color:#5B2CDB;
+}
+body.type-post .news-item-detail .text h3 + p{margin-top:0;}
+
+/* odkazy */
+body.type-post .news-item-detail .text a:not(.pp-btn):not(.pp-prod){
+  color:#5B2CDB;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+  transition:color .15s ease;
+}
+body.type-post .news-item-detail .text a:not(.pp-btn):not(.pp-prod):hover{color:#18A073;}
+
+/* odrážky a číslování */
+body.type-post .news-item-detail .text ul,
+body.type-post .news-item-detail .text ol{
+  list-style:none;
+  margin:0 0 1.3em;
+  padding:0;
+}
+body.type-post .news-item-detail .text li{
+  position:relative;
+  margin:0 0 .55em;
+  padding-left:30px;
+}
+body.type-post .news-item-detail .text ul > li::before{
+  content:"";
+  position:absolute;
+  left:6px;top:.62em;
+  width:9px;height:9px;border-radius:50%;
+  background:linear-gradient(135deg,#5B2CDB,#18A073);
+}
+body.type-post .news-item-detail .text ol{counter-reset:ppn;}
+body.type-post .news-item-detail .text ol > li{counter-increment:ppn;}
+body.type-post .news-item-detail .text ol > li::before{
+  content:counter(ppn);
+  position:absolute;
+  left:0;top:.18em;
+  width:22px;height:22px;border-radius:50%;
+  background:#5B2CDB;color:#fff;
+  font-size:12px;font-weight:600;line-height:22px;text-align:center;
+}
+
+/* citace */
+body.type-post .news-item-detail .text blockquote{
+  margin:1.4em 0;
+  padding:16px 22px;
+  border-left:5px solid #18A073;
+  border-radius:0 14px 14px 0;
+  background:#F1FBF7;
+  color:#1f3b32;
+}
+body.type-post .news-item-detail .text blockquote p{margin:0;}
+
+/* tabulky */
+body.type-post .news-item-detail .text table{
+  display:block;
+  max-width:100%;
+  overflow-x:auto;
+  margin:1.4em 0;
+  border-collapse:separate;
+  border-spacing:0;
+  border:1px solid #e6e0fa;
+  border-radius:14px;
+  font-size:14.5px;
+}
+body.type-post .news-item-detail .text table th{
+  padding:12px 16px;
+  background:linear-gradient(135deg,#5B2CDB,#7A3FE0);
+  color:#fff;
+  font-family:"Exo 2",sans-serif;
+  font-weight:600;
+  text-align:left;
+  border:0 !important;
+}
+body.type-post .news-item-detail .text table td{
+  padding:11px 16px;
+  border:0 !important;
+  border-top:1px solid #eee9fb !important;
+}
+body.type-post .news-item-detail .text table tr:nth-child(even) td{background:#FAF8FF;}
+
+/* obrázky v článku */
+body.type-post .news-item-detail .text img{
+  max-width:100%;
+  height:auto;
+  border-radius:16px;
+}
+
+/* ---------- Rámeček „Stručně“ ---------- */
+body.type-post .news-item-detail .pp-callout{
+  margin:0 0 28px;
+  padding:20px 24px;
+  border:1px solid #e6e0fa;
+  border-radius:18px;
+  background:linear-gradient(135deg,#F4F0FF 0%,#F1FBF7 100%);
+  box-shadow:0 4px 18px rgba(91,44,219,.07);
+}
+body.type-post .news-item-detail .pp-callout p{margin:0;}
+body.type-post .news-item-detail .pp-callout strong:first-child{
+  display:inline-block;
+  margin-right:6px;
+  padding:2px 12px;
+  border-radius:999px;
+  background:#5B2CDB;
+  color:#fff;
+  font-size:12.5px;
+  font-weight:600;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+
+/* ---------- Karty produktů v článku ---------- */
+body.type-post .news-item-detail .pp-prods{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:18px;
+  margin:1.4em 0 1.6em;
+}
+body.type-post .news-item-detail a.pp-prod{
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border:1px solid #eef0f4;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 2px 12px rgba(20,20,40,.07);
+  text-decoration:none;
+  color:inherit;
+  transition:box-shadow .2s ease,transform .2s ease,border-color .2s ease;
+}
+body.type-post .news-item-detail a.pp-prod:hover{
+  box-shadow:0 10px 26px rgba(91,44,219,.18);
+  border-color:#5B2CDB;
+  transform:translateY(-3px);
+}
+body.type-post .news-item-detail a.pp-prod img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:4/3;
+  object-fit:contain;
+  background:#fff;
+  border-radius:0;
+}
+body.type-post .news-item-detail .pp-prod__body{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  flex:1;
+  padding:14px 16px 18px;
+  border-top:1px solid #f1f2f6;
+}
+body.type-post .news-item-detail .pp-prod__name{
+  font-family:Poppins,sans-serif;
+  font-size:14px;
+  font-weight:600;
+  line-height:1.4;
+  color:#0A0E17;
+}
+body.type-post .news-item-detail .pp-prod__price{
+  font-family:"Exo 2",sans-serif;
+  font-size:20px;
+  font-weight:700;
+  color:#5B2CDB;
+}
+body.type-post .news-item-detail .pp-prod__stock{
+  align-self:flex-start;
+  padding:2px 10px;
+  border-radius:999px;
+  background:#eafaf3;
+  color:#0f7a56;
+  font-size:12px;
+  font-weight:600;
+}
+body.type-post .news-item-detail .pp-prod__cta{
+  margin-top:auto;
+  padding:10px 16px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 50%,#18A073 100%);
+  color:#fff;
+  font-family:"Exo 2",sans-serif;
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+}
+
+/* ---------- Tlačítko ---------- */
+body.type-post .news-item-detail .pp-cta{text-align:center;margin:2em 0 .6em;}
+body.type-post .news-item-detail a.pp-btn{
+  display:inline-block;
+  padding:15px 40px;
+  border-radius:50px;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 50%,#18A073 100%);
+  color:#fff !important;
+  font-family:"Exo 2",sans-serif;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  text-decoration:none !important;
+  box-shadow:0 6px 18px rgba(91,44,219,.25);
+  transition:box-shadow .2s ease,transform .2s ease;
+}
+body.type-post .news-item-detail a.pp-btn:hover{
+  box-shadow:0 10px 26px rgba(91,44,219,.35);
+  transform:translateY(-2px);
+}
+
+/* ---------- Zdroje a poznámka pod čarou ---------- */
+body.type-post .news-item-detail .pp-sources{
+  margin:2.2em 0 0;
+  padding-top:16px;
+  border-top:1px solid #eef0f4;
+  font-size:13px;
+  line-height:1.6;
+  color:#6b7280;
+}
+body.type-post .news-item-detail .pp-sources a{color:#5B2CDB;}
+
+/* ---------- Další / předchozí článek, diskuze ---------- */
+body.type-post .news-item-detail .next-prev{margin:30px 0 8px;}
+body.type-post .news-item-detail .next-prev .btn{
+  padding:12px 30px;
+  border:2px solid #5B2CDB;
+  border-radius:50px;
+  background:#fff;
+  color:#5B2CDB;
+  font-family:"Exo 2",sans-serif;
+  font-weight:600;
+  letter-spacing:.03em;
+  transition:background .2s ease,color .2s ease;
+}
+body.type-post .news-item-detail .next-prev .btn:hover{background:#5B2CDB;color:#fff;}
+body.type-post .news-item-detail > h2{
+  margin:34px 0 10px;
+  font-family:"Exo 2",sans-serif;
+  font-weight:700;
+  font-size:21px;
+  color:#0A0E17;
+}
+body.type-post .news-item-detail .discussionContainer .btn,
+body.type-post .news-item-detail .discussionContainer a.btn{
+  border-radius:50px;
+  font-family:"Exo 2",sans-serif;
+  font-weight:600;
+}
+
+/* ---------- Mobil ---------- */
+@media (max-width:767px){
+  body.type-post .news-item-detail{padding:4px 0 18px;}
+  body.type-post .news-item-detail .text{font-size:15.5px;line-height:1.7;}
+  body.type-post .news-item-detail .pp-callout{padding:16px 18px;border-radius:16px;}
+  body.type-post .news-item-detail .pp-prods{grid-template-columns:1fr;}
+  body.type-post .news-item-detail a.pp-btn{display:block;padding:15px 20px;}
+}
