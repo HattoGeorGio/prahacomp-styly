@@ -347,3 +347,128 @@ body.type-post .news-item-detail .discussionContainer a.btn{
   body.type-post .news-item-detail .pp-prods{grid-template-columns:1fr;}
   body.type-post .news-item-detail a.pp-btn{display:block;padding:15px 20px;}
 }
+
+
+/* =====================================================================
+   VÝPIS ČLÁNKŮ (rubrika Novinky) — v2, 25. 11. 2026
+   Shoptet ve výpisu ukazuje CELÝ text článku (perex v rubrice je vypnutý).
+   Tady se z každého článku udělá karta: nadpis, datum a jen první blok
+   textu (u našich článků rámeček „Stručně“), zbytek se skryje, celá karta
+   je klikací a dole je tlačítko „Číst celý článek“.
+   Pravidlo pro autory: článek vždy začíná shrnutím (`pp-callout`).
+   Rozsah: `body.type-posts-listing`.
+   ===================================================================== */
+body.type-posts-listing .sectionDescription h1{
+  font-family:"Exo 2",sans-serif;
+  font-weight:700;
+  font-size:clamp(25px,3.2vw,36px);
+  color:#0A0E17;
+}
+body.type-posts-listing .sectionDescription h1::after{
+  content:"";
+  display:block;
+  width:72px;
+  height:5px;
+  margin-top:14px;
+  border-radius:3px;
+  background:linear-gradient(90deg,#5B2CDB,#7A3FE0 55%,#18A073);
+}
+body.type-posts-listing .news-wrapper{
+  display:grid;
+  gap:22px;
+  margin:10px 0 24px;
+}
+body.type-posts-listing .news-item{
+  position:relative;
+  border:1px solid #eef0f4;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 2px 12px rgba(20,20,40,.07);
+  overflow:hidden;
+  transition:box-shadow .2s ease,transform .2s ease,border-color .2s ease;
+}
+body.type-posts-listing .news-item:hover{
+  border-color:#5B2CDB;
+  box-shadow:0 10px 26px rgba(91,44,219,.16);
+  transform:translateY(-2px);
+}
+body.type-posts-listing .news-item > .text{
+  position:relative;
+  padding:24px 26px 26px;
+}
+body.type-posts-listing .news-item a.title{
+  display:block;
+  font-family:"Exo 2",sans-serif;
+  font-weight:700;
+  font-size:clamp(20px,2.4vw,26px);
+  line-height:1.25;
+  color:#0A0E17;
+  text-decoration:none;
+}
+body.type-posts-listing .news-item a.title:hover{color:#5B2CDB;}
+/* celá karta je klikací (odkaz nadpisu se roztáhne přes kartu) */
+body.type-posts-listing .news-item a.title::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+}
+body.type-posts-listing .news-item time{
+  display:inline-block;
+  margin:10px 0 14px;
+  padding:4px 12px;
+  border-radius:999px;
+  background:#F4F0FF;
+  color:#5B2CDB;
+  font-family:Poppins,sans-serif;
+  font-size:12px;
+  font-weight:600;
+}
+body.type-posts-listing .news-item .description{
+  font-family:Poppins,sans-serif;
+  font-size:15px;
+  line-height:1.7;
+  color:#3a4150;
+}
+body.type-posts-listing .news-item .description > *:not(:first-child){
+  display:none;
+}
+body.type-posts-listing .news-item .description .pp-callout{
+  margin:0;
+}
+body.type-posts-listing .news-item .pp-callout{
+  padding:18px 22px;
+  border:1px solid #e6e0fa;
+  border-radius:16px;
+  background:linear-gradient(135deg,#F4F0FF 0%,#F1FBF7 100%);
+}
+body.type-posts-listing .news-item .pp-callout p{margin:0;}
+body.type-posts-listing .news-item .pp-callout strong:first-child{
+  display:inline-block;
+  margin-right:6px;
+  padding:2px 12px;
+  border-radius:999px;
+  background:#5B2CDB;
+  color:#fff;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+body.type-posts-listing .news-item .description::after{
+  content:"Číst celý článek →";
+  display:inline-block;
+  margin-top:18px;
+  padding:11px 28px;
+  border-radius:50px;
+  background:linear-gradient(135deg,#5B2CDB 0%,#7A3FE0 50%,#18A073 100%);
+  color:#fff;
+  font-family:"Exo 2",sans-serif;
+  font-size:13.5px;
+  font-weight:600;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+@media (max-width:767px){
+  body.type-posts-listing .news-item > .text{padding:18px 18px 20px;}
+}
